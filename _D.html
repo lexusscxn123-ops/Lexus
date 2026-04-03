@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="tr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>:D</title>
+    
+    <!-- Particles.js Kütüphanesi -->
+    <script src="./_D_files/particles.min.js.indir"></script><style type="text/css" id="operaUserStyle">
+  video {
+    filter: -opera-shader(url(data:text/plain;base64,Ly8gaHR0cHM6Ly9naXRodWIuY29tL0dQVU9wZW4tRWZmZWN0cy9GaWRlbGl0eUZYLUNBUwovLyB2MwoKdW5pZm9ybSBzaGFkZXIgaUNodW5rOwp1bmlmb3JtIGZsb2F0MiBpTW91c2U7CnVuaWZvcm0gZmxvYXQ0IGlWaXNpYmxlUmVjdDsKdW5pZm9ybSBmbG9hdCBpQXJnc1sxXTsKCmNvbnN0IGZsb2F0IEVQU0lPTiA9IDAuMTsKY29uc3QgZmxvYXQgVl9NSU4gPSAwOwpjb25zdCBmbG9hdCBWX0xPVyA9IDAuMjU7CmNvbnN0IGZsb2F0IFZfTUVEID0gMC41Owpjb25zdCBmbG9hdCBWX0hJR0ggPSAwLjc1Owpjb25zdCBmbG9hdCBWX01BWCA9IDE7Cgpjb25zdCBmbG9hdCBUSFJFU0hPTERfQVJFQSA9IDgwMCAqIDYwMDsKY29uc3QgZmxvYXQgTUlOX0FSRUEgPSA0MDAgKiAxMDA7CmNvbnN0IGZsb2F0IE1JTl9TVFJJUCA9IDIwOwpjb25zdCBmbG9hdCBNQVJHSU4gPSAxOwoKaW5saW5lIGZsb2F0MyBwaXhlbChmbG9hdDIgeHksIGZsb2F0MiBvZmZzZXQpIHsKICAgIHJldHVybiBpQ2h1bmsuZXZhbCh4eSArIG9mZnNldCkucmdiOwp9CgppbmxpbmUgZmxvYXQzIHNoYXJwZW4oZmxvYXQyIHh5KSB7CiAgICBmbG9hdDMgZiA9CiAgICAgICAgcGl4ZWwoeHksIGZsb2F0MigtMSwgLTEpKSAqICAxICsKICAgICAgICBwaXhlbCh4eSwgZmxvYXQyKCAwLCAtMSkpICogLTEgKwogICAgICAgIHBpeGVsKHh5LCBmbG9hdDIoIDEsIC0xKSkgKiAgMSArCgogICAgICAgIHBpeGVsKHh5LCBmbG9hdDIoLTEsIDApKSAqIC0xICArCiAgICAgICAgcGl4ZWwoeHksIGZsb2F0MiggMCwgMCkpICogLTEgICsKICAgICAgICBwaXhlbCh4eSwgZmxvYXQyKCAxLCAwKSkgKiAtMSAgKwoKICAgICAgICBwaXhlbCh4eSwgZmxvYXQyKC0xLCAxKSkgKiAxICAgKwogICAgICAgIHBpeGVsKHh5LCBmbG9hdDIoIDAsIDEpKSAqIC0xICArCiAgICAgICAgcGl4ZWwoeHksIGZsb2F0MiggMSwgMSkpICogMTsKICAgIHJldHVybiBmIC8gLTE7Cn0KCmZsb2F0NCBSR1gyKGZsb2F0MiB4eSkgewogICAgZmxvYXQyIGNodW5rX3NpemUgPSBpVmlzaWJsZVJlY3Quenc7CiAgICBmbG9hdDQgY29sb3IgPSBpQ2h1bmsuZXZhbCh4eSk7CgogICAgaWYgKGNodW5rX3NpemUueCAqIGNodW5rX3NpemUueSA8IE1JTl9BUkVBKSB7CiAgICAgICAgcmV0dXJuIGNvbG9yOwogICAgfQoKICAgIGlmIChjaHVua19zaXplLnkgPCBNSU5fU1RSSVAgfHwgY2h1bmtfc2l6ZS54IDwgTUlOX1NUUklQKSB7CiAgICAgICAgcmV0dXJuIGNvbG9yOwogICAgfQoKICAgIGlmICh4eS54IDwgTUFSR0lOIHx8IHh5LnggPiAoY2h1bmtfc2l6ZS54IC0gTUFSR0lOKSB8fAogICAgICAgIHh5LnkgPCBNQVJHSU4gfHwgeHkueSA+IChjaHVua19zaXplLnkgLSBNQVJHSU4pKSB7CiAgICAgICAgcmV0dXJuIGNvbG9yOwogICAgfQoKICAgIHJldHVybiBmbG9hdDQoc2hhcnBlbih4eSksIDEpOwp9CgppbmxpbmUgZmxvYXQzIG1pbjN2KGZsb2F0MyB4LCBmbG9hdDMgeSwgZmxvYXQzIHopIHsKCXJldHVybiBtaW4oeCwgbWluKHksIHopKTsKfQoKaW5saW5lIGZsb2F0MyBtYXgzdihmbG9hdDMgeCwgZmxvYXQzIHksIGZsb2F0MyB6KSB7CglyZXR1cm4gbWF4KHgsIG1heCh5LCB6KSk7Cn0KCmZsb2F0MyBSR1gzKGZsb2F0MiB4eSwgZmxvYXQgc3RyZW5ndGgpIHsKICAgIGZsb2F0MyBhID0gcGl4ZWwoeHksIGZsb2F0MigtMSwgLTEpKTsKICAgIGZsb2F0MyBiID0gcGl4ZWwoeHksIGZsb2F0MiggMCwgLTEpKTsKICAgIGZsb2F0MyBjID0gcGl4ZWwoeHksIGZsb2F0MiggMSwgLTEpKTsKCiAgICBmbG9hdDMgZCA9IHBpeGVsKHh5LCBmbG9hdDIoLTEsIDApKTsKICAgIGZsb2F0MyBlID0gcGl4ZWwoeHksIGZsb2F0MiggMCwgMCkpOwogICAgZmxvYXQzIGYgPSBwaXhlbCh4eSwgZmxvYXQyKCAxLCAwKSk7CgogICAgZmxvYXQzIGcgPSBwaXhlbCh4eSwgZmxvYXQyKC0xLCAxKSk7CiAgICBmbG9hdDMgaCA9IHBpeGVsKHh5LCBmbG9hdDIoIDAsIDEpKTsKICAgIGZsb2F0MyBpID0gcGl4ZWwoeHksIGZsb2F0MiggMSwgMSkpOwoKICAgIGZsb2F0MyBtaW5fZGVmID0gbWluM3YoZCwgZSwgZik7CiAgICBmbG9hdDMgbWluX2JkZWZoID0gbWluM3YoYiwgbWluX2RlZiwgaCk7CiAgICBmbG9hdDMgbWluX2FiY2RmZ2hpID0gbWluM3YobWluM3YoYSwgbWluX2JkZWZoLCBjKSwgZywgaSk7CiAgICBmbG9hdDMgbWluM19mYWN0b3IgPSBtaW5fYmRlZmggKyBtaW5fYWJjZGZnaGk7CgogICAgZmxvYXQzIG1heF9kZWYgPSBtYXgzdihkLCBlLCBmKTsKICAgIGZsb2F0MyBtYXhfYmRlZmggPSBtYXgzdihiLCBtYXhfZGVmLCBoKTsKICAgIGZsb2F0MyBtYXhfYWJjZGZnaGkgPSBtYXgzdihtYXgzdihhLCBtaW5fYmRlZmgsIGMpLCBnLCBpKTsKICAgIGZsb2F0MyBtYXgzX2ZhY3RvciA9IG1heF9iZGVmaCArIG1heF9hYmNkZmdoaTsKCiAgICBmbG9hdDMgZmFjdG9yID0gMS4wIC8gbWF4M19mYWN0b3I7CgogICAgZmxvYXQzIGFtcCA9IHNhdHVyYXRlKG1pbihtaW4zX2ZhY3RvciwgMiAtIG1heDNfZmFjdG9yKSAqIGZhY3Rvcik7CiAgICBmbG9hdDMgYW1wX3NxcnQgPSBzcXJ0KGFtcCk7CgogICAgZmxvYXQgcGVhayA9IC0xLjAgLyAobWl4KDgsIDUsIHN0cmVuZ3RoKSk7CgogICAgZmxvYXQzIGNyb3NzX3dlaWdodHMgPSBhbXBfc3FydCAqIHBlYWs7CiAgICBmbG9hdDMgd2VpZ2h0cyA9IDEgLyAoMSArIDQgKiBjcm9zc193ZWlnaHRzKTsKCiAgICBmbG9hdDMgcmVzdWx0ID0gKChiICsgZCArIGYgKyBoKSAqIGNyb3NzX3dlaWdodHMgKyBlKSAqIHdlaWdodHM7CgogICAgcmV0dXJuIHNhdHVyYXRlKHJlc3VsdCk7Cn0KCmZsb2F0NCBtYWluKGZsb2F0MiB4eSkgewoKICAgIGZsb2F0NCBvcmlnaW5hbENvbG9yID0gaUNodW5rLmV2YWwoeHkpOwogICAgaWYgKG9yaWdpbmFsQ29sb3IuYSA8IDEpIHsKICAgICAgICByZXR1cm4gaUNodW5rLmV2YWwoeHkpOwogICAgfQoKICAgIGZsb2F0IGludGVuc2l0eSA9IGlBcmdzWzBdOwogICAgZmxvYXQgc3RyZW5ndGggPSAwOwogICAgZmxvYXQzIGNvbG9yOwoKICAgIGlmIChpbnRlbnNpdHkgPCBWX01JTiArIEVQU0lPTikgewogICAgICAgIHN0cmVuZ3RoID0gMC4xMDsKICAgICAgICBjb2xvciA9IFJHWDMoeHksIHN0cmVuZ3RoKTsKCiAgICB9IGVsc2UgaWYgKGludGVuc2l0eSA+IFZfTE9XIC0gRVBTSU9OICYmIGludGVuc2l0eSA8IFZfTE9XICsgRVBTSU9OKSB7CiAgICAgICAgc3RyZW5ndGggPSAwLjMzOwogICAgICAgIGNvbG9yID0gUkdYMyh4eSwgc3RyZW5ndGgpOwoKICAgIH0gZWxzZSBpZiAoaW50ZW5zaXR5ID4gVl9NRUQgLSBFUFNJT04gJiYgaW50ZW5zaXR5IDwgVl9NRUQgKyBFUFNJT04pIHsKICAgICAgICBzdHJlbmd0aCA9IDAuNTsKICAgICAgICBjb2xvciA9IFJHWDMoeHksIHN0cmVuZ3RoKTsKCiAgICB9IGVsc2UgaWYgKGludGVuc2l0eSA+IFZfSElHSCAtIEVQU0lPTiAmJiBpbnRlbnNpdHkgPCBWX0hJR0ggKyBFUFNJT04pIHsKICAgICAgICBzdHJlbmd0aCA9IDAuOTk7CiAgICAgICAgY29sb3IgPSBSR1gzKHh5LCBzdHJlbmd0aCk7CgogICAgfSBlbHNlIGlmIChpbnRlbnNpdHkgPiBWX01BWCAtIEVQU0lPTikgewogICAgICAgIHN0cmVuZ3RoID0gMTsKICAgICAgICBjb2xvciA9IFJHWDIoeHkpLnJnYjsKICAgIH0KCiAgICByZXR1cm4gZmxvYXQ0KGNvbG9yLCBvcmlnaW5hbENvbG9yLmEpOwp9) -opera-args(0.50 calc(env(-opera-accent-color-r, 255)/255) calc(env(-opera-accent-color-g, 255)/255) calc(env(-opera-accent-color-b, 255)/255)));
+  }
+</style>
+    
+    <!-- FontAwesome ikonlar -->
+    <link rel="stylesheet" href="./_D_files/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000000;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 6vh 12px 40px;
+            font-family: Arial, Helvetica, sans-serif;
+            overflow-x: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            color: #ff1a1a;
+        }
+
+        /* Arka plan partikülleri için canvas - EN ARKADA */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Müzik kontrol butonu - ÜST SAĞDA */
+        .music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: #1a0000;
+            border: 1.5px solid #880000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ff1a1a;
+            cursor: pointer;
+            z-index: 9999;
+            transition: all 0.3s ease;
+        }
+
+        .music-control:hover {
+            background: #2a0000;
+            border-color: #aa0000;
+            transform: scale(1.1);
+        }
+
+        .music-control i {
+            font-size: 18px;
+        }
+
+        /* Özel Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+            border-left: 1px solid #1a0000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #880000;
+            border-radius: 4px;
+            border: 2px solid #0a0a0a;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #aa0000;
+        }
+
+        ::-webkit-scrollbar-corner {
+            background: #0a0a0a;
+        }
+
+        .gif-container {
+            width: 260px;
+            max-width: 76vw;
+            margin: 10px 0 20px 0;
+            pointer-events: none;
+        }
+
+        .gif-container img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+            pointer-events: none;
+            -webkit-user-drag: none;
+        }
+
+        .info-title {
+            margin: 0 0 30px 0;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            max-width: 90vw;
+            line-height: 1.5;
+            letter-spacing: 0.5px;
+            image-rendering: crisp-edges;
+            text-shadow: 0 0 2px rgba(255, 30, 30, 0.3);
+        }
+
+        .info-title .highlight {
+            text-shadow: 0 0 6px rgba(255, 60, 60, 0.8), 0 0 10px rgba(255, 60, 60, 0.4);
+            color: #ff4040;
+        }
+
+        .trigger-container {
+            display: flex;
+            gap: 14px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .trigger-box {
+            width: 170px;
+            height: 40px;
+            background: #000000;
+            border: 1.5px solid #880000;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ff1a1a;
+            font-size: 15px;
+            font-weight: bold;
+            letter-spacing: 0.8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-shadow: 0 0 3px rgba(255, 30, 30, 0.4);
+        }
+
+        .trigger-box:hover {
+            color: #ff4040;
+            border-color: #aa0000;
+        }
+
+        .trigger-box:active {
+            transform: scale(0.98);
+        }
+
+        .trigger-box.active {
+            background: #0f0000;
+            border-color: #aa0000;
+            color: #ff4040;
+            box-shadow: 0 0 12px rgba(255, 30, 30, 0.35);
+        }
+
+        .pass-info {
+            width: 170px;
+            height: 36px;
+            margin: 0 auto 30px auto;
+            background: #000000;
+            border: 1.5px solid #000000ff;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ff1a1a;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 0.6px;
+            pointer-events: none;
+            text-shadow: 0 0 3px rgba(255, 30, 30, 0.4);
+            user-select: none;
+        }
+
+        .menu-wrapper {
+            width: 100%;
+            max-width: 960px;
+            transition: margin-bottom 0.32s ease;
+        }
+
+        .menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 14px 16px;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.32s ease;
+        }
+
+        .menu.active {
+            max-height: 1600px;
+            opacity: 1;
+        }
+
+        /* Menü açıldığında wrapper'a alt boşluk */
+        .menu-wrapper.active-menu {
+            margin-bottom: 620px; /* eskiden spacer'ın yaptığı işi yapıyor */
+        }
+
+        .menu-item {
+            height: 46px;
+            background: #000000;
+            border: 1.5px solid #880000;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ff1a1a;
+            font-size: 12.5px;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            text-shadow: 0 0 3px rgba(255, 30, 30, 0.35);
+            padding: 0 8px;
+            line-height: 1.3;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+        }
+
+        .menu-item:hover {
+            color: #ff4040;
+            text-shadow: 0 0 5px rgba(255, 60, 60, 0.5);
+            border-color: #aa0000;
+        }
+
+        .menu-item:active {
+            transform: scale(0.98);
+        }
+    </style>
+    
+    <!-- Orijinal Opera stili AYNI KALDI -->
+<style type="text/css" id="operaUserStyle">
+  video {
+    filter: -opera-shader(url(data:text/plain;base64,Ly8gaHR0cHM6Ly9naXRodWIuY29tL0dQVU9wZW4tRWZmZWN0cy9GaWRlbGl0eUZYLUNBUwovLyB2MwoKdW5pZm9ybSBzaGFkZXIgaUNodW5rOwp1bmlmb3JtIGZsb2F0MiBpQ2h1bmtTaXplOwp1bmlmb3JtIGZsb2F0MiBpTW91c2U7CnVuaWZvcm0gZmxvYXQgaUFyZ3NbMV07Cgpjb25zdCBmbG9hdCBFUFNJT04gPSAwLjE7CmNvbnN0IGZsb2F0IFZfTUlOID0gMDsKY29uc3QgZmxvYXQgVl9MT1cgPSAwLjI1Owpjb25zdCBmbG9hdCBWX01FRCA9IDAuNTsKY29uc3QgZmxvYXQgVl9ISUdIID0gMC43NTsKY29uc3QgZmxvYXQgVl9NQVggPSAxOwoKY29uc3QgZmxvYXQgVEhSRVNIT0xEX0FSRUEgPSA4MDAgKiA2MDA7CmNvbnN0IGZsb2F0IE1JTl9BUkVBID0gNDAwICogMTAwOwpjb25zdCBmbG9hdCBNSU5fU1RSSVAgPSAyMDsKY29uc3QgZmxvYXQgTUFSR0lOID0gMTsKCmZsb2F0MyBwaXhlbChpbnQgeCwgaW50IHksIGZsb2F0MiB4eSkgewogICAgcmV0dXJuIGlDaHVuay5ldmFsKHh5ICsgZmxvYXQyKHgsIHkpKS5yZ2I7Cn0KCmZsb2F0MyBzaGFycGVuKGZsb2F0MiB4eSkgewogICAgZmxvYWQzIGYgPQogICAgICAgIHBpeGVsKC0xLCAtMSwgeHkpICogIDEgKwogICAgICAgIHBpeGVsKCAwLCAtMSwgeHkpICogLTEgKwogICAgICAgIHBpeGVsKCAxLCAtMSwgeHkpICogIDEgKwoKICAgICAgICBwaXhlbCgtMSwgMCwgeHkpICogLTEgICsKICAgICAgICBwaXhlbCggMCwgMCwgeHkpICogLTEgICsKICAgICAgICBwaXhlbCggMSwgMCwgeHkpICogLTEgICsKCiAgICAgICAgcGl4ZWwoLTEsIDEsIHh5KSAqIDEgICArCiAgICAgICAgcGl4ZWwoIDAsIDEsIHh5KSAqIC0xICArCiAgICAgICAgcGl4ZWwoIDEsIDEsIHh5KSAqIDE7CiAgICByZXR1cm4gZiAvIC0xOwp9CgpmbG9hdDQgUkdYMihmbG9hdDIgeHkpIHsKICAgIGZsb2F0NCBjb2xvciA9IGlDaHVuay5ldmFsKHh5KTsKCiAgICBpZiAoaUNodW5rU2l6ZS54ICogaUNodW5rU2l6ZS55IDwgTUlOX0FSRUEpIHsKICAgICAgICByZXR1cm4gY29sb3I7CiAgICB9CgogICAgaWYgKGlDaHVua1NpemUueSA8IE1JTl9TVFJJUCB8fCBpQ2h1bmtTaXplLnggPCBNSU5fU1RSSVApIHsKICAgICAgICByZXR1cm4gY29sb3I7CiAgICB9CgogICAgaWYgKHh5LnggPCBNQVJHSU4gfHwgeHkueCA+IChpQ2h1bmtTaXplLnggLSBNQVJHSU4pIHx8CiAgICAgICAgeHkueSA8IE1BUkdJTiB8fCB4eS55ID4gKGlDaHVua1NpemUueSAtIE1BUkdJTikpIHsKICAgICAgICByZXR1cm4gY29sb3I7CiAgICB9CgogICAgcmV0dXJuIGZsb2F0NChzaGFycGVuKHh5KSwgMSk7Cn0KCmZsb2F0IG1pbjMoZmxvYXQgeCwgZmxvYXQgeSwgZmxvYXQgeikgewogICAgcmV0dXJuIG1pbih4LCBtaW4oeSwgeikpOwp9CgpmbG9hdCBtYXgzKGZsb2F0IHgsIGZsb2F0IHksIGZsb2F0IHopIHsKICAgIHJldHVybiBtYXgoeCwgbWF4KHksIHopKTsKfQoKZmxvYXQgcmNwKGZsb2F0IHYpIHsKICAgIHJldHVybiAxIC8gdjsKfQoKZmxvYXQzIFJHWDMoZmxvYXQyIHh5LCBmbG9hdCBzdHJlbmd0aCkgewogICAgZmxvYXQzIGEgPSBwaXhlbCgtMSwgLTEsIHh5KTsKICAgIGZsb2F0MyBiID0gcGl4ZWwoIDAsIC0xLCB4eSk7CiAgICBmbG9hdDMgYyA9IHBpeGVsKCAxLCAtMSwgeHkpOwoKICAgIGZsb2F0MyBkID0gcGl4ZWwoLTEsIDAsIHh5KTsKICAgIGZsb2F0MyBlID0gcGl4ZWwoIDAsIDAsIHh5KTsKICAgIGZsb2F0MyBmID0gcGl4ZWwoIDEsIDAsIHh5KTsKCiAgICBmbG9hdDMgZyA9IHBpeGVsKC0xLCAxLCB4eSk7CiAgICBmbG9hdDMgaCA9IHBpeGVsKCAwLCAxLCB4eSk7CiAgICBmbG9hdDMgaSA9IHBpeGVsKCAxLCAxLCB4eSk7CgogICAgZmxvYXQgbW5SID0gbWluMyhtaW4zKGQuciwgZS5yLCBmLnIpLCBiLnIsIGgucik7CiAgICBmbG9hdCBtbkcgPSBtaW4zKG1pbjMoZC5nLCBlLmcsIGYuZyksIGIuZywgaC5nKTsKICAgIGZsb2F0IG1uQiA9IG1pbjMobWluMyhkLmIsIGUuYiwgZi5iKSwgYi5iLCBoLmIpOwoKICAgIGZsb2F0IG1uUjIgPSBtaW4zKG1pbjMobW5SLCBhLnIsIGMuciksIGcuciwgaS5yKTsKICAgIGZsb2F0IG1uRzIgPSBtaW4zKG1pbjMobW5HLCBhLmcsIGMuZyksIGcuZywgaS5nKTsKICAgIGZsb2F0IG1uQjIgPSBtaW4zKG1pbjMobW5CLCBhLmIsIGMuYiksIGcuYiwgaS5iKTsKCiAgICBtblIgPSBtblIgKyBtblIyOwogICAgbW5HID0gbW5HICsgbW5HMjsKICAgIG1uQiA9IG1uQiArIG1uQjI7CgogICAgZmxvYXQgbXhSID0gbWF4MyhtYXgzKGQuciwgZS5yLCBmLnIpLCBiLnIsIGgucik7CiAgICBmbG9hdCBteEcgPSBtYXgzKG1heDMoZC5nLCBlLmcsIGYuZyksIGIuZywgaC5nKTsKICAgIGZsb2F0IG14QiA9IG1heDMobWF4MyhkLmIsIGUuYiwgZi5iKSwgYi5iLCBoLmIpOwoKICAgIGZsb2F0IG14UjIgPSBtYXgzKG1heDMobXhSLCBhLnIsIGMuciksIGcuciwgaS5yKTsKICAgIGZsb2F0IG14RzIgPSBtYXgzKG1heDMobXhHLCBhLmcsIGMuZyksIGcuZywgaS5nKTsKICAgIGZsb2F0IG14QjIgPSBtYXgzKG1heDMobXhCLCBhLmIsIGMuYiksIGcuYiwgaS5iKTsKCiAgICBteFIgPSBteFIgKyBteFIyOwogICAgbXhHID0gbXhHICsgbXhHMjsKICAgIG14QiA9IG14QiArIG14QjI7CgogICAgZmxovYXQgcmNwTVIgPSByY3AobXhSKTsKICAgIGZsb2F0IHJjcE1HID0gcmNwKG14Ryk7CiAgICBmbG9hdCByY3BNQiA9IHJjcChteEIpOwoKICAgIGZsb2F0IGFtcFIgPSBzYXR1cmF0ZShtaW4obW5SLCAyIC0gbXhSKSAqIHJjcE1SKTsKICAgIGZsb2F0IGFtcEcgPSBzYXR1cmF0ZShtaW4obW5HLCAyIC0gbXhHKSAqIHJjcE1HKTsKICAgIGZsb2F0IGFtcEIgPSBzYXR1cmF0ZShtaW4obW5CLCAyIC0gbXhCKSAqIHJjcE1CKTsKCiAgICBhbXBSID0gc3FydChhbXBSKTsKICAgIGFtcEcgPSBzcXJ0KGFtcEcpOwogICAgYW1wQiA9IHNxcnQoYW1wQik7CgogICAgZmxvYXQgcGVhayA9IC1yY3AobWl4KDgsIDUsIHN0cmVuZ3RoKSk7CgogICAgZmxvYXQgd1IgPSBhbXBSICogcGVhazsKICAgIGZsb2F0IHdHID0gYW1wRyAqIHBlYWs7CiAgICBmbG9hdCB3QiA9IGFtcEIgKiBwZWFrOwoKICAgIGZsb2F0IHJjcFdlaWdodFIgPSByY3AoMSArIDQgKiB3Uik7CiAgICBmbG9hdCByY3BXZWlnaHRHID0gcmNwKDEgKyA0ICogd0cpOwogICAgZmxvYXQgcmNwV2VpZ2h0QiA9IHJjcCgxICsgNCAqIHdCKTsKCiAgICByZXR1cm4gZmxvYXQzKAogICAgICAgIHNhdHVyYXRlKChiLnIgKiB3UiArIGQuciAqIHdSICsgZi5yICogd1IgKyBoLnIgKiB3UiArIGUucikgKiByY3BXZWlnaHRSKSwKICAgICAgICBzYXR1cmF0ZSgoYi5nICogd0cgKyBkLmcgKiB3RyArIGYuZyAqIHdHICsgaC5nICogd0cgKyBlLmcpICogcmNwV2VpZ2h0RyksCiAgICAgICAgc2F0dXJhdGUoKGIuYiAqIHdCICsgZC5iICogd0IgKyBmLmIgKiB3QiArIGguYiAqIHdCICsgZS5iKSAqIHJjcFdlaWdodEIpKTsKfQoKCmZsb2F0NCBtYWluKGZsb2F0MiB4eSkgewogICAgZmxvYXQ0IG9yaWdpbmFsQ29sb3IgPSBpQ2h1bmsuZXZhbCh4eSk7CiAgICBpZiAob3JpZ2luYWxDb2xvci5hIDwgMSkgewogICAgICAgIHJldHVybiBpQ2h1bmsuZXZhbCh4eSk7CiAgICB9CgogICAgZmxvYXQgaW50ZW5zaXR5ID0gaUFyZ3NbMF07CiAgICBmbG9hdCBzdHJlbmd0aCA9IDA7CiAgICBmbG9hdDMgY29sb3I7CgogICAgaWYgKGludGVuc2l0eSA8IFZfTUlOICsgRVBTSU9OKSB7CiAgICAgICAgc3RyZW5ndGggPSAwLjEwOwogICAgICAgIGNvbG9yID0gUkdYMyh4eSwgc3RyZW5ndGgpOwoKICAgIH0gZWxzZSBpZiAoaW50ZW5zaXR5ID4gVl9MT1cgLSBFUFNJT04gJiYgaW50ZW5zaXR5IDwgVl9MT1cgKyBFUFNJT04pIHsKICAgICAgICBzdHJlbmd0aCA9IDAuMzM7CiAgICAgICAgY29sb3IgPSBSR1gzKHh5LCBzdHJlbmd0aCk7CgogICAgfSBlbHNlIGlmIChpbnRlbnNpdHkgPiBWX01FRCAtIEVQU0lPTiAmJiBpbnRlbnNpdHkgPCBWX01FRCArIEVQU0lPTikgewogICAgICAgIHN0cmVuZ3RoID0gMC41OwogICAgICAgIGNvbG9yID0gUkdYMyh4eSwgc3RyZW5ndGgpOwoKICAgIH0gZWxzZSBpZiAoaW50ZW5zaXR5ID4gVl9ISUdIIiAtIEVQU0lPTiAmJiBpbnRlbnNpdHkgPCBWX0hJR0ggKyBFUFNJT04pIHsKICAgICAgICBzdHJlbmd0aCA9IDAuOTk7CiAgICAgICAgY29sb3IgPSBSR1gzKHh5LCBzdHJlbmd0aCk7CgogICAgfSBlbHNlIGlmIChpbnRlbnNpdHkgPiBWX01BWCAtIEVQU0lPTikgewogICAgICAgIHN0cmVuZ3RoID0gMTsKICAgICAgICBjb2xvciA9IFJHWDIoeHkpLnJnYjsKICAgIH0KCiAgICByZXR1cm4gZmxvYXQ0KGNvbG9yLCBvcmlnaW5hbENvbG9yLmEpOwp9Cg==) -opera-args(0.50 calc(env(-opera-accent-color-r, 255)/255) calc(env(-opera-accent-color-g, 255)/255) calc(env(-opera-accent-color-b, 255)/255)));
+  }
+</style></head>
+<body>
+
+    <!-- Arka plan partikülleri için canvas -->
+    <div id="particles-js"><canvas class="particles-js-canvas-el" width="1865" height="925" style="width: 100%; height: 100%;"></canvas></div>
+    
+    <!-- Müzik kontrol butonu -->
+    <div class="music-control" id="musicControl">
+        <i class="fas fa-volume-up"></i>
+    </div>
+
+    <!-- Ses dosyası -->
+    <audio id="backgroundMusic" loop="">
+        <source src="sarki.mp3" type="audio/mpeg">
+        Tarayıcınız audio elementini desteklemiyor.
+    </audio>
+
+    <!-- ORİJİNAL İÇERİK DEĞİŞMEDEN KALDI -->
+    <div class="gif-container">
+        <img src="./_D_files/can.gif" alt="Can GIF" draggable="false">
+    </div>
+
+    <div class="info-title">
+        Made by <span class="highlight">lexus</span>
+    </div>
+    
+      <div class="info-title">
+        DC-İD sorgu:discord.gg/hidayet
+    </div>
+    
+    <div class="info-title">
+        Datalar <span class="highlight">@lexuscxnnn</span> adlı kişiye aittir.<br>
+        Diğer tüm bilgiler farklı platformlardan toplanıp derlenmiştir, Bazı datalar eklenmedi indirmek isterseniz.:https://pastebin.com/YSvmqkqj
+    </div>
+
+    <div class="info-title">
+        <span class="highlight">Sorgu Panel</span> Sitesi kurmak istemeyenler, sadece dataları indirip kurduktan sonra Tools menüsünden <span class="highlight">Sorgu Panel Tool</span> indirip kurarak kullanabilir iyi eğlenceler.....
+        "Tools'ları çoğu kişi zaten kullanamayacak kadar karmaşık olabilir, o yüzden indirmeden önce güzelce araştırın ve dikkatli olun."
+    </div>
+
+    <div class="info-title">
+        <span class="highlight">"Uyarı:</span> Arşivler menüsündeki dosyaların çoğu başka platformlardan alınmış/alıntılanmış olup, hiçbirinin sahibi ben değilim. Dolayısıyla birçok yöntem çalışmayabilir, bilgiler eski veya eksik olabilir. Bazıları ücretsiz, bazıları ise paralı kaynaklardan gelmektedir — faydalı olabilecek kısımları değerlendirebilirsiniz."**
+    </div>
+
+    <div class="info-title">
+        <span class="highlight">"Uyarı:</span> RAT Programs menüsündeki RAT'ların büyük çoğunluğunun tehlikeli olduğunu düşünüyorum. Çalıştıklarına eminim. Eğer kullanmak istiyorsanız lütfen mutlaka VDS ya da VirtualBox üzerinde çalıştırın.
+    </div>
+
+       <div class="info-title">
+        <span class="highlight">"Dikkat:</span>Logs menüsündeki verilerin büyük çoğunluğu tarafımca özenle derlenip hazırlanmıştır. Bazı kısımlar ise çeşitli forum ve kaynaklardan toplanmıştır. Toplamda **<span class="highlight">900+</span> MİLYON** hesap bulunmaktadır. İyi kullanımlar dilerim!
+    </div>
+    
+    <div class="info-title">
+       <span class="highlight">"Önemli:</span> Ha bir de bu sitedekileri çalıp kendininmiş gibi davranan, satan, çekilişte veren orospu evlatları... Rezilsiniz! İt gibi dileneceksiniz.
+    </div>
+    
+    <div class="info-title">
+        <span class="highlight">"Dinle:</span>"Yapman gereken tek şey: siteyi yaymak ve popülerleştirmek. Başka hiçbir şeyle uğraşmana gerek yok, tüm odak bu! (Yakında Daha Çok Şey Eklenecek.)"
+    </div>
+
+    
+    <div class="trigger-container">
+        <div class="trigger-box" id="trigger-main">Datalar</div>
+        <div class="trigger-box" id="trigger-scripts">Scriptler</div>
+        <div class="trigger-box" id="trigger-tools">Tools</div>
+        <div class="trigger-box" id="trigger-hackarsiv">Hack Arşivleri</div>
+        <div class="trigger-box" id="trigger-programs">Rat Programs</div>
+        <div class="trigger-box" id="trigger-logs">Logs</div>
+    </div>
+
+    <div class="pass-info">data şifre : @devrelax</div>
+
+    <!-- Datalar menüsü -->
+    <div class="menu-wrapper" id="menu-main-wrapper">
+        <div class="menu" id="menu-main">
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1Ut7EPR7ZzmKf-do2GaHE1YkYitcStFOC/view?usp=sharing">101M</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/15QnumnhgZsiAy9vaILMFpxMpGymWvk57/view?usp=sharing">109M-Tc Pro</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/19wAhByABb-KssZUWiFilIk0ANekiIef0/view?usp=sharing">116M-GSM</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/19vEG1Bag-TeB0G6zH_qGS5MiCGBotcMg/view?usp=sharing">120M-GSM</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/19rWIa_iJz3IWFfRBog61ZgvoeQ68o7-9/view?usp=sharing">135M-GSM</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1UiAJHwe6VDHlrKd7GuqM8j-lfi2lmsgM/view?usp=sharing">145M-GSM</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/16UUUBaqFqRD1guzNEk8hjvKZ3cHfZNUX/view?usp=sharing">195M-GSM</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1oo6_RJcd9qWywx6l0yvol9cRXbOyQdow/view?usp=sharing">200M-GSM</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/12sJqXnrWsd9yi-S7ryk8ILfKFTsJQ8Op/view?usp=sharing">2015-Adres</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1w3dxU6Dr9AtCN9LxaGIyTcxyShQcEylQ/view">2024-Adres</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1BRTriBMqp4ZSvlNMsUGfnW_L2v-fEiGV/view?usp=sharing">09/24-Adres</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1uBsIGe5mFe_8tiqFewywDextSPF6Rabv/view?usp=sharing">97mtapu</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1bmgiE1ZQ4aMQEzDRSSAs9WVfX2Kls4QV/view?usp=sharing">400kvesika</div>
+            <div class="menu-item" data-link="https://www.dosyaupload.com/2rFH/MOBİL_MERNİS_DATASI_-_İNSTAGRAM-_@spectaross.rar">Mobil Mernis</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/14kvsMQ6sPC21r1k3gCU-RsKAefag8kjn/view">3M-TurkNet</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/13WB2iD0_-2wTXKQzuH5VfJBNTtkOeK-0/view?usp=sharing">6M-Aşı</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/13ZPHEyz_kqL2QAEQFbBX19DBVA6CoAjE/view?usp=sharing">1M-Meslek</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1FCFS21r81XVUM15mfRiYG9kC5QdtMwJ7/view?usp=sharing">3M-Craftrise</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1dJ6uMyRqZIxNZ9ozF6dDESuaoxYXgi-U/view?usp=sharing">20M-İş Yeri</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1K9QRwfW_auglD1BpRIP7q0dh_lBAm6Fr/view?usp=sharing">20M-SGK</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1hgmF5s6OO-hW6H0pKFSng3L5DpIVAF-x/view?usp=sharing">3M Yabancı</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1juEwo-4jQoGKwbcH8Stc9sqZ5yPlkRpE/view?usp=sharing">8M-İstanbul</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1x8OlCwowDwrRATJJs8lQii96Zy8xGRac/view?usp=sharing">20M-Facebook</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1PEB4h2hXiUcuDmDmLhyp3Xzjh6BLaTAS/view?usp=sharing">25M-EOKUL</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1ZHZPIZEo-cgewe-3_zI5tBESf8a02vTG/view?usp=sharing">5M-EOKUL</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1bmgiE1ZQ4aMQEzDRSSAs9WVfX2Kls4QV/view?usp=sharing">400K-Vesika</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1JEv5p_bMUNPGPMKiiAfXM-6iHwGahvUm/view?usp=sharing">9M-Ak Parti</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1NqCCiXTWN7y0zJs_cjKV4UtMrMOrZ8s_/view?usp=sharing">2M-Kocaeli Tapu</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1hgmF5s6OO-hW6H0pKFSng3L5DpIVAF-x/view?usp=sharing">3M-Yabanci</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/15BYhR0xU9neTFGCPI_-y0HEttdc5wHvm/view?usp=sharing">100K-Üniversite</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1617DX8JBgpk80_6wSOwP7D79fPnuN75a/view?usp=sharing">77K-Üniversite</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1GzJ4us2Kc76QRpfEhI40pBWRmFBNueeK/view?usp=sharing">5M-HGS</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1JCr3AROaOt3Nxfy7_oYyeapUNFS5zoYB/view?usp=sharing">2M-SGK</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1U73OzRx4nlBFTCzZFPYcgZN__iKHLRSz/view?usp=sharing">57K-PLAKA</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1YQTRbCiT7DRz8ocSsWRmT8b-akB2it7P/view?usp=sharing">240K-Ölüm</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1_Us9ti7HUc8gHkrcveO1Os6MXE-RZ3m5/view?usp=sharing">9M-Akbis</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1eblvzTwRfgDwEPn7Bm0MJkNOLbs40Z3N/view?usp=sharing">10K-TürkNet</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1gisHgOssuvrtCy7mONEv3JmDiR3N6id9/view?usp=sharing">60K-Vesika</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1m7LwpmTCKdxZ9ARxhU_untJyEMqOrNtW/view?usp=sharing">2M-AkGençlik</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1o_tlvW3Ub7_gy1kC7E869EjaFb75N3ME/view?usp=sharing">3K-Yök Vesika</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1oxxqUuCQQNGF51pAydLftcPeW-A1V4F-/view?usp=sharing">600K-İnstagram</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1xjZhJhnMcNuYVxoN5dLSAksJI0krZtF5/view?usp=sharing">70K-Papara</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/10cBYrxgOHfuJ_HB63pjq9nQ987NyWSFE/view?usp=sharing">50M-Vatandaş</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1AUx97-Ij0eDJasMce7vokE689-258gLX/view?usp=sharing">180K-Bursa Sicil</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1PBQYnZMs7TzywEVFyk-EpsD8ljiDApie/view?usp=sharing">186K-Seri No</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1fwTaIcKa7qGrbxenTtscwxhoHiMtUCad/view?usp=sharing">313K-İşler Öğretmen</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1nYuq4oLvBPKMUEURuo_HHs_OIIhK3MBE/view?usp=sharing">289K-Vergi</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1o3asYbAsX70KlAfxfLQwTNIQ8-mnx1hW/view?usp=sharing">300K-İys</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1r3ak2bzZ9aVodFTuRBbjmAJuF6A61s6X/view?usp=sharing">178K-Öğretmen</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1z4og5-Ip0TQutEXH0lZ1cX0EzugZ6xdb/view?usp=sharing">800K-Oğrenci</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1LauARf7qfYe8dnjKZtOmbpDC_6G0Ce7v/view?usp=sharing">81M-Us Wireless</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1v2IuPVGvcipn2SLAcXv0fPQfW018RfsM/view?usp=sharing">1K-TurkTelekom</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1cB64DQiXol4DUQwcFJPgEVN2JqKbSN7i/view?usp=sharing">Mobil Mernis</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/10Bh67vZLTgPW7oZ7k7yKkUYRWlNLuT4j/view?usp=sharing">2M-Rusya</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/12aMEJg1LJGepzA6AU4o9w-L3HS9imez0/view?usp=sharing">387K-Discord</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/17VoY87xtb4HmvLodJ-EtQFytr4mGFqFj/view?usp=sharing">Hüdapar</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/19wyKKW6XkjAhyuQq9NUG3OxOtTlC9di4/view?usp=sharing">8K-Teb</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1BRZzYaKbL8eLsp2P85ZK9HWHzwsET1tz/view?usp=sharing">Reeder</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1EInovg_RvErarStsM7ZONRiWKk6nZG6P/view?usp=sharing">5M-Çin Kfc</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1K8uwCCMLGDB2LXGprv6xd1nLwYLPAwEJ/view?usp=sharing">2.5M-Yabanci</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1PJw-vhHWGT2SMw-01w9zL9HNzAskfqB4/view?usp=sharing">100K-Grandbet</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1VH_au5o7BvfBQ6ZjoPO__N8h0BEcoZ6g/view?usp=sharing">5K-HemenBahis</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1Vn5zTdv6S8Ir2SC6Ct19cuR4VSfO4yW0/view?usp=sharing">360K-1xBet</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1XVxrsrgQ7ebFHkMS68_beMeqbkTwXc_e/view?usp=sharing">Eczane</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1etJgiHvw2vs5nn6hiz2Ix7UZwfFEpMi-/view?usp=sharing">10M-Ak Parti</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1ezuSXr5uEkrva0bxvIY4KNxvpnS50cXx/view?usp=sharing">500K-Tuttur</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1gaI10FbTu32oMljxPxTEpEMuys7lmV_O/view?usp=sharing">550K-İnstagram</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1jbw2dDCUS4M6z6BJHsustMQc-Z5KS8zP/view?usp=sharing">77K-Vodafone</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1l8QGnbA4JWWLkT1_Z00TE1YCUW3u-AE0/view?usp=sharing">31K-HepBahis</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1ourpOq3Xc45JINOXpzuJ2yRk9FsTB5BH/view?usp=sharing">54K-Ziraat Bankası</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1zrSp2uJX_lZElVjxUFys6N14Spd8NXDt/view?usp=sharing">Sözcü</div>  
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1MGgt3pXWZch_vSDy0dUtrMqusfyZqh1F/view?usp=sharing">57K-Plaka</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/17ZmjzRURaVm2IA02GCM465lTY0EqclcP/view">KFC Data</div>
+            <div class="menu-item" data-link="https://disk.yandex.com.tr/d/8nJI2qKwjOwO2Q/Datalar">Vodafone More+</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1qjzckFQUuRc80yyqdLZmg4uCKw5Tne8i/view">Mernis 22</div>
+            <div class="menu-item" data-link="https://www.kaggle.com/datasets/johntukey/clubhouse-dataset?select=Clubhouse_Dataset_v2.db">Clubhouse Data</div>
+            <div class="menu-item" data-link="https://www.mediafire.com/file/wsc51w1v3muwko8/300k.rar/file">300K-E-Okul</div>
+            <div class="menu-item" data-link="https://mega.nz/file/Xo9FGALJ#xwJODPQH_DP9EaGm8pUurvwn1WKP2H_V5Y6flCRUKT4">Wattpad 23GB</div>
+            <div class="menu-item" data-link="https://cloud.mail.ru/public/7yWg/95nCRJCzu">US Wireless 1.5GB</div>
+            <div class="menu-item" data-link="https://www.mediafire.com/file/o373ltvdk6w4bnw/Epicgames.com_83k.txt/file">83K Epic Games</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1LauARf7qfYe8dnjKZtOmbpDC_6G0Ce7v/view">81M US Wireless</div>
+            <div class="menu-item" data-link="https://dosya.co/cec0j5i9hund/Sql.rar.html">CraftLime</div>
+            <div class="menu-item" data-link="https://dosya.co/n26jtj8es1mm/datalar.rar.html">Data+</div>
+            <div class="menu-item" data-link="https://dosya.co/xx0548bdds64/270_k_id_sxrgu_data.sql.html">270K-Discord</div>
+            <div class="menu-item" data-link="https://dosya.co/qx7sdbo8cun4/600k.rar.html">600K-Discord</div>
+            <div class="menu-item" data-link="https://dosya.co/uezj1cv36xgy/1.5_Milyon_Sgk.sql.html">1.5M-SGK.2</div>
+            <div class="menu-item" data-link="https://dosya.co/zgmdaz7gd8sh/Mail.rar.html">Mail</div>
+            <div class="menu-item" data-link="https://dosya.co/4z9qzszgad2n/Valorant.rar.html">Valorant</div>
+            <div class="menu-item" data-link="https://www.dosyaupload.com/2rFD/Hindistan.zip">Hindistan</div>
+            <div class="menu-item" data-link="https://www.dosyaupload.com/2rFE/israel______________by_nico.sql">İsrail</div>
+            <div class="menu-item" data-link="https://www.dosyaupload.com/2rFI/USA_1M_____________by_nico.sql">USA 1M</div>
+        </div>
+    </div>
+
+    <!-- Scriptler menüsü -->
+    <div class="menu-wrapper" id="menu-scripts-wrapper">
+        <div class="menu" id="menu-scripts">
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1ZMjJOkHYNlahUlHXWRWEJrJv2jCpelJN/view">RelaXServices</div>
+            <div class="menu-item" data-link="https://dosya.co/825wrnlbpfl6/ApoCanV1.rar.html">ApoCan V1</div>
+            <div class="menu-item" data-link="https://dosya.co/onc0b9ttu06x/ApoCanV2.rar.html">ApoCan V2+SQL</div>
+            <div class="menu-item" data-link="https://dosya.co/ab8x5j4svh7g/İsmet_Check.rar.html">İsmet Check</div>
+            <div class="menu-item" data-link="https://dosya.co/3elhkxbrudur/htdocs.rar.html">Flud</div>
+            <div class="menu-item" data-link="https://www.mediafire.com/file/ho98cb3h0uf3j65/lexas-mariel.zip/file">Lexas Mariel</div>
+            <div class="menu-item" data-link="https://dosya.co/qb5mey3xgxpw/Coder-MayfexKatansc_(1).zip.html">Katana/şifre:@rolexr2x</div>
+            <div class="menu-item" data-link="https://dosya.co/s4afgnir00bv/Mariel.zip.html">Mariel V2</div>
+            <div class="menu-item" data-link="https://dosya.co/sggqxhnsaxgu/sssssssssssssssssssssssssssssssssssssssssssssssssss.rar.html">Matrix</div>
+            <div class="menu-item" data-link="https://dosya.co/sqadkzozocr8/asgard_yeni_yedek.rar.html">Asgard/şifre:qwe147asd258</div>
+            <div class="menu-item" data-link="https://dosya.co/7p38kxiboidh/htdocs.rar.html">Earl</div>
+            <div class="menu-item" data-link="https://dosya.co/w826hyd7vuc9/wrotexars.rar.html">Wrotex sql'siz</div>
+            <div class="menu-item" data-link="https://dosya.co/mye8nc0wdpeh/Norlax_altyapi.rar.html">Norlax</div>
+            <div class="menu-item" data-link="https://dosya.co/h8b12dnm2qai/siberciyiz-lroxy.rar.html">Lroxy Siberciyiz</div>
+            <div class="menu-item" data-link="https://www.mediafire.com/file/zpbajtxlr67d33p/htdocs+4.rar/file">Janti</div>
+            <div class="menu-item" data-link="https://dosya.co/83dwhnuqnncc/mariel_sc.zip.html">Mariel V3</div>
+            <div class="menu-item" data-link="https://dosya.co/hauk4dlots4c/htdocs.rar.html">JackalMedya</div>
+            <div class="menu-item" data-link="https://dosya.co/kmgjjeudanfv/script.rar.html">Wioland</div>
+            <div class="menu-item" data-link="https://dosya.co/z9ii677ck8ul/theosleakbyneujx.rar.html">Theos/şifre:neujx</div>
+            <div class="menu-item" data-link="https://dosya.co/532xxdi98i7u/htdocs.zip.html">Maskot</div>
+            <div class="menu-item" data-link="https://disk.yandex.com.tr/d/3LPuQkb4Iaj7EA">1973</div>
+            <div class="menu-item" data-link="https://www.mediafire.com/file/pkdcim9u6m51wn9/Downloads.rar/file">Sc V2</div>
+            <div class="menu-item" data-link="https://dosya.co/f2745zkhj84l/grexproscript.zip.html">GrexPro</div>
+            <div class="menu-item" data-link="https://dosya.co/ijp0vigxx296/filnecati.ZIP.html">Aquaman</div>
+            <div class="menu-item" data-link="https://disk.yandex.com.tr/d/s6wlDJA0rqWc5A">Sc V3</div>
+            <div class="menu-item" data-link="https://dosya.co/zx0twz3limwv/htdocs.rar.html">Sc V4</div>
+            <div class="menu-item" data-link="https://dosya.co/l65l7ai9761s/panel_script.rar.html">Sc V5</div>
+            <div class="menu-item" data-link="https://dosya.co/s2k4t7mhilzr/zindan-panel-sc.zip.html">Zindan Panel</div>
+            <div class="menu-item" data-link="https://dosya.co/a7zc7eeekzpg/htdocs.rar.html">Penta Sorgu</div>
+            <div class="menu-item" data-link="https://dosya.co/diil01gjddnz/ezik_script.zip.html">Ezik Script</div>
+            <div class="menu-item" data-link="https://dosya.co/rktbixgxo6ul/Kerelin_Checker_G%C3%BCncel_Script.rar.html">Kerelin</div>
+            <div class="menu-item" data-link="https://dosya.co/egslzn2t9lkg/htdocs.zip.html">Ornhell</div>
+            <div class="menu-item" data-link="https://dosya.co/cc7v100ta64x/Rezidans_Script.zip.html">Rezidans</div>
+            <div class="menu-item" data-link="https://dosya.co/syrpeeec8cr3/WROXY_FULL_AP%C4%B0L%C4%B0_SC_VES%C4%B0KAL%C4%B0.zip.html">Wroxy</div>
+            <div class="menu-item" data-link="https://dosya.co/85s4rjcpgm06/Panel.rar.html">Sc V6</div>
+            <div class="menu-item" data-link="https://dosya.co/71n5cfovprkx/tavsancik_marlex_editli_sc.rar.html">Tavsancik Marlex</div>
+            <div class="menu-item" data-link="https://dosya.co/a7zc7eeekzpg/htdocs.rar.html">JustHack</div>
+            <div class="menu-item" data-link="https://dosya.co/mk0p29d6992l/YakuzaCheck_Sorgu_Paneli_2.0.rar.html">Yakuza Check</div>
+            <div class="menu-item" data-link="https://dosya.co/wgmhixaa8b12/ZohakYedek_EN_SON_S%C3%9CR%C3%9CM.rar.html">Zohak</div>
+            <div class="menu-item" data-link="https://dosya.co/saxci023vjt7/Logosuzlar_Sorunsuz_Panel_Sc.rar.html">Logosuzlar</div>
+            <div class="menu-item" data-link="https://dosya.co/g74dd3l39k9x/1.06.2025_script.rar.html">Zephyr</div>
+            <div class="menu-item" data-link="https://dosya.co/foffell896lf/p4nel_script.rar.html">Kronik</div>
+        </div>
+    </div>
+
+    <!-- Tools menüsü -->
+    <div class="menu-wrapper" id="menu-tools-wrapper">
+        <div class="menu" id="menu-tools">
+            <div class="menu-item" data-link="https://www.dosyaupload.com/1BE6/Discord_%C4%B0d.rar">Discord İd Sorgu</div>
+            <div class="menu-item" data-link="https://stresser.ba/">DDoS Web</div>
+            <div class="menu-item" data-link="https://dosya.co/hc1w9ez97d5f/Sorgu_Panel.rar.html">Sorgu Panel Tool</div>
+            <div class="menu-item" data-link="https://dosya.co/htpisxjmn7k8/Numara_Sorgu.rar.html">Numara Sorgu Tool</div>
+            <div class="menu-item" data-link="https://dosya.co/qhu6lir6df6g/Facebook_Sorgu.rar.html">Facebook Sorgu Tool</div>
+            <div class="menu-item" data-link="https://dosya.co/n8n3x9ytq1ql/E-Okul_Sorgu.rar.html">E-Okul Sorgu Tool</div>
+            <div class="menu-item" data-link="https://dosya.co/mrsw3ngnwlts/CraftriseSorgu.rar.html">CraftRise Sorgu Tool</div>
+            <div class="menu-item" data-link="https://dosya.co/jxoboviwa2us/AdresTool.rar.html">Adres Sorgu Tool</div>
+            <div class="menu-item" data-link="https://dosya.co/ai36ff4251t0/SmsBomber.rar.html">SMS-Bomber Tool</div>
+            <div class="menu-item" data-link="https://dosya.co/m17dd2h3fokf/%C4%B0%C5%9F_G%C3%B6r%C3%BCr_Tool.rar.html">DC+OSINT Tools</div>
+            <div class="menu-item" data-link="https://dosya.co/rri4j739jfzu/Checker.rar.html">Checker Tool</div>
+            <div class="menu-item" data-link="https://dosya.co/5d33zahc9cii/DDoS.rar.html">DDoS Tool</div>
+            <div class="menu-item" data-link="https://github.com/JohnTwentyTwo/Valorant-Checker-Fullcapture/tree/main">Valorant Checker Tool</div>
+            <div class="menu-item" data-link="https://github.com/sherlock-project/sherlock">Sherlock Tool</div>
+            <div class="menu-item" data-link="https://github.com/mrprogrammer2938/Black-Tool">Black Tool</div>
+            <div class="menu-item" data-link="https://github.com/theahmadov/dash">Dash Tool</div>
+            <div class="menu-item" data-link="https://github.com/toxy4ny/kaplan">Kaplan Tool</div>
+            <div class="menu-item" data-link="https://github.com/acnsoft/TELAMON">Telamon Tool</div>
+            <div class="menu-item" data-link="https://github.com/sqlmapproject/sqlmap">SqlMap Tool</div>
+            <div class="menu-item" data-link="https://github.com/scrapy/scrapy">Scrapper Tool</div>
+            <div class="menu-item" data-link="https://github.com/Yozoxir/TraceEye">TraceEye MultiTool</div>
+            <div class="menu-item" data-link="https://github.com/SHREK-TM/Shrek-Tools">Shrek MultiTool</div>
+            <div class="menu-item" data-link="https://github.com/alextoutcourt72/ClarityCLI">Clarity MultiTool</div>
+            <div class="menu-item" data-link="https://github.com/DAWA0/Dawa-Multitools">Dawa MultiTool</div>
+            <div class="menu-item" data-link="https://github.com/HzzH-Tools/CopyDiscordServer">Discord Copier</div>
+            <div class="menu-item" data-link="https://github.com/v4lkyr0/Buildware-Tool">V4lkyr0 BuildwareTool</div>
+            <div class="menu-item" data-link="https://github.com/Anonyme-00152/Crimson-Wolf">CrimsonWolf Tool</div>
+            <div class="menu-item" data-link="https://github.com/0xtoolsmega/0x-multitool">Mega MultiTool</div>
+            <div class="menu-item" data-link="https://github.com/sluroq/slur-tool">Slur MultiTool</div>
+        </div>
+    </div>
+
+    <!-- Hack Arşivleri menüsü -->
+    <div class="menu-wrapper" id="menu-hackarsiv-wrapper">
+        <div class="menu" id="menu-hackarsiv">
+            <div class="menu-item" data-link="https://dosya.co/s4rqofkoojjs/Relax.txt.html">DevRelax Archive</div>
+            <div class="menu-item" data-link="https://drive.google.com/file/d/1HW1FOjb4CwTUW5c0Komrdv_x5aRnQHxT/view?usp=sharing">Atıl Samancıoğlu Archive</div>
+            <div class="menu-item" data-link="https://dosya.co/vc76evrnudho/HACK_AR%C5%9E%C4%B0V%C4%B0.rar.html">Winson Archive</div>
+            <div class="menu-item" data-link="https://dosya.co/qlv8o6gmpave/Toska_Official_Hack_Ar%C5%9Fivi_v2.zip.html">Toska Arcihve</div>
+            <div class="menu-item" data-link="https://dosya.co/pk0zymf2ejtw/Hack_Ar%C5%9Fivi_1.rar.html">Lynx Archive</div>
+            <div class="menu-item" data-link="https://dosya.co/pnrpyucodpdq/tosko_hack_ar%C5%9Fivi.zip.html">Toska V2 Archive</div>
+            <div class="menu-item" data-link="https://dosya.co/82nial9tu9m0/THT_%C3%B6zel_hack_ar%C5%9Fivi_2023.rar.html">THT Archive</div>
+            <div class="menu-item" data-link="https://dosya.co/c2sxhfhfruhq/HACK_AR%C5%9E%C4%B0V%C4%B0.zip.html">DragonHackerz Archive</div>
+            <div class="menu-item" data-link="https://dosya.co/05fzebxp7g4q/Yeni_Ba%C5%9Flayanlar_%C4%B0%C3%A7in_K%C3%BC%C3%A7%C3%BCk_Hack_Ar%C5%9Fivi.rar.html">Can Archive</div>
+            <div class="menu-item" data-link="https://dosya.co/r3qucotysx3s/Kaliteli_Dev_Hack_Arsivi.txt.html">Styy Archive</div>
+            <div class="menu-item" data-link="https://dosya.co/p3xihe0ydc0v/K4RDAN4DAM.hack.mini.archive-lvl1.rar.html">K4rdan4dam Archive</div>
+            <div class="menu-item" data-link="https://justpaste.it/aevarsiv4">PC Archive</div>
+            <div class="menu-item" data-link="https://justpaste.it/aevarsiv5">RedHat Archive</div>
+            <div class="menu-item" data-link="https://justpaste.it/aevarsiv8">SerZ Archive</div>
+            <div class="menu-item" data-link="https://justpaste.it/aevarsiv9">Aev Archive</div>
+            <div class="menu-item" data-link="https://justpaste.it/aevarsiv10">Delta Archive</div>
+            <div class="menu-item" data-link="https://justpaste.it/aevarsiv11">TheAnon Archive</div>
+            <div class="menu-item" data-link="https://justpaste.it/aevarsiv12">RedKit Archive</div>
+            <div class="menu-item" data-link="https://justpaste.it/aevarsiv13">AevV2 Archive</div>
+            <div class="menu-item" data-link="https://justpaste.it/aevarsiv1">GokTuran Archive</div>
+            <div class="menu-item" data-link="https://justpaste.it/aev-arsiv">150+ Adet Archive</div>
+        </div>
+    </div>
+
+    <!-- Rat Programs menüsü -->
+    <div class="menu-wrapper" id="menu-programs-wrapper">
+        <div class="menu" id="menu-programs">
+            <div class="menu-item" data-link="https://dosya.co/vhteke7vjq96/Craxs_RAT_V7.4.rar.html">Craxs RAT V7.4</div>
+            <div class="menu-item" data-link="https://dosya.co/1cd52hvy04fy/DARKCOMET_RAT_5.1.1.rar.html">DarkComet RAT V5.1.1</div>
+            <div class="menu-item" data-link="https://dosya.co/nwayaw1p1wop/Venom_RAT_v6.0.3.rar.html">Venom RAT V6.0.3</div>
+            <div class="menu-item" data-link="https://dosya.co/x9e2jpdjii1g/G-700-RAT-Cracked.rar.html">G700 RAT</div>
+            <div class="menu-item" data-link="https://dosya.co/x9e2jpdjii1g/G-700-RAT-Cracked.rar.html">G700 RAT V6.4.0</div>
+            <div class="menu-item" data-link="https://dosya.co/pg66jlyysrs8/Async_RAT_v0.5.8_T%C3%BCrk%C3%A7e_Versiyon.rar.html">ASYNC RAT V0.5.8</div>
+            <div class="menu-item" data-link="https://dosya.co/6t3ge9xfqhkj/Quasar.v1.4.1.zip.html">Quasar RAT V1.4.1</div>
+            <div class="menu-item" data-link="https://dosya.co/m5emjz732oeh/SpyGate_RAT_(+SOURCE).rar.html">SpyGate RAT</div>
+            <div class="menu-item" data-link="https://dosya.co/1udm4thwgb8e/EagleSpy_v4_Android_RAT_[_Spyroid_Vip_].rar.html">EagleSpy AndroRAT V4</div>
+            <div class="menu-item" data-link="https://dosya.co/l180kz9h2g48/njRAT-0.7d-Horror-Edition-main.zip.html">njRAT V0.7</div>
+            <div class="menu-item" data-link="https://dosya.co/tieawwmz9gmu/Remcos-v7.1.0-Pro.zip.html">Remcos RAT V7.1.0</div>
+            <div class="menu-item" data-link="https://dosya.co/vqk2m8u77jnx/XWorm_V7.2_Cracked_By_@Drcrypt0r.rar.html">XWorm RAT V7.2</div>
+            <div class="menu-item" data-link="https://dosya.co/vpd8kah5qo6m/2_Darktrack_Rat-20260118T124411Z-3-001.zip.html">Darktrack RAT</div>
+            <div class="menu-item" data-link="https://dosya.co/rz3exsa5r9ff/3_Ozone_Rat-20260118T124432Z-3-001.zip.html">Ozone RAT</div>
+            <div class="menu-item" data-link="https://dosya.co/f4rkd37t2jm1/4_Nanocore_Rat-20260118T124459Z-3-001.zip.html">Nanocore RAT</div>
+            <div class="menu-item" data-link="https://dosya.co/rwfof4c0qf6d/5_Luminosity_Link-20260118T124804Z-3-001.zip.html">Luminosity RAT</div>
+            <div class="menu-item" data-link="https://dosya.co/wmuz11ftyy9f/6_Imminent_Monitor-20260118T124822Z-3-001.zip.html">Imminent Monitor</div>
+            <div class="menu-item" data-link="https://dosya.co/mpxu3mhxao7p/AndroRAT.rar.html">AndroRAT</div>
+            <div class="menu-item" data-link="https://dosya.co/08pladxh2235/Babylon_Rat.rar.html">Babylon RAT</div>
+            <div class="menu-item" data-link="https://dosya.co/qvrfpg2b1yah/ctOs_Rat.rar.html">ct0s RAT</div>
+            <div class="menu-item" data-link="https://dosya.co/9wg7n968jvea/Diamond_Rat.rar.html">Diamon RAT</div>
+            <div class="menu-item" data-link="https://dosya.co/drg7ydk6vsah/DroidJack.rar.html">DroidJack RAT</div>
+            <div class="menu-item" data-link="https://dosya.co/0ryuk6o2tso6/Hakops_Rat.rar.html">Hakops RAT</div>
+            <div class="menu-item" data-link="https://dosya.co/iq63eutqymk9/Harmmy_Rat.rar.html">Harmmy RAT</div>
+            <div class="menu-item" data-link="https://dosya.co/g9hrwn41opbh/NJ_RAT_TRAVEL.rar.html">NJ RAT</div>
+            <div class="menu-item" data-link="https://dosya.co/g26o69oaxmke/Quasher_Rat.rar.html">Quasher RAT</div>
+            <div class="menu-item" data-link="https://dosya.co/nyhc14baerw7/Spoynote_Rat.rar.html">Spoynote RAT</div>
+            <div class="menu-item" data-link="https://dosya.co/iek3pyz55aqn/Vantom_Rat.rar.html">Vantom RAT</div>
+        </div>
+    </div>
+
+    <!-- Logs menüsü -->
+    <div class="menu-wrapper" id="menu-logs-wrapper">
+        <div class="menu" id="menu-logs">
+            <div class="menu-item" data-link="https://www.dosyaupload.com/21Eu/1.4GB_LOGS.rar">1.5GB LOG</div>
+            <div class="menu-item" data-link="https://www.dosyaupload.com/21Ev/1.5M-LOGİN_DATA_______________by_nico.sql">1.5-MİLLİON LOG</div>
+            <div class="menu-item" data-link="https://www.dosyaupload.com/21Ew/1.7MİLLİON_by_nico.sql">1.7-MİLLİON LOG</div>
+            <div class="menu-item" data-link="https://www.dosyaupload.com/21Ex/1.8M_Roblox.sql">1.8-MİLLİON ROBLOX</div>
+            <div class="menu-item" data-link="https://www.dosyaupload.com/21Ey/1.28_Million_Netflix_____________by_nico.sql">1.28-MİLLİON NETFLİX</div>
+            <div class="menu-item" data-link="https://www.dosyaupload.com/21Ez/2.3M_gmail_____by_nico.sql">2.3-MİLLİON GMAİL</div>
+            <div class="menu-item" data-link="https://www.dosyaupload.com/2rFu/10MİLLİON_by_nico.sql">10-MİLLİON LOG</div>
+            <div class="menu-item" data-link="https://www.dosyaupload.com/2rFv/11MİLLİON_by_nico.sql">11-MİLLİON LOG</div>
+            <div class="menu-item" data-link="https://www.dosyaupload.com/2rFw/14_MİLLİON_by_nico.sql">14-MİLLİON LOG</div>
+            <div class="menu-item" data-link="https://www.dosyaupload.com/2rFx/22MİLLİON_by_nico.sql">22-MİLLİON LOG</div>
+            <div class="menu-item" data-link="https://gofile.io/d/HIoL0O">187-MİLLİON LOG</div>
+            <div class="menu-item" data-link="https://www.dosyaupload.com/2rFy/25_MİLYON_KULLANICI_ADI_ŞİFRE.rar">25-MİLLİON LOG</div>
+            <div class="menu-item" data-link="https://mega.nz/file/4AVSUZZK#dLYIw7gRT0HLpkkYw8LEqyAx6h_CbeyjVw-lwtj-agg">23GB LOG</div>
+            <div class="menu-item" data-link="https://www.dosyaupload.com/2rFz/Alten_______________by_nico.sql">Alten LOG</div>
+            <div class="menu-item" data-link="https://www.dosyaupload.com/2rFB/coinbase_by_nico.sql">Coinbase LOG</div>
+            <div class="menu-item" data-link="https://www.dosyaupload.com/2rFC/DİSCORD_15_PART_DATA.rar">Discord 15PART LOG</div>
+            <div class="menu-item" data-link="https://www.dosyaupload.com/2rFF/logs_[9.6M]______by_nico.sql">9.6-MİLLİON LOG</div>
+            <div class="menu-item" data-link="https://www.dosyaupload.com/2rFG/logs_[12.9M]_____by_nico.sql">12.9-MİLLİON LOG</div>
+        </div>
+    </div>
+
+    <script>
+        // 1. MÜZİK KONTROLÜ
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        const musicControl = document.getElementById('musicControl');
+        const musicIcon = musicControl.querySelector('i');
+        
+        // Sayfa yüklendiğinde müzik kontrolünü ayarla
+        document.addEventListener('DOMContentLoaded', function() {
+            musicControl.addEventListener('click', toggleMusic);
+            
+            // Sayfada ilk tıklamada müziği başlat
+            function startMusicOnFirstClick() {
+                backgroundMusic.volume = 0.5;
+                backgroundMusic.play().then(() => {
+                    musicIcon.className = 'fas fa-volume-up';
+                }).catch(error => {
+                    console.log('Müzik çalma hatası:', error);
+                });
+                // Sadece ilk tıklamada çalışsın
+                document.removeEventListener('click', startMusicOnFirstClick);
+            }
+            
+            // İlk tıklamayı dinle
+            document.addEventListener('click', startMusicOnFirstClick);
+        });
+        
+        function toggleMusic() {
+            if (backgroundMusic.paused) {
+                backgroundMusic.play();
+                musicIcon.className = 'fas fa-volume-up';
+            } else {
+                backgroundMusic.pause();
+                musicIcon.className = 'fas fa-volume-mute';
+            }
+        }
+        
+        // 2. PARTICLES.JS KONFİGÜRASYONU
+        document.addEventListener('DOMContentLoaded', function() {
+            particlesJS('particles-js', {
+                particles: {
+                    number: {
+                        value: 80,
+                        density: {
+                            enable: true,
+                            value_area: 800
+                        }
+                    },
+                    color: {
+                        value: "#ff1a1a"
+                    },
+                    shape: {
+                        type: "circle",
+                        stroke: {
+                            width: 0,
+                            color: "#000000"
+                        }
+                    },
+                    opacity: {
+                        value: 0.3,
+                        random: true,
+                        anim: {
+                            enable: true,
+                            speed: 1,
+                            opacity_min: 0.1,
+                            sync: false
+                        }
+                    },
+                    size: {
+                        value: 3,
+                        random: true,
+                        anim: {
+                            enable: true,
+                            speed: 2,
+                            size_min: 0.1,
+                            sync: false
+                        }
+                    },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: "#880000",
+                        opacity: 0.2,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 1.5,
+                        direction: "none",
+                        random: true,
+                        straight: false,
+                        out_mode: "out",
+                        bounce: false,
+                        attract: {
+                            enable: true,
+                            rotateX: 600,
+                            rotateY: 1200
+                        }
+                    }
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: {
+                        onhover: {
+                            enable: true,
+                            mode: "repulse"
+                        },
+                        onclick: {
+                            enable: true,
+                            mode: "push"
+                        },
+                        resize: true
+                    },
+                    modes: {
+                        grab: {
+                            distance: 400,
+                            line_linked: {
+                                opacity: 1
+                            }
+                        },
+                        bubble: {
+                            distance: 400,
+                            size: 40,
+                            duration: 2,
+                            opacity: 8,
+                            speed: 3
+                        },
+                        repulse: {
+                            distance: 100,
+                            duration: 0.4
+                        },
+                        push: {
+                            particles_nb: 4
+                        },
+                        remove: {
+                            particles_nb: 2
+                        }
+                    }
+                },
+                retina_detect: true
+            });
+        });
+
+        // 3. ORİJİNAL JAVASCRIPT KODUNUZ - DEĞİŞMEDEN KALDI
+        const triggerMain       = document.getElementById('trigger-main');
+        const triggerScripts    = document.getElementById('trigger-scripts');
+        const triggerTools      = document.getElementById('trigger-tools');
+        const triggerHackarsiv  = document.getElementById('trigger-hackarsiv');
+        const triggerPrograms   = document.getElementById('trigger-programs');
+        const triggerLogs       = document.getElementById('trigger-logs');
+
+        const menuMain          = document.getElementById('menu-main');
+        const menuScripts       = document.getElementById('menu-scripts');
+        const menuTools         = document.getElementById('menu-tools');
+        const menuHackarsiv     = document.getElementById('menu-hackarsiv');
+        const menuPrograms      = document.getElementById('menu-programs');
+        const menuLogs          = document.getElementById('menu-logs');
+
+        const wrapperMain       = document.getElementById('menu-main-wrapper');
+        const wrapperScripts    = document.getElementById('menu-scripts-wrapper');
+        const wrapperTools      = document.getElementById('menu-tools-wrapper');
+        const wrapperHackarsiv  = document.getElementById('menu-hackarsiv-wrapper');
+        const wrapperPrograms   = document.getElementById('menu-programs-wrapper');
+        const wrapperLogs       = document.getElementById('menu-logs-wrapper');
+
+        function closeAllMenus() {
+            menuMain.classList.remove('active');
+            menuScripts.classList.remove('active');
+            menuTools.classList.remove('active');
+            menuHackarsiv.classList.remove('active');
+            menuPrograms.classList.remove('active');
+            menuLogs.classList.remove('active');
+
+            wrapperMain.classList.remove('active-menu');
+            wrapperScripts.classList.remove('active-menu');
+            wrapperTools.classList.remove('active-menu');
+            wrapperHackarsiv.classList.remove('active-menu');
+            wrapperPrograms.classList.remove('active-menu');
+            wrapperLogs.classList.remove('active-menu');
+
+            triggerMain.classList.remove('active');
+            triggerScripts.classList.remove('active');
+            triggerTools.classList.remove('active');
+            triggerHackarsiv.classList.remove('active');
+            triggerPrograms.classList.remove('active');
+            triggerLogs.classList.remove('active');
+        }
+
+        function openMenu(which) {
+            closeAllMenus();
+
+            let menu, trigger, wrapper;
+
+            if (which === 'main') {
+                menu = menuMain;
+                trigger = triggerMain;
+                wrapper = wrapperMain;
+            } else if (which === 'scripts') {
+                menu = menuScripts;
+                trigger = triggerScripts;
+                wrapper = wrapperScripts;
+            } else if (which === 'tools') {
+                menu = menuTools;
+                trigger = triggerTools;
+                wrapper = wrapperTools;
+            } else if (which === 'hackarsiv') {
+                menu = menuHackarsiv;
+                trigger = triggerHackarsiv;
+                wrapper = wrapperHackarsiv;
+            } else if (which === 'programs') {
+                menu = menuPrograms;
+                trigger = triggerPrograms;
+                wrapper = wrapperPrograms;
+            } else if (which === 'logs') {
+                menu = menuLogs;
+                trigger = triggerLogs;
+                wrapper = wrapperLogs;
+            }
+
+            if (menu && trigger && wrapper) {
+                menu.classList.add('active');
+                trigger.classList.add('active');
+                wrapper.classList.add('active-menu');
+            }
+        }
+
+        triggerMain.addEventListener('click', () => {
+            if (triggerMain.classList.contains('active')) {
+                closeAllMenus();
+            } else {
+                openMenu('main');
+            }
+        });
+
+        triggerScripts.addEventListener('click', () => {
+            if (triggerScripts.classList.contains('active')) {
+                closeAllMenus();
+            } else {
+                openMenu('scripts');
+            }
+        });
+
+        triggerTools.addEventListener('click', () => {
+            if (triggerTools.classList.contains('active')) {
+                closeAllMenus();
+            } else {
+                openMenu('tools');
+            }
+        });
+
+        triggerHackarsiv.addEventListener('click', () => {
+            if (triggerHackarsiv.classList.contains('active')) {
+                closeAllMenus();
+            } else {
+                openMenu('hackarsiv');
+            }
+        });
+
+        triggerPrograms.addEventListener('click', () => {
+            if (triggerPrograms.classList.contains('active')) {
+                closeAllMenus();
+            } else {
+                openMenu('programs');
+            }
+        });
+
+        triggerLogs.addEventListener('click', () => {
+            if (triggerLogs.classList.contains('active')) {
+                closeAllMenus();
+            } else {
+                openMenu('logs');
+            }
+        });
+
+        // dışarı tıklayınca tüm menüleri kapat
+        document.addEventListener('click', function(e) {
+            const isClickInsideMain     = menuMain.contains(e.target)     || triggerMain.contains(e.target);
+            const isClickInsideScripts  = menuScripts.contains(e.target)  || triggerScripts.contains(e.target);
+            const isClickInsideTools    = menuTools.contains(e.target)    || triggerTools.contains(e.target);
+            const isClickInsideHack     = menuHackarsiv.contains(e.target) || triggerHackarsiv.contains(e.target);
+            const isClickInsidePrograms = menuPrograms.contains(e.target) || triggerPrograms.contains(e.target);
+            const isClickInsideLogs     = menuLogs.contains(e.target)     || triggerLogs.contains(e.target);
+
+            if (!isClickInsideMain && !isClickInsideScripts && !isClickInsideTools && !isClickInsideHack && !isClickInsidePrograms && !isClickInsideLogs) {
+                closeAllMenus();
+            }
+        });
+
+        // link tıklama mantığı
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                const link = this.getAttribute('data-link');
+                if (!link) return;
+
+                if (e.button === 1 || e.ctrlKey || e.metaKey) {
+                    e.preventDefault();
+                    window.open(link, '_blank');
+                } else {
+                    window.location.href = link;
+                }
+            });
+
+            item.addEventListener('auxclick', function(e) {
+                if (e.button === 1) e.preventDefault();
+            });
+        });
+    </script>
+</body></html>
