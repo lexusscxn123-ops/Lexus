@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEXUS OSINT v7.0 - DEEP NETWORK ANALYSIS</title>
+    <title>LEXUS OSINT v11.0 - DYNAMIC DATABASE</title>
     <style>
         body { margin: 0; overflow: hidden; background: #000; font-family: 'Courier New', monospace; color: #8A2BE2; }
         canvas { display: block; position: fixed; top: 0; left: 0; z-index: -1; }
@@ -16,26 +16,26 @@
 
         #terminal-screen {
             display: none; position: absolute; top: 2%; left: 2%; width: 96%; height: 96%;
-            background: rgba(10, 10, 10, 0.96); border: 1px solid #8A2BE2; padding: 25px;
+            background: rgba(10, 10, 10, 0.97); border: 1px solid #8A2BE2; padding: 25px;
             box-sizing: border-box; overflow-y: auto; border-radius: 8px;
         }
 
-        .output-container { margin-top: 20px; display: none; }
-        .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; border: 1px solid #8A2BE2; padding: 15px; background: rgba(138, 43, 226, 0.05); }
+        .result-container { margin-top: 25px; display: none; border: 1px solid #8A2BE2; background: rgba(138, 43, 226, 0.05); padding: 20px; animation: fadeIn 0.4s; }
         
-        .section-header { grid-column: 1 / span 2; color: #fff; font-weight: bold; border-bottom: 1px solid #8A2BE2; padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase; }
-        .data-item { margin: 8px 0; font-size: 13px; }
-        .label { color: #8A2BE2; font-weight: bold; }
-        .value { color: #00ff00; margin-left: 10px; }
+        .section-title { color: #fff; font-weight: bold; border-bottom: 1px solid #8A2BE2; padding-bottom: 8px; margin: 15px 0 10px 0; text-transform: uppercase; font-size: 13px; }
+        .data-row { margin: 12px 0; font-size: 14px; display: flex; justify-content: space-between; border-bottom: 1px solid rgba(138, 43, 226, 0.1); padding-bottom: 5px; }
+        .key-label { color: #8A2BE2; font-weight: bold; }
+        .val-text { color: #00ff00; font-weight: bold; word-break: break-all; text-align: right; width: 65%; }
 
         input, button {
             width: 100%; padding: 12px; margin: 10px 0; background: #000;
             border: 1px solid #8A2BE2; color: #fff; outline: none; border-radius: 4px;
         }
-        button { background: #8A2BE2; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; }
-        button:hover { background: #fff; color: #8A2BE2; box-shadow: 0 0 15px #fff; }
+        button { background: #8A2BE2; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        button:hover { background: #fff; color: #8A2BE2; box-shadow: 0 0 20px #fff; }
 
-        .console-msg { color: #555; font-size: 11px; margin: 2px 0; }
+        .terminal-log { color: #555; font-size: 11px; margin: 2px 0; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -43,89 +43,102 @@
 <canvas id="canvas"></canvas>
 
 <div id="login-screen">
-    <h2 style="letter-spacing: 10px;">LEXUS</h2>
-    <p style="font-size: 10px; color: #666;">DEEP NETWORK & OSINT v7.0</p>
-    <input type="password" id="key" placeholder="ACCESS KEY">
-    <button onclick="checkKey()">AUTHORIZE</button>
+    <h2 style="letter-spacing: 10px; color: #8A2BE2;">LEXUS</h2>
+    <p style="font-size: 10px; color: #444;">OSINT INTERFACE V11.0</p>
+    <input type="password" id="passkey" placeholder="ACCESS KEY">
+    <button onclick="authorize()">SİSTEME GİRİŞ</button>
 </div>
 
 <div id="terminal-screen">
     <div style="border-bottom: 2px solid #8A2BE2; padding-bottom: 15px; margin-bottom: 20px;">
-        <h2 style="margin:0; letter-spacing: 3px;">LEXUS INTELLIGENCE SUITE</h2>
-        <p style="font-size: 11px; margin: 5px 0;">[OPERATOR: lexusscxn] | [OSINT_MODE: DEEP_IP_ANALYSIS]</p>
+        <h2 style="margin:0; letter-spacing: 4px;">LEXUS INTELLIGENCE SUITE</h2>
+        <p style="font-size: 11px; margin: 5px 0;">[OPERATOR: lexusscxn] | [SORGULAMA MODU: DİNAMİK]</p>
     </div>
 
-    <input type="text" id="target" placeholder="ID, IP veya E-Posta Verisi Girin...">
-    <button onclick="runDeepAnalysis()">SORGULAMAYI BAŞLAT</button>
+    <input type="text" id="targetId" placeholder="Sorgulanacak ID veya Veri Girin...">
+    <button onclick="startDeepSearch()">VERİTABANINDA SORGULA</button>
 
-    <div id="console" style="margin-top: 15px; height: 100px; overflow: hidden;"></div>
+    <div id="logs" style="margin-top: 15px; max-height: 80px; overflow: hidden;"></div>
 
-    <div id="results" class="output-container">
-        <div class="report-grid">
-            <div class="section-header">Hedef Kimlik Verileri</div>
-            <div class="data-item"><span class="label">E-POSTA/ID:</span><span class="value" id="res-id"></span></div>
-            <div class="data-item"><span class="label">UYGULAMALAR:</span><span class="value">Discord, Instagram, Riot</span></div>
-            
-            <div class="section-header">Derin Ağ Analizi (Automatic IP Scan)</div>
-            <div class="data-item"><span class="label">IP ADRESİ:</span><span class="value" id="res-ip"></span></div>
-            <div class="data-item"><span class="label">ÜLKE/ŞEHİR:</span><span class="value">TR / Istanbul</span></div>
-            <div class="data-item"><span class="label">ISP (SAĞLAYICI):</span><span class="value">Turk Telekom (AS9121)</span></div>
-            <div class="data-item"><span class="label">PROXY/VPN:</span><span class="value" style="color:#ff3333;">TESPİT EDİLMEDİ</span></div>
-            <div class="data-item"><span class="label">LOKASYON:</span><span class="value">41.0082° N, 28.9784° E</span></div>
-            <div class="data-item"><span class="label">NETWORK TYPE:</span><span class="value">Static / Residential</span></div>
-            
-            <div class="section-header">Sosyal & Sunucu Kayıtları</div>
-            <div class="data-item"><span class="label">SERVER IDs:</span><span class="value">11294827... , 99203155...</span></div>
-            <div class="data-item"><span class="label">BİYOGRAFİ:</span><span class="value">Lexus Database: Aktif Sanalcı Kaydı Mevcut.</span></div>
-        </div>
+    <div id="resultBox" class="result-container">
+        <div class="section-title">Kullanıcı Kimlik Bilgileri</div>
+        <div class="data-row"><span class="key-label">HEDEF ID:</span><span class="val-text" id="disp-id"></span></div>
+        <div class="data-row"><span class="key-label">E-POSTA:</span><span class="val-text" id="disp-email"></span></div>
+        
+        <div class="section-title">Ağ ve Lokasyon Analizi</div>
+        <div class="data-row"><span class="key-label">IP ADRESİ:</span><span class="val-text" id="disp-ip"></span></div>
+        <div class="data-row"><span class="key-label">SAĞLAYICI:</span><span class="val-text">Turk Telekom (Residential)</span></div>
+        
+        <div class="section-title">Sosyal Veriler</div>
+        <div class="data-row"><span class="key-label">BULUNDUĞU SUNUCULAR:</span><span class="val-text">112948... , 992031...</span></div>
     </div>
 </div>
 
 <script>
-    const KEY = "lexus2026";
-    const ADMIN = "lexusscxn";
+    const ADMIN_PASS = "lexusscxn";
+    const USER_PASS = "lexus2026";
 
-    function checkKey() {
-        const val = document.getElementById('key').value;
-        if(val === KEY || val === ADMIN) {
+    // --- BU BÖLÜM SENİN VERİTABANIN ---
+    // Her ID için farklı e-posta ve IP buraya girilir.
+    const dataRecords = {
+        "1338919878265933948": {
+            email: "lexuscxn2026@gmail.com",
+            ip: "176.232.146.180"
+        },
+        "5588339944": {
+            email: "hidayet_oz@outlook.com",
+            ip: "185.12.99.44"
+        },
+        "7744112255": {
+            email: "target_user_99@protonmail.com",
+            ip: "95.10.20.30"
+        }
+    };
+
+    function authorize() {
+        const val = document.getElementById('passkey').value;
+        if(val === ADMIN_PASS || val === USER_PASS) {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('terminal-screen').style.display = 'block';
-        } else {
-            alert("SİSTEME ERİŞİM REDDEDİLDİ!");
-        }
+        } else { alert("YETKİSİZ ERİŞİM!"); }
     }
 
-    function addConsole(text) {
-        const con = document.getElementById('console');
+    function addLog(txt) {
+        const l = document.getElementById('logs');
         const p = document.createElement('p');
-        p.className = 'console-msg';
-        p.innerText = ">> " + text;
-        con.prepend(p);
+        p.className = 'terminal-log';
+        p.innerText = ">> " + txt;
+        l.prepend(p);
     }
 
-    function runDeepAnalysis() {
-        const query = document.getElementById('target').value;
-        if(!query) return;
+    function startDeepSearch() {
+        const id = document.getElementById('targetId').value.trim();
+        if(!id) return;
 
-        document.getElementById('results').style.display = 'none';
-        document.getElementById('console').innerHTML = "";
+        document.getElementById('resultBox').style.display = 'none';
+        document.getElementById('logs').innerHTML = "";
 
-        addConsole("Lexus Çekirdek modülü aktif edildi...");
-        setTimeout(() => addConsole("Otomatik IP sorgulama motoru başlatılıyor..."), 500);
-        setTimeout(() => addConsole("30 Farklı veritabanı (SQL/JSON) sessizce taranıyor..."), 1000);
-        setTimeout(() => addConsole("Ağ geçidi ve Proxy katmanları analiz ediliyor..."), 1800);
+        addLog("Derin tarama motoru başlatıldı...");
+        setTimeout(() => addLog("SQL/JSON veritabanları taranıyor (Gizli Mod)..."), 600);
+        setTimeout(() => addLog("Eşleşen kimlik verileri doğrulanıyor..."), 1300);
 
         setTimeout(() => {
-            document.getElementById('res-id').innerText = query;
-            // Eğer girilen veri IP ise onu kullan, değilse rastgele üret
-            document.getElementById('res-ip').innerText = query.match(/\d+\.\d+\.\d+\.\d+/) ? query : "176.232." + Math.floor(Math.random()*255) + "." + Math.floor(Math.random()*255);
-            
-            document.getElementById('results').style.display = 'block';
-            addConsole("DERİN ANALİZ RAPORU HAZIRLANDI.");
-        }, 2800);
+            if (dataRecords[id]) {
+                const res = dataRecords[id];
+                document.getElementById('disp-id').innerText = id;
+                document.getElementById('disp-email').innerText = res.email; // ID'ye ait e-postayı getirir
+                document.getElementById('disp-ip').innerText = res.ip; // ID'ye ait IP'yi getirir
+                
+                document.getElementById('resultBox').style.display = 'block';
+                addLog("VERİ BULUNDU: Rapor oluşturuldu.");
+            } else {
+                addLog("HATA: Bu ID'ye ait bir kayıt bulunamadı.");
+                alert("Veritabanında bu ID ile eşleşen bir veri yok.");
+            }
+        }, 2000);
     }
 
-    // Matrix Rain
+    // Matrix Background
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth; canvas.height = window.innerHeight;
