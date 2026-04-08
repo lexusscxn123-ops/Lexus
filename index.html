@@ -3,37 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEXUS OSINT TERMINAL v3.0</title>
+    <title>LEXUS INTELLIGENCE TERMINAL</title>
     <style>
         body { margin: 0; overflow: hidden; background: #000; font-family: 'Courier New', monospace; color: #8A2BE2; }
         canvas { display: block; position: fixed; top: 0; left: 0; z-index: -1; }
         
         #login-screen {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(10, 10, 10, 0.95); padding: 30px; border: 2px solid #8A2BE2;
-            border-radius: 10px; box-shadow: 0 0 20px #8A2BE2; text-align: center; width: 320px;
+            background: rgba(10, 10, 10, 0.98); padding: 35px; border: 2px solid #8A2BE2;
+            border-radius: 15px; box-shadow: 0 0 25px #8A2BE2; text-align: center; width: 320px;
         }
 
         #terminal-screen {
             display: none; position: absolute; top: 2%; left: 2%; width: 96%; height: 96%;
-            background: rgba(10, 10, 10, 0.94); border: 1px solid #8A2BE2; padding: 20px;
-            box-sizing: border-box; overflow-y: auto; border-radius: 5px;
+            background: rgba(10, 10, 10, 0.95); border: 1px solid #8A2BE2; padding: 25px;
+            box-sizing: border-box; overflow-y: auto; border-radius: 10px;
         }
 
-        .output-line { margin-bottom: 5px; font-size: 14px; white-space: pre-wrap; }
-        .success { color: #00ff00; }
-        .danger { color: #ff3333; }
-        .info { color: #58a6ff; }
-        .system { color: #8A2BE2; font-weight: bold; }
+        .profile-card {
+            display: none; background: rgba(138, 43, 226, 0.1); border: 1px solid #8A2BE2;
+            padding: 20px; margin-top: 20px; border-radius: 10px; animation: fadeIn 1s;
+        }
+
+        .avatar { width: 100px; height: 100px; border-radius: 50%; border: 2px solid #8A2BE2; margin-bottom: 15px; }
+        .data-row { margin: 8px 0; font-size: 14px; border-bottom: 1px solid rgba(138, 43, 226, 0.2); padding-bottom: 5px; }
+        .label { color: #fff; font-weight: bold; margin-right: 10px; }
+        .value { color: #00ff00; }
 
         input, button {
             width: 100%; padding: 12px; margin: 10px 0; background: #000;
-            border: 1px solid #8A2BE2; color: #fff; outline: none; border-radius: 4px;
+            border: 1px solid #8A2BE2; color: #fff; outline: none; border-radius: 5px;
         }
-        button { background: #8A2BE2; font-weight: bold; cursor: pointer; }
+        button { background: #8A2BE2; font-weight: bold; cursor: pointer; transition: 0.3s; }
         button:hover { background: #fff; color: #8A2BE2; }
 
-        .terminal-header { border-bottom: 1px solid #8A2BE2; padding-bottom: 10px; margin-bottom: 20px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .loading-text { color: #ffcc00; font-style: italic; }
     </style>
 </head>
 <body>
@@ -41,69 +46,76 @@
 <canvas id="canvas"></canvas>
 
 <div id="login-screen">
-    <h2 style="letter-spacing: 5px;">LEXUS LOGIN</h2>
+    <h2 style="letter-spacing: 5px; margin-bottom: 5px;">LEXUS</h2>
+    <p style="font-size: 10px; color: #aaa; margin-bottom: 20px;">ENCRYPTED OSINT TERMINAL</p>
     <input type="password" id="key" placeholder="ACCESS KEY">
-    <button onclick="checkKey()">SİSTEME GİRİŞ YAP</button>
+    <button onclick="checkKey()">AUTHORIZE</button>
 </div>
 
 <div id="terminal-screen">
-    <div class="terminal-header">
-        <h2 style="margin:0;">[LEXUS OSINT SUITE v3.0] - ADMIN: lexusscxn</h2>
-        <p style="font-size: 12px; margin: 5px 0;">DATABASE CONNECTED | STATUS: ENCRYPTED</p>
+    <div style="border-bottom: 1px solid #8A2BE2; padding-bottom: 10px; margin-bottom: 20px;">
+        <h2 style="margin:0;">[LEXUS INTELLIGENCE SUITE v3.0]</h2>
+        <p style="font-size: 12px; margin: 5px 0; color: #fff;">Status: <span style="color:#00ff00;">ONLINE</span> | Admin: lexusscxn</p>
     </div>
 
-    <div id="input-area">
-        <input type="text" id="target" placeholder="ID, Email veya IP Adresi girin...">
-        <button onclick="startOsint()">OSINT TARAMASINI BAŞLAT</button>
-    </div>
+    <input type="text" id="target" placeholder="Sorgulanacak ID, E-posta veya Kullanıcı Adı...">
+    <button onclick="deepSearch()">DERİN TARAMAYI BAŞLAT</button>
 
-    <div id="output" style="margin-top: 20px;">
-        <div class="output-line system">>> Lexus Terminal Hazır. Bekleniyor...</div>
+    <div id="status-msg" class="loading-text" style="margin-top: 15px;"></div>
+
+    <div id="profile-result" class="profile-card">
+        <div style="text-align: center;">
+            <img src="https://via.placeholder.com/100/8A2BE2/ffffff?text=Lexus" id="res-avatar" class="avatar">
+            <h3 id="res-user" style="margin: 0; color: #fff;">-</h3>
+        </div>
+        <hr style="border: 0; border-top: 1px solid #8A2BE2; margin: 20px 0;">
+        <div class="data-row"><span class="label">BIOGRAPHY:</span> <span class="value" id="res-bio">-</span></div>
+        <div class="data-row"><span class="label">EMAIL:</span> <span class="value" id="res-email">-</span></div>
+        <div class="data-row"><span class="label">LAST IP:</span> <span class="value" id="res-ip">-</span></div>
+        <div class="data-row"><span class="label">PLATFORMS:</span> <span class="value" id="res-apps">-</span></div>
+        <div class="data-row"><span class="label">BREACH STATUS:</span> <span class="value" id="res-leak" style="color: #ff3333;">-</span></div>
     </div>
 </div>
 
 <script>
-    const KEY = "lexus2026";
-    const ADMIN = "lexusscxn";
+    const USER_KEY = "lexus2026";
+    const ADMIN_KEY = "lexusscxn";
 
     function checkKey() {
         const val = document.getElementById('key').value;
-        if(val === KEY || val === ADMIN) {
+        if(val === USER_KEY || val === ADMIN_KEY) {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('terminal-screen').style.display = 'block';
-            printLine(">> Erişim Onaylandı. Yetki: " + (val === ADMIN ? "ADMIN" : "USER"), "success");
         } else {
-            alert("GEÇERSİZ ANAHTAR!");
+            alert("SİSTEME ERİŞİM ENGELLENDİ!");
         }
     }
 
-    function printLine(text, type = "") {
-        const container = document.getElementById('output');
-        const div = document.createElement('div');
-        div.className = "output-line " + type;
-        div.innerText = text;
-        container.prepend(div);
-    }
+    function deepSearch() {
+        const query = document.getElementById('target').value;
+        if(!query) return;
 
-    function startOsint() {
-        const target = document.getElementById('target').value;
-        if(!target) return;
+        const status = document.getElementById('status-msg');
+        const card = document.getElementById('profile-result');
+        card.style.display = 'none';
 
-        printLine("-------------------------------------------");
-        printLine(">> " + target + " için derin tarama başlatıldı...", "info");
-
-        // Simüle edilmiş OSINT adımları (Senin linkteki mantık)
-        setTimeout(() => printLine(">> Veritabanları taranıyor: data.sql, discord_data.sql, id.txt...", "system"), 500);
-        setTimeout(() => printLine(">> E-posta Kayıtları Sorgulanıyor: Instagram, Facebook, LinkedIn...", "info"), 1200);
-        setTimeout(() => printLine(">> IP Lokasyon ve Servis Sağlayıcı Analiz Ediliyor...", "info"), 2000);
+        status.innerText = ">> Lexus veritabanları (SQL/JSON) taranıyor...";
+        
+        setTimeout(() => { status.innerText = ">> E-posta sızıntıları ve API kayıtları kontrol ediliyor..."; }, 1000);
+        setTimeout(() => { status.innerText = ">> Sosyal medya ve sportif uygulama eşleşmeleri aranıyor..."; }, 2000);
         
         setTimeout(() => {
-            printLine(">> [!] SONUÇLAR BULUNDU", "success");
-            printLine(">> Kayıtlı Platformlar: Instagram (Tespit Edildi), Discord (Bağlı)", "success");
-            printLine(">> Sızıntı Durumu: " + (Math.random() > 0.5 ? "VERİ SIZINTISI BULUNDU (Breach Detected)" : "Temiz"), "danger");
-            printLine(">> Lokasyon Verisi: [TR/Istanbul] - ISP: TurkTelecom", "info");
-            printLine(">> Lexus ID Sorgu: " + Math.floor(Math.random()*99999999) + " [VERİ_DOĞRULANDI]", "success");
-            printLine("-------------------------------------------");
+            status.innerText = ">> VERİ DOĞRULANDI. PANEL OLUŞTURULUYOR...";
+            
+            // Sonuçları Doldur
+            document.getElementById('res-user').innerText = query.toUpperCase();
+            document.getElementById('res-bio').innerText = "Bu kullanıcı dijital izlerini gizlemeye çalışmış ancak Lexus tarafından tespit edilmiştir.";
+            document.getElementById('res-email').innerText = query.includes('@') ? query : query.toLowerCase() + "@gmail.com";
+            document.getElementById('res-ip').innerText = "176." + Math.floor(Math.random()*255) + "." + Math.floor(Math.random()*255) + ".1";
+            document.getElementById('res-apps').innerText = "Discord, Instagram, Spotify, Roblox, Riot Games";
+            document.getElementById('res-leak').innerText = "KRİTİK: 3 Veri Sızıntısında Bulundu!";
+            
+            card.style.display = 'block';
         }, 3000);
     }
 
@@ -125,5 +137,6 @@
     }
     setInterval(draw, 33);
 </script>
+
 </body>
 </html>
