@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEXUS OSINT v11.0 - DYNAMIC DATABASE</title>
+    <title>LEXUS OSINT v15.0 - NO-ID OUTPUT</title>
     <style>
         body { margin: 0; overflow: hidden; background: #000; font-family: 'Courier New', monospace; color: #8A2BE2; }
         canvas { display: block; position: fixed; top: 0; left: 0; z-index: -1; }
@@ -20,22 +20,21 @@
             box-sizing: border-box; overflow-y: auto; border-radius: 8px;
         }
 
-        .result-container { margin-top: 25px; display: none; border: 1px solid #8A2BE2; background: rgba(138, 43, 226, 0.05); padding: 20px; animation: fadeIn 0.4s; }
+        .report-panel { margin-top: 25px; display: none; border: 1px solid #8A2BE2; background: rgba(138, 43, 226, 0.05); padding: 20px; border-left: 5px solid #8A2BE2; }
         
-        .section-title { color: #fff; font-weight: bold; border-bottom: 1px solid #8A2BE2; padding-bottom: 8px; margin: 15px 0 10px 0; text-transform: uppercase; font-size: 13px; }
+        .header { color: #fff; font-weight: bold; border-bottom: 1px solid #8A2BE2; padding-bottom: 8px; margin: 15px 0 10px 0; text-transform: uppercase; font-size: 13px; letter-spacing: 2px; }
         .data-row { margin: 12px 0; font-size: 14px; display: flex; justify-content: space-between; border-bottom: 1px solid rgba(138, 43, 226, 0.1); padding-bottom: 5px; }
-        .key-label { color: #8A2BE2; font-weight: bold; }
-        .val-text { color: #00ff00; font-weight: bold; word-break: break-all; text-align: right; width: 65%; }
+        .label { color: #8A2BE2; font-weight: bold; }
+        .value { color: #00ff00; font-weight: bold; text-align: right; }
 
         input, button {
             width: 100%; padding: 12px; margin: 10px 0; background: #000;
             border: 1px solid #8A2BE2; color: #fff; outline: none; border-radius: 4px;
         }
         button { background: #8A2BE2; font-weight: bold; cursor: pointer; text-transform: uppercase; }
-        button:hover { background: #fff; color: #8A2BE2; box-shadow: 0 0 20px #fff; }
+        button:hover { background: #fff; color: #8A2BE2; box-shadow: 0 0 15px #fff; }
 
-        .terminal-log { color: #555; font-size: 11px; margin: 2px 0; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .log { color: #333; font-size: 11px; margin: 2px 0; }
     </style>
 </head>
 <body>
@@ -44,101 +43,99 @@
 
 <div id="login-screen">
     <h2 style="letter-spacing: 10px; color: #8A2BE2;">LEXUS</h2>
-    <p style="font-size: 10px; color: #444;">OSINT INTERFACE V11.0</p>
-    <input type="password" id="passkey" placeholder="ACCESS KEY">
-    <button onclick="authorize()">SİSTEME GİRİŞ</button>
+    <input type="password" id="pass" placeholder="AUTH KEY">
+    <button onclick="access()">SİSTEMİ BAŞLAT</button>
 </div>
 
 <div id="terminal-screen">
     <div style="border-bottom: 2px solid #8A2BE2; padding-bottom: 15px; margin-bottom: 20px;">
         <h2 style="margin:0; letter-spacing: 4px;">LEXUS INTELLIGENCE SUITE</h2>
-        <p style="font-size: 11px; margin: 5px 0;">[OPERATOR: lexusscxn] | [SORGULAMA MODU: DİNAMİK]</p>
+        <p style="font-size: 11px; margin: 5px 0;">[OPERATOR: lexusscxn] | [OUTPUT_FILTER: ACTIVE]</p>
     </div>
 
-    <input type="text" id="targetId" placeholder="Sorgulanacak ID veya Veri Girin...">
-    <button onclick="startDeepSearch()">VERİTABANINDA SORGULA</button>
+    <input type="text" id="targetId" placeholder="Discord ID Girin...">
+    <button onclick="runSecureSearch()">VERİYİ ÇEK VE TEMİZLE</button>
 
-    <div id="logs" style="margin-top: 15px; max-height: 80px; overflow: hidden;"></div>
+    <div id="console" style="margin-top: 15px; max-height: 80px; overflow: hidden;"></div>
 
-    <div id="resultBox" class="result-container">
-        <div class="section-title">Kullanıcı Kimlik Bilgileri</div>
-        <div class="data-row"><span class="key-label">HEDEF ID:</span><span class="val-text" id="disp-id"></span></div>
-        <div class="data-row"><span class="key-label">E-POSTA:</span><span class="val-text" id="disp-email"></span></div>
+    <div id="report" class="report-panel">
+        <div class="header">TEMİZLENMİŞ VERİ RAPORU</div>
+        <div class="data-row"><span class="label">SORGULANAN ID:</span><span class="value" id="res-id"></span></div>
+        <div class="data-row"><span class="label">E-POSTA ADRESİ:</span><span class="value" id="res-email" style="color: #00ff00; text-shadow: 0 0 5px #00ff00;"></span></div>
         
-        <div class="section-title">Ağ ve Lokasyon Analizi</div>
-        <div class="data-row"><span class="key-label">IP ADRESİ:</span><span class="val-text" id="disp-ip"></span></div>
-        <div class="data-row"><span class="key-label">SAĞLAYICI:</span><span class="val-text">Turk Telekom (Residential)</span></div>
-        
-        <div class="section-title">Sosyal Veriler</div>
-        <div class="data-row"><span class="key-label">BULUNDUĞU SUNUCULAR:</span><span class="val-text">112948... , 992031...</span></div>
+        <div class="header">AĞ VE LOKASYON ANALİZİ</div>
+        <div class="data-row"><span class="label">IP ADRESİ:</span><span class="value" id="res-ip"></span></div>
+        <div class="data-row"><span class="label">DURUM:</span><span class="value">SAYISAL KİMLİK FİLTRELENDİ</span></div>
     </div>
 </div>
 
 <script>
-    const ADMIN_PASS = "lexusscxn";
-    const USER_PASS = "lexus2026";
+    const K1 = "lexusscxn";
+    const K2 = "lexus2026";
 
-    // --- BU BÖLÜM SENİN VERİTABANIN ---
-    // Her ID için farklı e-posta ve IP buraya girilir.
-    const dataRecords = {
+    // --- VERİTABANI HAVUZU ---
+    // Buraya girdiğin ID'lerin karşısına sadece gerçek mail adreslerini yaz.
+    const database = {
         "1338919878265933948": {
-            email: "lexuscxn2026@gmail.com",
+            email: "lexusscxn@gmail.com", // Artık burada sayı olsa bile filtreleyecek
             ip: "176.232.146.180"
         },
-        "5588339944": {
-            email: "hidayet_oz@outlook.com",
-            ip: "185.12.99.44"
-        },
-        "7744112255": {
-            email: "target_user_99@protonmail.com",
-            ip: "95.10.20.30"
+        "81637282638283637": {
+            email: "hedefkullanici@protonmail.com",
+            ip: "188.132.44.11"
         }
     };
 
-    function authorize() {
-        const val = document.getElementById('passkey').value;
-        if(val === ADMIN_PASS || val === USER_PASS) {
+    function access() {
+        const v = document.getElementById('pass').value;
+        if(v === K1 || v === K2) {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('terminal-screen').style.display = 'block';
-        } else { alert("YETKİSİZ ERİŞİM!"); }
+        } else { alert("ACCESS DENIED!"); }
     }
 
-    function addLog(txt) {
-        const l = document.getElementById('logs');
+    function addLog(m) {
+        const c = document.getElementById('console');
         const p = document.createElement('p');
-        p.className = 'terminal-log';
-        p.innerText = ">> " + txt;
-        l.prepend(p);
+        p.className = 'log';
+        p.innerText = ">> " + m;
+        c.prepend(p);
     }
 
-    function startDeepSearch() {
+    function runSecureSearch() {
         const id = document.getElementById('targetId').value.trim();
         if(!id) return;
 
-        document.getElementById('resultBox').style.display = 'none';
-        document.getElementById('logs').innerHTML = "";
+        document.getElementById('report').style.display = 'none';
+        document.getElementById('console').innerHTML = "";
 
-        addLog("Derin tarama motoru başlatıldı...");
-        setTimeout(() => addLog("SQL/JSON veritabanları taranıyor (Gizli Mod)..."), 600);
-        setTimeout(() => addLog("Eşleşen kimlik verileri doğrulanıyor..."), 1300);
+        addLog("Sessiz modül başlatıldı...");
+        setTimeout(() => addLog("Ham veritabanı dosyaları taranıyor..."), 500);
+        setTimeout(() => addLog("Sayısal ID verileri e-posta çıktısından temizleniyor..."), 1200);
+        setTimeout(() => addLog("Gerçek e-posta maskesi kaldırılıyor..."), 1800);
 
         setTimeout(() => {
-            if (dataRecords[id]) {
-                const res = dataRecords[id];
-                document.getElementById('disp-id').innerText = id;
-                document.getElementById('disp-email').innerText = res.email; // ID'ye ait e-postayı getirir
-                document.getElementById('disp-ip').innerText = res.ip; // ID'ye ait IP'yi getirir
+            if (database[id]) {
+                const data = database[id];
+                document.getElementById('res-id').innerText = id;
                 
-                document.getElementById('resultBox').style.display = 'block';
-                addLog("VERİ BULUNDU: Rapor oluşturuldu.");
+                // Filtreleme: Çıktıda uzun sayı dizilerini (8163... gibi) tamamen engeller
+                // Eğer veritabanındaki e-posta yanlışlıkla sayı içeriyorsa onları da temizler
+                let emailOutput = data.email.replace(/[0-9]{5,}/g, ''); 
+                
+                document.getElementById('res-email').innerText = emailOutput;
+                document.getElementById('res-ip').innerText = data.ip;
+                
+                document.getElementById('report').style.display = 'block';
+                addLog("BAŞARILI: Temiz e-posta verisi oluşturuldu.");
             } else {
-                addLog("HATA: Bu ID'ye ait bir kayıt bulunamadı.");
-                alert("Veritabanında bu ID ile eşleşen bir veri yok.");
+                addLog("HATA: Kayıt bulunamadı.");
+                alert("Bu ID herhangi bir dosyada kayıtlı değil.");
             }
-        }, 2000);
+        }, 2200);
     }
 
-    // Matrix Background
+    // Matrix
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth; canvas.height = window.innerHeight;
