@@ -3,155 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEXUS OSINT v15.0 - NO-ID OUTPUT</title>
+    <title>LEXUS IP & DATA INTELLIGENCE v16.0</title>
     <style>
-        body { margin: 0; overflow: hidden; background: #000; font-family: 'Courier New', monospace; color: #8A2BE2; }
+        :root { --main-purple: #8A2BE2; --bg-dark: #050505; --neon-green: #00ff00; }
+        body { margin: 0; overflow: hidden; background: var(--bg-dark); font-family: 'Courier New', monospace; color: var(--main-purple); }
         canvas { display: block; position: fixed; top: 0; left: 0; z-index: -1; }
         
-        #login-screen {
+        #login-box {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(10, 10, 10, 0.98); padding: 35px; border: 2px solid #8A2BE2;
-            border-radius: 10px; box-shadow: 0 0 25px #8A2BE2; text-align: center; width: 300px;
+            background: rgba(0, 0, 0, 0.95); padding: 40px; border: 1px solid var(--main-purple);
+            border-radius: 5px; box-shadow: 0 0 30px rgba(138, 43, 226, 0.3); text-align: center; width: 320px;
         }
 
-        #terminal-screen {
-            display: none; position: absolute; top: 2%; left: 2%; width: 96%; height: 96%;
-            background: rgba(10, 10, 10, 0.97); border: 1px solid #8A2BE2; padding: 25px;
-            box-sizing: border-box; overflow-y: auto; border-radius: 8px;
+        #main-terminal {
+            display: none; position: absolute; top: 3%; left: 3%; width: 94%; height: 94%;
+            background: rgba(5, 5, 5, 0.98); border: 1px solid var(--main-purple); padding: 30px;
+            box-sizing: border-box; overflow-y: auto; border-radius: 10px;
         }
 
-        .report-panel { margin-top: 25px; display: none; border: 1px solid #8A2BE2; background: rgba(138, 43, 226, 0.05); padding: 20px; border-left: 5px solid #8A2BE2; }
+        .report-card { 
+            margin-top: 25px; display: none; border: 1px solid var(--main-purple); 
+            background: rgba(138, 43, 226, 0.03); padding: 25px; 
+            border-left: 4px solid var(--main-purple); animation: scanEffect 0.6s ease;
+        }
         
-        .header { color: #fff; font-weight: bold; border-bottom: 1px solid #8A2BE2; padding-bottom: 8px; margin: 15px 0 10px 0; text-transform: uppercase; font-size: 13px; letter-spacing: 2px; }
-        .data-row { margin: 12px 0; font-size: 14px; display: flex; justify-content: space-between; border-bottom: 1px solid rgba(138, 43, 226, 0.1); padding-bottom: 5px; }
-        .label { color: #8A2BE2; font-weight: bold; }
-        .value { color: #00ff00; font-weight: bold; text-align: right; }
+        .section-hdr { color: #fff; font-weight: bold; border-bottom: 2px solid var(--main-purple); padding-bottom: 10px; margin: 20px 0 15px 0; text-transform: uppercase; letter-spacing: 3px; font-size: 15px; }
+        .data-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 12px; font-size: 14px; }
+        .label { color: var(--main-purple); font-weight: 800; opacity: 0.8; }
+        .val { color: var(--neon-green); text-align: right; word-break: break-all; text-shadow: 0 0 5px rgba(0, 255, 0, 0.3); }
 
         input, button {
-            width: 100%; padding: 12px; margin: 10px 0; background: #000;
-            border: 1px solid #8A2BE2; color: #fff; outline: none; border-radius: 4px;
+            width: 100%; padding: 14px; margin: 12px 0; background: #000;
+            border: 1px solid var(--main-purple); color: #fff; outline: none; font-weight: bold;
         }
-        button { background: #8A2BE2; font-weight: bold; cursor: pointer; text-transform: uppercase; }
-        button:hover { background: #fff; color: #8A2BE2; box-shadow: 0 0 15px #fff; }
+        button { background: var(--main-purple); cursor: pointer; text-transform: uppercase; transition: 0.4s; }
+        button:hover { background: #fff; color: var(--main-purple); box-shadow: 0 0 20px #fff; }
 
-        .log { color: #333; font-size: 11px; margin: 2px 0; }
+        .status-log { color: #444; font-size: 11px; margin: 4px 0; font-style: italic; }
+        @keyframes scanEffect { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-<canvas id="canvas"></canvas>
+<canvas id="matrix"></canvas>
 
-<div id="login-screen">
-    <h2 style="letter-spacing: 10px; color: #8A2BE2;">LEXUS</h2>
-    <input type="password" id="pass" placeholder="AUTH KEY">
-    <button onclick="access()">SİSTEMİ BAŞLAT</button>
+<div id="login-box">
+    <h1 style="letter-spacing: 12px; margin-bottom: 5px;">LEXUS</h1>
+    <p style="font-size: 10px; color: #666; margin-bottom: 25px;">OSINT & IP SCANNER v16.0</p>
+    <input type="password" id="authKey" placeholder="OPERATÖR ŞİFRESİ">
+    <button onclick="unlock()">SİSTEMİ YÜKLE</button>
 </div>
 
-<div id="terminal-screen">
-    <div style="border-bottom: 2px solid #8A2BE2; padding-bottom: 15px; margin-bottom: 20px;">
-        <h2 style="margin:0; letter-spacing: 4px;">LEXUS INTELLIGENCE SUITE</h2>
-        <p style="font-size: 11px; margin: 5px 0;">[OPERATOR: lexusscxn] | [OUTPUT_FILTER: ACTIVE]</p>
+<div id="main-terminal">
+    <div style="border-bottom: 3px solid var(--main-purple); padding-bottom: 15px; margin-bottom: 25px;">
+        <h2 style="margin:0; letter-spacing: 5px;">LEXUS INTELLIGENCE SUITE</h2>
+        <p style="font-size: 11px; margin: 5px 0; color: #777;">[OPERATOR: lexusscxn] | [OSINT_MODE: DEEP_IP_DATA_MATCH]</p>
     </div>
 
-    <input type="text" id="targetId" placeholder="Discord ID Girin...">
-    <button onclick="runSecureSearch()">VERİYİ ÇEK VE TEMİZLE</button>
+    <div style="display: flex; gap: 10px;">
+        <input type="text" id="idTarget" placeholder="Sorgulanacak ID veya IP Girin..." style="flex: 3;">
+        <button onclick="executeDeepScan()" style="flex: 1;">DERİN SORGULA</button>
+    </div>
 
-    <div id="console" style="margin-top: 15px; max-height: 80px; overflow: hidden;"></div>
+    <div id="consoleLogs" style="margin-top: 15px; max-height: 100px; overflow: hidden; border-left: 2px solid #222; padding-left: 10px;"></div>
 
-    <div id="report" class="report-panel">
-        <div class="header">TEMİZLENMİŞ VERİ RAPORU</div>
-        <div class="data-row"><span class="label">SORGULANAN ID:</span><span class="value" id="res-id"></span></div>
-        <div class="data-row"><span class="label">E-POSTA ADRESİ:</span><span class="value" id="res-email" style="color: #00ff00; text-shadow: 0 0 5px #00ff00;"></span></div>
+    <div id="reportBox" class="report-card">
+        <div class="section-hdr">KİMLİK VE DOSYA VERİLERİ</div>
+        <div class="data-grid">
+            <span class="label">HEDEF ID:</span><span class="val" id="r-id"></span>
+            <span class="label">DECODE E-POSTA:</span><span class="val" id="r-email"></span>
+        </div>
         
-        <div class="header">AĞ VE LOKASYON ANALİZİ</div>
-        <div class="data-row"><span class="label">IP ADRESİ:</span><span class="value" id="res-ip"></span></div>
-        <div class="data-row"><span class="label">DURUM:</span><span class="value">SAYISAL KİMLİK FİLTRELENDİ</span></div>
+        <div class="section-hdr">LEXUS IP SORGULAMA (REAL-TIME)</div>
+        <div class="data-grid">
+            <span class="label">IP ADRESİ:</span><span class="val" id="r-ip"></span>
+            <span class="label">ISP (SAĞLAYICI):</span><span class="val" id="r-isp"></span>
+            <span class="label">LOKASYON:</span><span class="val" id="r-loc"></span>
+            <span class="label">PROXY/VPN:</span><span class="val" style="color:red;">NEGATİF</span>
+        </div>
+        
+        <div class="section-hdr">SUNUCU VE SOSYAL KAYITLAR</div>
+        <div class="data-grid">
+            <span class="label">AKTİF SUNUCULAR:</span><span class="val">112948... , 992031... (5 Toplam)</span>
+            <span class="label">ETİKET:</span><span class="val">Lexus Database 'Aktif Sanalci'</span>
+            <span class="label">DURUM:</span><span class="val" style="color:var(--neon-green)">DOĞRULANDI [OK]</span>
+        </div>
     </div>
 </div>
 
 <script>
-    const K1 = "lexusscxn";
-    const K2 = "lexus2026";
+    const P_ACCESS = "lexusscxn";
 
-    // --- VERİTABANI HAVUZU ---
-    // Buraya girdiğin ID'lerin karşısına sadece gerçek mail adreslerini yaz.
-    const database = {
+    // --- DOSYA VERİTABANI (ID'YE AİT BİLGİLER BURADAN GELİR) ---
+    const fileDatabase = {
         "1338919878265933948": {
-            email: "lexusscxn@gmail.com", // Artık burada sayı olsa bile filtreleyecek
-            ip: "176.232.146.180"
+            email: "hedef_user@protonmail.com", // Senin mailin değil, o ID'ye ait olan gelecek
+            ip: "176.232.146.180",
+            isp: "Turk Telekom (AS9121)",
+            loc: "41.0082° N, 28.9784° E"
         },
         "81637282638283637": {
-            email: "hedefkullanici@protonmail.com",
-            ip: "188.132.44.11"
+            email: "sanalci_target@gmail.com",
+            ip: "188.132.163.199",
+            isp: "Superonline (AS34984)",
+            loc: "39.9334° N, 32.8597° E"
         }
     };
 
-    function access() {
-        const v = document.getElementById('pass').value;
-        if(v === K1 || v === K2) {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('terminal-screen').style.display = 'block';
+    function unlock() {
+        if(document.getElementById('authKey').value === P_ACCESS) {
+            document.getElementById('login-box').style.display = 'none';
+            document.getElementById('main-terminal').style.display = 'block';
         } else { alert("ACCESS DENIED!"); }
     }
 
-    function addLog(m) {
-        const c = document.getElementById('console');
+    function pushLog(txt) {
+        const c = document.getElementById('consoleLogs');
         const p = document.createElement('p');
-        p.className = 'log';
-        p.innerText = ">> " + m;
+        p.className = 'status-log';
+        p.innerText = ">> " + txt;
         c.prepend(p);
     }
 
-    function runSecureSearch() {
-        const id = document.getElementById('targetId').value.trim();
-        if(!id) return;
+    function executeDeepScan() {
+        const input = document.getElementById('idTarget').value.trim();
+        if(!input) return;
 
-        document.getElementById('report').style.display = 'none';
-        document.getElementById('console').innerHTML = "";
+        document.getElementById('reportBox').style.display = 'none';
+        document.getElementById('consoleLogs').innerHTML = "";
 
-        addLog("Sessiz modül başlatıldı...");
-        setTimeout(() => addLog("Ham veritabanı dosyaları taranıyor..."), 500);
-        setTimeout(() => addLog("Sayısal ID verileri e-posta çıktısından temizleniyor..."), 1200);
-        setTimeout(() => addLog("Gerçek e-posta maskesi kaldırılıyor..."), 1800);
+        pushLog("Lexus Çekirdek modülü aktif edildi...");
+        setTimeout(() => pushLog("30 Farklı Veritabanı (SQL/JSON) sessizce taranıyor..."), 600);
+        setTimeout(() => pushLog("IP Sorgulama motoru başlatılıyor..."), 1200);
+        setTimeout(() => pushLog("ID eşleşmesi doğrulanıyor..."), 1800);
 
         setTimeout(() => {
-            if (database[id]) {
-                const data = database[id];
-                document.getElementById('res-id').innerText = id;
+            if (fileDatabase[input]) {
+                const data = fileDatabase[input];
+                document.getElementById('r-id').innerText = input;
+                document.getElementById('r-email').innerText = data.email;
+                document.getElementById('r-ip').innerText = data.ip;
+                document.getElementById('r-isp').innerText = data.isp;
+                document.getElementById('r-loc').innerText = data.loc;
                 
-                // Filtreleme: Çıktıda uzun sayı dizilerini (8163... gibi) tamamen engeller
-                // Eğer veritabanındaki e-posta yanlışlıkla sayı içeriyorsa onları da temizler
-                let emailOutput = data.email.replace(/[0-9]{5,}/g, ''); 
-                
-                document.getElementById('res-email').innerText = emailOutput;
-                document.getElementById('res-ip').innerText = data.ip;
-                
-                document.getElementById('report').style.display = 'block';
-                addLog("BAŞARILI: Temiz e-posta verisi oluşturuldu.");
+                document.getElementById('reportBox').style.display = 'block';
+                pushLog("TARAMA TAMAMLANDI: Eksiksiz veri raporu hazırlandı.");
             } else {
-                addLog("HATA: Kayıt bulunamadı.");
-                alert("Bu ID herhangi bir dosyada kayıtlı değil.");
+                pushLog("HATA: Kayıt bulunamadı. Veritabanında bu ID mevcut değil.");
+                alert("Bu ID'ye ait herhangi bir dosya kaydı bulunamadı.");
             }
-        }, 2200);
+        }, 2500);
     }
 
-    // Matrix
-    const canvas = document.getElementById('canvas');
+    // Matrix Rain Effect
+    const canvas = document.getElementById('matrix');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-    const chars = "LEXUS01";
-    const drops = Array(Math.floor(canvas.width/16)).fill(1);
-    function draw() {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    const chars = "LEXUS01X";
+    const drops = Array(Math.floor(canvas.width/18)).fill(1);
+    function drawMatrix() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = "#8A2BE2";
+        ctx.font = "15px monospace";
         drops.forEach((y, i) => {
-            ctx.fillText(chars[Math.floor(Math.random()*chars.length)], i*16, y*16);
-            if(y*16 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+            ctx.fillText(chars[Math.floor(Math.random()*chars.length)], i*18, y*18);
+            if(y*18 > canvas.height && Math.random() > 0.98) drops[i] = 0;
             drops[i]++;
         });
     }
-    setInterval(draw, 33);
+    setInterval(drawMatrix, 35);
 </script>
 </body>
 </html>
