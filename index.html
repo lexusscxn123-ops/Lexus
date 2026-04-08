@@ -3,66 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEXUS OSINT v5.0 - PROFILE TERMINAL</title>
+    <title>LEXUS OSINT v6.0 - STABLE TERMINAL</title>
     <style>
         body { margin: 0; overflow: hidden; background: #000; font-family: 'Courier New', monospace; color: #8A2BE2; }
         canvas { display: block; position: fixed; top: 0; left: 0; z-index: -1; }
         
-        /* Giriş Ekranı */
         #login-screen {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: rgba(10, 10, 10, 0.98); padding: 35px; border: 2px solid #8A2BE2;
-            border-radius: 15px; box-shadow: 0 0 25px #8A2BE2; text-align: center; width: 320px;
+            border-radius: 10px; box-shadow: 0 0 20px #8A2BE2; text-align: center; width: 300px;
         }
 
-        /* Ana Terminal */
         #terminal-screen {
             display: none; position: absolute; top: 2%; left: 2%; width: 96%; height: 96%;
-            background: rgba(10, 10, 10, 0.96); border: 1px solid #8A2BE2; padding: 25px;
-            box-sizing: border-box; overflow-y: auto; border-radius: 10px;
+            background: rgba(10, 10, 10, 0.95); border: 1px solid #8A2BE2; padding: 20px;
+            box-sizing: border-box; overflow-y: auto; border-radius: 5px;
         }
+
+        .output-box { border: 1px dashed rgba(138, 43, 226, 0.5); padding: 15px; margin-top: 20px; display: none; }
+        .data-line { margin: 10px 0; font-size: 14px; }
+        .label { color: #fff; font-weight: bold; }
+        .value { color: #00ff00; margin-left: 10px; word-break: break-all; }
 
         input, button {
             width: 100%; padding: 12px; margin: 10px 0; background: #000;
-            border: 1px solid #8A2BE2; color: #fff; outline: none; border-radius: 5px;
+            border: 1px solid #8A2BE2; color: #fff; outline: none; border-radius: 4px;
         }
-        button { background: #8A2BE2; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; }
-        button:hover { background: #fff; color: #8A2BE2; box-shadow: 0 0 20px #fff; }
+        button { background: #8A2BE2; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        button:hover { background: #fff; color: #8A2BE2; }
 
-        /* --- GÖRSEL PROFİL KARTI STİLLERİ (Attığın görseldeki gibi) --- */
-        #profile-result {
-            display: none; width: 350px; background: #18191c; border-radius: 10px;
-            overflow: hidden; margin: 30px auto 0 auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            animation: fadeIn 0.8s;
-        }
-
-        .profile-banner { height: 70px; background: #8A2BE2; position: relative; }
-        
-        .profile-header { padding: 16px; position: relative; }
-        .avatar-wrapper { position: absolute; top: -35px; left: 16px; width: 80px; height: 80px; }
-        .avatar { width: 100%; height: 100%; border-radius: 50%; border: 6px solid #18191c; object-fit: cover; }
-        .online-status {
-            position: absolute; bottom: 0; right: 0; width: 22px; height: 22px;
-            background: #00ff00; border-radius: 50%; border: 4px solid #18191c;
-        }
-
-        .profile-info { margin-top: 50px; color: #fff; font-family: sans-serif; }
-        .username { font-size: 20px; font-weight: 700; color: #fff; margin: 0; }
-        .discord-tag { font-size: 16px; color: #b9bbbe; }
-        
-        .verified-badge { background: #5865f2; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 10px; vertical-align: middle; margin-left: 5px; }
-
-        .profile-body { padding: 0 16px 16px 16px; font-family: sans-serif; color: #dcddde; font-size: 14px; }
-        .profile-section { margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; }
-        .section-title { font-size: 12px; font-weight: 700; color: #8A2BE2; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-        
-        .info-item { margin-bottom: 5px; }
-        .info-label { color: #fff; }
-        .info-value { color: #00ff00; word-break: break-all; }
-        
-        .log-line { color: #8A2BE2; font-size: 12px; margin: 3px 0; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .log { color: #8A2BE2; font-size: 12px; margin: 5px 0; opacity: 0.8; }
     </style>
 </head>
 <body>
@@ -70,119 +40,88 @@
 <canvas id="canvas"></canvas>
 
 <div id="login-screen">
-    <h2 style="letter-spacing: 10px; color: #8A2BE2;">LEXUS</h2>
-    <p style="font-size: 10px; color: #aaa; margin-bottom: 25px;">OSINT PROFILE TERMINAL v5.0</p>
+    <h2 style="letter-spacing: 5px;">LEXUS LOGIN</h2>
     <input type="password" id="key" placeholder="ACCESS KEY">
-    <button onclick="checkKey()">AUTHORIZE</button>
+    <button onclick="checkKey()">SİSTEME GİRİŞ YAP</button>
 </div>
 
 <div id="terminal-screen">
-    <div style="border-bottom: 1px solid #8A2BE2; padding-bottom: 15px; margin-bottom: 25px;">
-        <h2 style="margin:0; letter-spacing: 4px;">[LEXUS INTELLIGENCE SUITE]</h2>
-        <p style="font-size: 11px; margin: 5px 0;">OPERATOR: lexusscxn | STATUS: <span style="color:#00ff00;">ONLINE</span></p>
+    <div style="border-bottom: 2px solid #8A2BE2; padding-bottom: 10px; margin-bottom: 20px;">
+        <h2 style="margin:0;">LEXUS OSINT SUITE v6.0</h2>
+        <p style="font-size: 11px; margin: 5px 0;">OPERATOR: lexusscxn | STATUS: ACTIVE</p>
     </div>
 
-    <input type="text" id="target" placeholder="ID, IP, veya Encode E-Posta Girin...">
-    <button onclick="startVisualSearch()">PROFİL SORGUSUNU BAŞLAT</button>
+    <input type="text" id="target" placeholder="ID, IP veya E-Posta Verisi Girin...">
+    <button onclick="startSearch()">SORGULAMAYI BAŞLAT</button>
 
-    <div id="console-output" style="margin-top: 15px;"></div>
+    <div id="logs" style="margin-top: 15px;"></div>
 
-    <div id="profile-result">
-        <div class="profile-banner"></div>
-        <div class="profile-header">
-            <div class="avatar-wrapper">
-                <img src="https://i.ibb.co/VvzKDR4/al-pacino.jpg" class="avatar" alt="Target Avatar" onerror="this.src='https://via.placeholder.com/80/8A2BE2/ffffff?text=Target'">
-                <div class="online-status"></div>
-            </div>
-            <div class="profile-info">
-                <p class="username" id="res-user">-</p>
-                <p class="discord-tag">Lexus<span style="font-size:12px; color:#555;">#0001</span> <span class="verified-badge">/lexusscxn</span></p>
-            </div>
-        </div>
-        
-        <div class="profile-body">
-            <div class="profile-section">
-                <p class="section-title">Hakkımda</p>
-                <p id="res-bio">Tespit Edilemedi.</p>
-            </div>
-
-            <div class="profile-section">
-                <p class="section-title">Bağlı Veriler</p>
-                <div class="info-item"><span class="info-label">E-Posta (HASHED):</span> <span class="info-value" id="res-email">...</span></div>
-                <div class="info-item"><span class="info-label">NETWORK IP:</span> <span class="info-value" id="res-ip">...</span></div>
-                <div class="info-item"><span class="info-label">Platforms:</span> <span class="info-value" id="res-apps">...</span></div>
-                <div class="info-item"><span class="info-label">Server IDs:</span> <span class="info-value" id="res-servers" style="color: #ffcc00;">...</span></div>
-            </div>
-            
-            <p style="font-size:11px; color:#555; text-align:center; margin-top:15px; font-family:'Courier New';">[DATA_VERIFIED_BY_LEXUS]</p>
-        </div>
+    <div id="results" class="output-box">
+        <h3 style="color: #fff; border-bottom: 1px solid #8A2BE2; padding-bottom: 5px;">SORGULAMA SONUÇLARI</h3>
+        <div class="data-line"><span class="label">E-POSTA:</span><span class="value" id="res-email"></span></div>
+        <div class="data-line"><span class="label">IP ADRESİ:</span><span class="value" id="res-ip"></span></div>
+        <div class="data-line"><span class="label">UYGULAMALAR:</span><span class="value" id="res-apps"></span></div>
+        <div class="data-line"><span class="label">SUNUCU ID'LERİ:</span><span class="value" id="res-servers"></span></div>
+        <div class="data-line"><span class="label">BİYOGRAFİ:</span><span class="value" id="res-bio"></span></div>
     </div>
-    </div>
+</div>
 
 <script>
-    const USER_KEY = "lexus2026";
-    const ADMIN_KEY = "lexusscxn";
+    const KEY = "lexus2026";
+    const ADMIN = "lexusscxn";
 
     function checkKey() {
         const val = document.getElementById('key').value;
-        if(val === USER_KEY || val === ADMIN_KEY) {
+        if(val === KEY || val === ADMIN) {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('terminal-screen').style.display = 'block';
         } else {
-            alert("ERİŞİM ENGELLENDİ!");
+            alert("HATALI ANAHTAR!");
         }
     }
 
     function addLog(text) {
-        const out = document.getElementById('console-output');
+        const logs = document.getElementById('logs');
         const div = document.createElement('div');
-        div.className = 'log-line';
+        div.className = 'log';
         div.innerText = ">> " + text;
-        out.prepend(div);
+        logs.prepend(div);
     }
 
-    function startVisualSearch() {
+    function startSearch() {
         const query = document.getElementById('target').value;
         if(!query) return;
 
-        const card = document.getElementById('profile-result');
-        card.style.display = 'none';
-        document.getElementById('console-output').innerHTML = "";
+        document.getElementById('results').style.display = 'none';
+        document.getElementById('logs').innerHTML = "";
 
-        addLog("Derin veritabanı sorgusu başlatıldı...");
-        setTimeout(() => addLog("Sessiz modda 30 dosya taranıyor..."), 600);
-        setTimeout(() => addLog("Profil ve biyografi verileri çekiliyor..."), 1300);
-        setTimeout(() => addLog("IP ve Sunucu ID'leri doğrulanıyor..."), 2000);
+        addLog("Sessiz tarama modülü başlatıldı...");
+        setTimeout(() => addLog("Veritabanı dosyaları taranıyor (Gizli Mod)..."), 700);
+        setTimeout(() => addLog("Kayıtlar bulundu, veriler senkronize ediliyor..."), 1500);
 
         setTimeout(() => {
-            addLog("TARAMA TAMAMLANDI. PROFİL OLUŞTURULUYOR...");
+            // E-postayı olduğu gibi alıyoruz (hiçbir decode işlemi yok, ne girildiyse o)
+            document.getElementById('res-email').innerText = query;
+            document.getElementById('res-ip').innerText = "176.232." + Math.floor(Math.random()*255) + "." + Math.floor(Math.random()*255);
+            document.getElementById('res-apps').innerText = "Discord, Instagram, Spotify, Riot Games, Roblox";
+            document.getElementById('res-servers').innerText = "11294827... , 88492011... , 99203155...";
+            document.getElementById('res-bio').innerText = "Lexus Database üzerinde kayıtlı aktif sanalcı profili.";
             
-            // Verileri doldur (E-posta şifreli kalır)
-            document.getElementById('res-user').innerText = query.substring(0, 12).toUpperCase();
-            
-            // Eğer sorgu base64 gibi duruyorsa olduğu gibi e-posta kısmına yaz (decode etme)
-            document.getElementById('res-email').innerText = (query.includes('=') || query.length > 20) ? query : "hashlib_enc_data_4421";
-            
-            document.getElementById('res-bio').innerText = "Bu kullanıcı 'Sanalcı' veritabanında " + query.substring(0, 5) + "... kimliği ile eşleşti. Dikkatli yaklaşın.";
-            document.getElementById('res-ip').innerText = "185.122." + Math.floor(Math.random()*255) + "." + Math.floor(Math.random()*255);
-            document.getElementById('res-apps').innerText = "Discord, Instagram, Spotify, Roblox, Riot Games";
-            document.getElementById('res-servers').innerText = "112948... , 884920... , 992031... (5 Sunucu)";
-            
-            card.style.display = 'block';
-        }, 3000);
+            document.getElementById('results').style.display = 'block';
+            addLog("TARAMA TAMAMLANDI.");
+        }, 2200);
     }
 
-    // Matrix Rain Effect
+    // Matrix
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth; canvas.height = window.innerHeight;
     const chars = "LEXUS01";
     const drops = Array(Math.floor(canvas.width/16)).fill(1);
     function draw() {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = "#8A2BE2";
-        ctx.font = "16px monospace";
         drops.forEach((y, i) => {
             ctx.fillText(chars[Math.floor(Math.random()*chars.length)], i*16, y*16);
             if(y*16 > canvas.height && Math.random() > 0.975) drops[i] = 0;
@@ -190,7 +129,6 @@
         });
     }
     setInterval(draw, 33);
-    window.onresize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
 </script>
 </body>
 </html>
