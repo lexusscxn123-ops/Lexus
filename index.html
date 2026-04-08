@@ -3,176 +3,202 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEXUS IP & DATA INTELLIGENCE v16.0</title>
+    <title>LEXUS INTELLIGENCE v21.0 - DECODER</title>
     <style>
-        :root { --main-purple: #8A2BE2; --bg-dark: #050505; --neon-green: #00ff00; }
-        body { margin: 0; overflow: hidden; background: var(--bg-dark); font-family: 'Courier New', monospace; color: var(--main-purple); }
-        canvas { display: block; position: fixed; top: 0; left: 0; z-index: -1; }
+        :root { --p: #8A2BE2; --bg: #000; --g: #00ff00; }
+        body { margin: 0; overflow: hidden; background: var(--bg); font-family: 'Courier New', monospace; color: var(--p); }
+        canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.3; }
         
-        #login-box {
+        #gate {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.95); padding: 40px; border: 1px solid var(--main-purple);
-            border-radius: 5px; box-shadow: 0 0 30px rgba(138, 43, 226, 0.3); text-align: center; width: 320px;
+            background: rgba(5, 5, 5, 0.98); padding: 40px; border: 2px solid var(--p);
+            box-shadow: 0 0 40px var(--p); text-align: center; width: 350px; border-radius: 12px;
         }
 
-        #main-terminal {
-            display: none; position: absolute; top: 3%; left: 3%; width: 94%; height: 94%;
-            background: rgba(5, 5, 5, 0.98); border: 1px solid var(--main-purple); padding: 30px;
+        #panel {
+            display: none; position: absolute; top: 2%; left: 2%; width: 96%; height: 96%;
+            background: rgba(2, 2, 2, 0.99); border: 1px solid var(--p); padding: 30px;
             box-sizing: border-box; overflow-y: auto; border-radius: 10px;
         }
 
-        .report-card { 
-            margin-top: 25px; display: none; border: 1px solid var(--main-purple); 
-            background: rgba(138, 43, 226, 0.03); padding: 25px; 
-            border-left: 4px solid var(--main-purple); animation: scanEffect 0.6s ease;
+        .m-card { border: 1px solid rgba(138, 43, 226, 0.3); padding: 15px; margin-bottom: 20px; border-radius: 5px; }
+        .m-title { font-size: 11px; font-weight: bold; color: #fff; margin-bottom: 10px; display: block; letter-spacing: 2px; }
+
+        .report { 
+            margin-top: 30px; display: none; border: 1px solid var(--p); 
+            background: rgba(138, 43, 226, 0.04); padding: 25px; 
+            border-left: 10px solid var(--p); animation: slideIn 0.4s ease;
         }
         
-        .section-hdr { color: #fff; font-weight: bold; border-bottom: 2px solid var(--main-purple); padding-bottom: 10px; margin: 20px 0 15px 0; text-transform: uppercase; letter-spacing: 3px; font-size: 15px; }
-        .data-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 12px; font-size: 14px; }
-        .label { color: var(--main-purple); font-weight: 800; opacity: 0.8; }
-        .val { color: var(--neon-green); text-align: right; word-break: break-all; text-shadow: 0 0 5px rgba(0, 255, 0, 0.3); }
+        .hdr { color: #fff; font-weight: bold; border-bottom: 2px solid var(--p); padding-bottom: 8px; margin: 20px 0 10px 0; letter-spacing: 5px; font-size: 14px; }
+        .row { display: flex; justify-content: space-between; margin: 10px 0; border-bottom: 1px solid rgba(138, 43, 226, 0.05); padding-bottom: 5px; }
+        .k { color: var(--p); font-weight: bold; }
+        .v { color: var(--g); font-weight: bold; text-shadow: 0 0 5px var(--g); }
 
-        input, button {
-            width: 100%; padding: 14px; margin: 12px 0; background: #000;
-            border: 1px solid var(--main-purple); color: #fff; outline: none; font-weight: bold;
-        }
-        button { background: var(--main-purple); cursor: pointer; text-transform: uppercase; transition: 0.4s; }
-        button:hover { background: #fff; color: var(--main-purple); box-shadow: 0 0 20px #fff; }
+        input, button { width: 100%; padding: 14px; margin: 8px 0; background: #000; border: 1px solid var(--p); color: #fff; font-weight: bold; outline: none; }
+        button { background: var(--p); cursor: pointer; transition: 0.3s; }
+        button:hover { background: #fff; color: var(--p); box-shadow: 0 0 20px #fff; }
 
-        .status-log { color: #444; font-size: 11px; margin: 4px 0; font-style: italic; }
-        @keyframes scanEffect { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .log { color: #444; font-size: 11px; margin: 2px 0; font-style: italic; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-15px); } to { opacity: 1; transform: translateX(0); } }
     </style>
 </head>
 <body>
 
 <canvas id="matrix"></canvas>
 
-<div id="login-box">
-    <h1 style="letter-spacing: 12px; margin-bottom: 5px;">LEXUS</h1>
-    <p style="font-size: 10px; color: #666; margin-bottom: 25px;">OSINT & IP SCANNER v16.0</p>
-    <input type="password" id="authKey" placeholder="OPERATÖR ŞİFRESİ">
-    <button onclick="unlock()">SİSTEMİ YÜKLE</button>
+<div id="gate">
+    <h1 style="letter-spacing: 15px; margin: 0;">LEXUS</h1>
+    <p style="font-size: 10px; color: #555; margin-bottom: 30px;">ULTIMATE DECODER v21.0</p>
+    <input type="password" id="access" placeholder="OPERATOR KEY">
+    <button onclick="login()">SİSTEMİ YÜKLE</button>
 </div>
 
-<div id="main-terminal">
-    <div style="border-bottom: 3px solid var(--main-purple); padding-bottom: 15px; margin-bottom: 25px;">
-        <h2 style="margin:0; letter-spacing: 5px;">LEXUS INTELLIGENCE SUITE</h2>
-        <p style="font-size: 11px; margin: 5px 0; color: #777;">[OPERATOR: lexusscxn] | [OSINT_MODE: DEEP_IP_DATA_MATCH]</p>
+<div id="panel">
+    <div style="border-bottom: 2px solid var(--p); padding-bottom: 15px; margin-bottom: 25px;">
+        <h2 style="margin:0; letter-spacing: 8px;">LEXUS INTELLIGENCE</h2>
+        <p style="font-size: 11px; color: #666;">[OPERATOR: lexusscxn] | [OSINT_ENGINE: DECODER_ENABLED]</p>
     </div>
 
-    <div style="display: flex; gap: 10px;">
-        <input type="text" id="idTarget" placeholder="Sorgulanacak ID veya IP Girin..." style="flex: 3;">
-        <button onclick="executeDeepScan()" style="flex: 1;">DERİN SORGULA</button>
+    <div class="m-card">
+        <span class="m-title"># MODULE_01: ID_SCAN_DECODER</span>
+        <div style="display: flex; gap: 10px;">
+            <input type="text" id="idIn" placeholder="Discord ID Girin..." style="flex: 3;">
+            <button onclick="runId()" style="flex: 1;">SORGULA</button>
+        </div>
     </div>
 
-    <div id="consoleLogs" style="margin-top: 15px; max-height: 100px; overflow: hidden; border-left: 2px solid #222; padding-left: 10px;"></div>
+    <div class="m-card">
+        <span class="m-title"># MODULE_02: EMAIL_OSINT_QUERY</span>
+        <div style="display: flex; gap: 10px;">
+            <input type="text" id="mailIn" placeholder="E-posta Girin..." style="flex: 3;">
+            <button onclick="runMail()" style="flex: 1;">ÇÖZÜMLE</button>
+        </div>
+    </div>
 
-    <div id="reportBox" class="report-card">
-        <div class="section-hdr">KİMLİK VE DOSYA VERİLERİ</div>
-        <div class="data-grid">
-            <span class="label">HEDEF ID:</span><span class="val" id="r-id"></span>
-            <span class="label">DECODE E-POSTA:</span><span class="val" id="r-email"></span>
-        </div>
+    <div id="console" style="margin-top: 15px; max-height: 80px; overflow: hidden; opacity: 0.5;"></div>
+
+    <div id="res" class="report">
+        <div class="hdr">HEDEF ANALİZ ÇIKTISI (DECODED)</div>
+        <div class="row"><span class="k">Sorgu ID:</span><span class="v" id="o-id"></span></div>
+        <div class="row"><span class="k">E-posta (TEMİZ):</span><span class="v" id="o-mail"></span></div>
         
-        <div class="section-hdr">LEXUS IP SORGULAMA (REAL-TIME)</div>
-        <div class="data-grid">
-            <span class="label">IP ADRESİ:</span><span class="val" id="r-ip"></span>
-            <span class="label">ISP (SAĞLAYICI):</span><span class="val" id="r-isp"></span>
-            <span class="label">LOKASYON:</span><span class="val" id="r-loc"></span>
-            <span class="label">PROXY/VPN:</span><span class="val" style="color:red;">NEGATİF</span>
-        </div>
+        <div class="hdr">AĞ VE LOKASYON ANALİZİ</div>
+        <div class="row"><span class="k">IP Adresi:</span><span class="v" id="o-ip"></span></div>
+        <div class="row"><span class="k">ISS:</span><span class="v" id="o-isp"></span></div>
+        <div class="row"><span class="k">Lokasyon:</span><span class="v" id="o-loc"></span></div>
         
-        <div class="section-hdr">SUNUCU VE SOSYAL KAYITLAR</div>
-        <div class="data-grid">
-            <span class="label">AKTİF SUNUCULAR:</span><span class="val">112948... , 992031... (5 Toplam)</span>
-            <span class="label">ETİKET:</span><span class="val">Lexus Database 'Aktif Sanalci'</span>
-            <span class="label">DURUM:</span><span class="val" style="color:var(--neon-green)">DOĞRULANDI [OK]</span>
-        </div>
+        <div class="hdr">DURUM ANALİZİ</div>
+        <div class="row"><span class="k">Veri Kaynağı:</span><span class="v" style="color:#fff">Lexus Cloud DB</span></div>
+        <div class="row"><span class="k">Status:</span><span class="v" style="color:var(--g)">DECODED [OK]</span></div>
     </div>
 </div>
 
 <script>
-    const P_ACCESS = "lexusscxn";
+    const S_KEY = "lexusscxn";
 
-    // --- DOSYA VERİTABANI (ID'YE AİT BİLGİLER BURADAN GELİR) ---
-    const fileDatabase = {
+    // --- VERİTABANI (ENCODED VERİLER) ---
+    // Veriler burada base64 veya hex olarak saklanır, sistem sorguda çözer.
+    const database = {
         "1338919878265933948": {
-            email: "hedef_user@protonmail.com", // Senin mailin değil, o ID'ye ait olan gelecek
+            e: "aGlkYXlldF9vekBvdXRsb29rLmNvbQ==", // Decoded: hidayet_oz@outlook.com
             ip: "176.232.146.180",
-            isp: "Turk Telekom (AS9121)",
-            loc: "41.0082° N, 28.9784° E"
+            isp: "Turk Telekom",
+            loc: "Istanbul, TR"
         },
         "81637282638283637": {
-            email: "sanalci_target@gmail.com",
-            ip: "188.132.163.199",
-            isp: "Superonline (AS34984)",
-            loc: "39.9334° N, 32.8597° E"
+            e: "dGFyZ2V0X3NhbmFsY2lAcHJvdG9uLm1l", // Decoded: target_sanalci@proton.me
+            ip: "185.122.33.44",
+            isp: "Superonline",
+            loc: "Ankara, TR"
         }
     };
 
-    function unlock() {
-        if(document.getElementById('authKey').value === P_ACCESS) {
-            document.getElementById('login-box').style.display = 'none';
-            document.getElementById('main-terminal').style.display = 'block';
+    function login() {
+        if(document.getElementById('access').value === S_KEY) {
+            document.getElementById('gate').style.display = 'none';
+            document.getElementById('panel').style.display = 'block';
         } else { alert("ACCESS DENIED!"); }
     }
 
-    function pushLog(txt) {
-        const c = document.getElementById('consoleLogs');
+    function addLog(m) {
+        const c = document.getElementById('console');
         const p = document.createElement('p');
-        p.className = 'status-log';
-        p.innerText = ">> " + txt;
+        p.className = 'log';
+        p.innerText = ">> " + m;
         c.prepend(p);
     }
 
-    function executeDeepScan() {
-        const input = document.getElementById('idTarget').value.trim();
-        if(!input) return;
-
-        document.getElementById('reportBox').style.display = 'none';
-        document.getElementById('consoleLogs').innerHTML = "";
-
-        pushLog("Lexus Çekirdek modülü aktif edildi...");
-        setTimeout(() => pushLog("30 Farklı Veritabanı (SQL/JSON) sessizce taranıyor..."), 600);
-        setTimeout(() => pushLog("IP Sorgulama motoru başlatılıyor..."), 1200);
-        setTimeout(() => pushLog("ID eşleşmesi doğrulanıyor..."), 1800);
-
-        setTimeout(() => {
-            if (fileDatabase[input]) {
-                const data = fileDatabase[input];
-                document.getElementById('r-id').innerText = input;
-                document.getElementById('r-email').innerText = data.email;
-                document.getElementById('r-ip').innerText = data.ip;
-                document.getElementById('r-isp').innerText = data.isp;
-                document.getElementById('r-loc').innerText = data.loc;
-                
-                document.getElementById('reportBox').style.display = 'block';
-                pushLog("TARAMA TAMAMLANDI: Eksiksiz veri raporu hazırlandı.");
-            } else {
-                pushLog("HATA: Kayıt bulunamadı. Veritabanında bu ID mevcut değil.");
-                alert("Bu ID'ye ait herhangi bir dosya kaydı bulunamadı.");
-            }
-        }, 2500);
+    // Gerçek Decode Fonksiyonu
+    function decodeData(str) {
+        try { return atob(str); } catch(e) { return str; }
     }
 
-    // Matrix Rain Effect
+    function runId() {
+        const val = document.getElementById('idIn').value.trim();
+        if(!val) return;
+        reset();
+        addLog("ID dosyaları taranıyor...");
+        
+        setTimeout(() => {
+            if(database[val]) {
+                const d = database[val];
+                show(val, decodeData(d.e), d.ip, d.isp, d.loc);
+                addLog("Veri bulundu. E-posta decode edildi.");
+            } else { alert("Veritabanı kaydı yok."); addLog("HATA: Eşleşme yok."); }
+        }, 1500);
+    }
+
+    function runMail() {
+        const val = document.getElementById('mailIn').value.trim();
+        if(!val) return;
+        reset();
+        addLog("E-posta OSINT motoru başlatıldı...");
+
+        setTimeout(() => {
+            let found = null;
+            for(let key in database) {
+                if(decodeData(database[key].e) === val) found = {id: key, ...database[key]};
+            }
+
+            if(found) {
+                show(found.id, val, found.ip, found.isp, found.loc);
+                addLog("E-posta eşleşmesi doğrulandı.");
+            } else { alert("Bu e-posta kayıtlı değil."); addLog("HATA: Kayıt yok."); }
+        }, 1500);
+    }
+
+    function show(id, mail, ip, isp, loc) {
+        document.getElementById('o-id').innerText = id;
+        document.getElementById('o-mail').innerText = mail;
+        document.getElementById('o-ip').innerText = ip;
+        document.getElementById('o-isp').innerText = isp;
+        document.getElementById('o-loc').innerText = loc;
+        document.getElementById('res').style.display = 'block';
+    }
+
+    function reset() {
+        document.getElementById('res').style.display = 'none';
+        document.getElementById('console').innerHTML = "";
+    }
+
+    // Matrix
     const canvas = document.getElementById('matrix');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth; canvas.height = window.innerHeight;
     const chars = "LEXUS01X";
-    const drops = Array(Math.floor(canvas.width/18)).fill(1);
-    function drawMatrix() {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const drops = Array(Math.floor(canvas.width/20)).fill(1);
+    function draw() {
+        ctx.fillStyle = "rgba(0,0,0,0.1)";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
         ctx.fillStyle = "#8A2BE2";
-        ctx.font = "15px monospace";
         drops.forEach((y, i) => {
-            ctx.fillText(chars[Math.floor(Math.random()*chars.length)], i*18, y*18);
-            if(y*18 > canvas.height && Math.random() > 0.98) drops[i] = 0;
+            ctx.fillText(chars[Math.floor(Math.random()*chars.length)], i*20, y*20);
+            if(y*20 > canvas.height && Math.random() > 0.98) drops[i] = 0;
             drops[i]++;
         });
     }
-    setInterval(drawMatrix, 35);
+    setInterval(draw, 35);
 </script>
 </body>
 </html>
