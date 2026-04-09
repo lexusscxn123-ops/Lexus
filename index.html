@@ -3,160 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEXUS v26.0 - LOADED</title>
+    <title>TERMINAL_BY_LEXUS</title>
     <style>
-        :root { --g: #00ff41; --bg: #050505; }
-        body { margin: 0; background: var(--bg); color: var(--g); font-family: 'Courier New', monospace; overflow: hidden; }
-        canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.5; }
-
-        #gate, #panel {
-            background: rgba(0, 0, 0, 0.92); backdrop-filter: blur(10px);
-            border: 1px solid var(--g); border-radius: 12px;
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            padding: 30px; width: 95%; max-width: 480px; box-sizing: border-box;
-            box-shadow: 0 0 25px rgba(0, 255, 65, 0.15);
+        body {
+            background-color: #000;
+            color: #1aff1a;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            text-shadow: 0 0 5px #1aff1a;
         }
 
-        #panel { display: none; height: 88vh; overflow-y: auto; }
+        /* Scanline Efekti */
+        body::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 10;
+            background-size: 100% 3px, 3px 100%;
+            pointer-events: none;
+        }
 
-        .header-info { display: flex; justify-content: space-between; font-size: 11px; border-bottom: 1px solid var(--g); padding-bottom: 10px; margin-bottom: 20px; color: #fff; }
-        
-        input { width: 100%; padding: 14px; background: #000; border: 1px solid var(--g); color: var(--g); margin: 10px 0; border-radius: 6px; outline: none; box-sizing: border-box; }
-        button { width: 100%; padding: 14px; background: var(--g); color: #000; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; border-radius: 6px; transition: 0.3s; }
-        button:hover { background: #fff; box-shadow: 0 0 15px #fff; }
+        #terminal { width: 85%; max-width: 800px; z-index: 5; }
+        .cursor { display: inline-block; width: 10px; background-color: #1aff1a; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
 
-        .report { margin-top: 25px; border: 1px solid var(--g); padding: 20px; border-radius: 8px; display: none; background: rgba(0, 255, 65, 0.03); animation: fadeIn 0.4s ease; }
-        .row { display: flex; justify-content: space-between; margin: 10px 0; border-bottom: 1px solid rgba(0, 255, 65, 0.08); padding-bottom: 6px; font-size: 14px; }
-        .label { color: #888; text-transform: uppercase; font-size: 11px; }
-        .val { color: #fff; font-weight: bold; text-align: right; word-break: break-all; margin-left: 15px; }
+        input {
+            background: transparent;
+            border: none;
+            color: #1aff1a;
+            font-family: inherit;
+            font-size: 1.1rem;
+            outline: none;
+            width: 200px; /* Şifre için genişletildi */
+        }
 
-        .log-box { font-size: 10px; color: #444; margin-top: 15px; border-top: 1px solid #111; padding-top: 10px; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .system-msg { color: #ff0000; font-weight: bold; }
+        .getir-msg { color: #ffffff; margin: 8px 0; }
+        .admin-text { color: #ff00ff; text-transform: uppercase; font-weight: bold; }
+
+        /* Sağ Üst Admin Paneli */
+        #admin-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 300px;
+            height: 200px;
+            border: 1px solid #ff00ff;
+            background: rgba(20, 0, 20, 0.9);
+            padding: 10px;
+            font-size: 0.7rem;
+            color: #ff00ff;
+            display: none;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
+        }
+
+        .glitch { animation: shake 0.2s infinite; background-color: #200 !important; }
+        @keyframes shake {
+            0% { transform: translate(1px, 1px); }
+            50% { transform: translate(-2px, 2px); }
+            100% { transform: translate(1px, -1px); }
+        }
     </style>
 </head>
 <body>
 
-<canvas id="matrix"></canvas>
-
-<div id="gate">
-    <h1 style="text-align:center; letter-spacing: 12px; margin: 0;">LEXUS</h1>
-    <p style="text-align: center; font-size: 10px; margin-top: 5px; color: #555;">DATABASE SYSTEM v26.0</p>
-    <div class="header-info" style="margin-top: 20px;"><span>[LOCKED]</span> <span id="gate-clock"></span></div>
-    <input type="password" id="pass" placeholder="ACCESS KEY">
-    <button onclick="unlock()">SİSTEME GİRİŞ YAP</button>
+<div id="admin-panel">
+    <div style="border-bottom: 1px solid #ff00ff; margin-bottom: 5px;">[SECRET_VAULT_LOGS]</div>
+    <div id="log-content"></div>
 </div>
 
-<div id="panel">
-    <div class="header-info">
-        <span>OP: lexusscxn</span>
-        <span id="live-clock"></span>
-    </div>
-
-    <div style="text-align: center; margin-bottom: 25px;">
-        <h3 style="margin:0; letter-spacing: 4px;">PRE-LOADED INTELLIGENCE</h3>
-        <small style="color:var(--g);">SORGULANAN VERİLER HAFIZADAN ÇEKİLİR</small>
-    </div>
-
-    <input type="text" id="queryIn" placeholder="Discord ID, Mail veya IP girin...">
-    <button onclick="deepScan()">HAFIZAYI TARA</button>
-
-    <div id="logs" class="log-box">>> Bekleniyor...</div>
-
-    <div id="report" class="report">
-        <div style="border-bottom: 1px solid var(--g); margin-bottom: 15px; font-weight: bold; color: var(--g);">[!] DATA FOUND</div>
-        <div id="res-list"></div>
-        <div style="margin-top: 15px; font-size: 10px; color: #555; text-align: center;">* Veriler Lexus Local DB üzerinden %100 doğrulandı.</div>
+<div id="terminal">
+    <div id="output"></div>
+    <div id="input-line">
+        <span id="prompt"></span>
+        <input type="text" id="userInput" autofocus>
+        <span class="cursor">&nbsp;</span>
     </div>
 </div>
 
 <script>
-    const KEY = "lexusscxn";
+    const output = document.getElementById('output');
+    const userInput = document.getElementById('userInput');
+    const promptSpan = document.getElementById('prompt');
+    const adminPanel = document.getElementById('admin-panel');
+    const logContent = document.getElementById('log-content');
 
-    // --- BURASI HAFIZA (DATABASE) ---
-    // İstediğin kadar veriyi buraya ekle, kodun içinde "Yüklü" kalacaktır.
-    const preLoadedData = [
-        {
-            id: "1338919878265933948",
-            eposta: "hidayet_oz@outlook.com",
-            ip: "176.232.146.180",
-            sunucular: "133241, 998231, 887211",
-            iss: "Turk Telekom",
-            lokasyon: "Istanbul, TR"
-        },
-        {
-            id: "81637282638283637",
-            eposta: "target_sanalci@proton.me",
-            ip: "185.122.44.55",
-            sunucular: "776112, 554221, 100293",
-            iss: "Superonline",
-            lokasyon: "Ankara, TR"
-        }
-        // Buraya yeni verileri aynı formatta ekleyebilirsin.
+    const lines = [
+        "[SYSTEM] LEXUS_CORE_V41 BAĞLANDI...",
+        "Dünyayı değiştirmek için hazır mısın?",
+        "--------------------------------------------------",
+        "ELLIOT SORUYOR: Bir sistem kölesi misin (0),",
+        "Yoksa dünyayı değiştirenlerden mi (1)?"
     ];
 
-    function unlock() {
-        if(document.getElementById('pass').value === KEY) {
-            document.getElementById('gate').style.display = 'none';
-            document.getElementById('panel').style.display = 'block';
-        } else { alert("ŞİFRE HATALI!"); }
-    }
-
-    function updateClock() {
-        const t = new Date().toLocaleTimeString();
-        if(document.getElementById('live-clock')) document.getElementById('live-clock').innerText = t;
-        if(document.getElementById('gate-clock')) document.getElementById('gate-clock').innerText = t;
-    }
-    setInterval(updateClock, 1000);
-
-    function deepScan() {
-        const query = document.getElementById('queryIn').value.trim().toLowerCase();
-        const report = document.getElementById('report');
-        const logs = document.getElementById('logs');
-        
-        if(!query) return;
-        report.style.display = 'none';
-        logs.innerText = ">> Veritabanı blokları taranıyor...";
-
-        setTimeout(() => {
-            // Akıllı Arama: Herhangi bir alanla eşleşirse getirir
-            const match = preLoadedData.find(item => 
-                Object.values(item).some(val => String(val).toLowerCase() === query)
-            );
-
-            if(match) {
-                let html = "";
-                for(let k in match) {
-                    html += `<div class="row"><span class="label">${k}:</span><span class="val">${match[k]}</span></div>`;
-                }
-                document.getElementById('res-list').innerHTML = html;
-                report.style.display = 'block';
-                logs.innerText = ">> Eşleşme sağlandı. Veri döküldü.";
-            } else {
-                logs.innerText = ">> HATA: Veritabanında kayıtlı değil.";
-                alert("Bu bilgiye dair yüklü bir veri bulunamadı.");
+    let i = 0;
+    function typeWriter() {
+        if (i < lines.length) {
+            let p = document.createElement('p');
+            p.className = i === 0 ? 'system-msg' : 'getir-msg';
+            output.appendChild(p);
+            let charIndex = 0;
+            let text = lines[i];
+            function typeChar() {
+                if (charIndex < text.length) {
+                    p.innerHTML += text.charAt(charIndex);
+                    charIndex++;
+                    setTimeout(typeChar, 25);
+                } else { i++; setTimeout(typeWriter, 400); }
             }
-        }, 1000);
+            typeChar();
+        } else { promptSpan.innerHTML = "Giriş yap > "; }
     }
 
-    // Matrix Rain
-    const canvas = document.getElementById('matrix');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-    const chars = "01LEXUS";
-    const fontSize = 15;
-    const drops = Array(Math.floor(canvas.width/fontSize)).fill(1);
-    function draw() {
-        ctx.fillStyle = "rgba(0,0,0,0.05)";
-        ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.fillStyle = "#00ff41";
-        ctx.font = fontSize + "px monospace";
-        drops.forEach((y, i) => {
-            ctx.fillText(chars[Math.floor(Math.random()*chars.length)], i*fontSize, y*fontSize);
-            if(y*fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-            drops[i]++;
-        });
+    async function getIpData() {
+        try {
+            const res = await fetch('https://ipapi.co/json/');
+            return await res.json();
+        } catch { return { ip: "Gizli", city: "Bilinmiyor" }; }
     }
-    setInterval(draw, 35);
+
+    userInput.addEventListener('keydown', async (e) => {
+        if (e.key === 'Enter') {
+            const val = userInput.value.trim();
+            const ipInfo = await getIpData();
+
+            // 1. ADMIN ŞİFRESİ KONTROLÜ
+            if (val === 'lexuscxnnn113') {
+                adminPanel.style.display = "block";
+                output.innerHTML += `<p class="admin-text">[YETKİ VERİLDİ] Hoş geldin Admin Lexus. Panel aktif.</p>`;
+                logContent.innerHTML += `<div>[${new Date().toLocaleTimeString()}] ADMIN_LOGIN: Başarılı.</div>`;
+            } 
+            // 2. KÖLE SEÇİMİ (0)
+            else if (val === '0') {
+                document.body.classList.add('glitch');
+                userInput.disabled = true;
+                output.innerHTML += `<p class="system-msg">[TESPİT] Köle ruhlu tespit edildi ip çekiliyor...</p>`;
+                
+                // Bilgileri admin paneline gizlice gönder
+                logContent.innerHTML += `<div style="color:red;">[!] İHLAL: ${ipInfo.ip} | ${ipInfo.city}</div>`;
+                
+                setTimeout(() => {
+                    document.body.classList.remove('glitch');
+                    output.innerHTML += `<p style="color:gray;">> Sistem resetlendi. Tekrar dene.</p>`;
+                    userInput.disabled = false;
+                    userInput.focus();
+                }, 2500);
+            }
+            // 3. DÜNYAYI DEĞİŞTİRENLER (1)
+            else if (val === '1') {
+                output.innerHTML += `<p style="color:cyan;">[ONAY] Devrim başlıyor. Bizi bekle.</p>`;
+            } 
+            else {
+                output.innerHTML += `<p style="color:#444;">[?] Komut anlaşılamadı.</p>`;
+            }
+            userInput.value = "";
+        }
+    });
+
+    window.onload = typeWriter;
 </script>
+
 </body>
 </html>
