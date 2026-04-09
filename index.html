@@ -3,176 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEXUS OSINT v23.0 - MATRIX EDITION</title>
+    <title>LEXUS v26.0 - LOADED</title>
     <style>
-        :root { --g: #00ff41; --bg: #050505; --p: #8A2BE2; }
+        :root { --g: #00ff41; --bg: #050505; }
         body { margin: 0; background: var(--bg); color: var(--g); font-family: 'Courier New', monospace; overflow: hidden; }
-        
-        /* Matrix Arkaplan */
-        canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.6; }
+        canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.5; }
 
-        /* Cam Efekti Panel */
-        #login-box, #main-panel {
-            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px);
-            border: 1px solid var(--g); border-radius: 15px;
-            box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+        #gate, #panel {
+            background: rgba(0, 0, 0, 0.92); backdrop-filter: blur(10px);
+            border: 1px solid var(--g); border-radius: 12px;
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            padding: 30px; width: 90%; max-width: 500px; box-sizing: border-box;
+            padding: 30px; width: 95%; max-width: 480px; box-sizing: border-box;
+            box-shadow: 0 0 25px rgba(0, 255, 65, 0.15);
         }
 
-        #main-panel { display: none; height: 85vh; overflow-y: auto; transform: translate(-50%, -50%); top: 50%; }
+        #panel { display: none; height: 88vh; overflow-y: auto; }
 
-        /* Üst Bilgi Çubuğu */
-        .status-bar { display: flex; justify-content: space-between; font-size: 12px; border-bottom: 1px solid var(--g); padding-bottom: 10px; margin-bottom: 20px; color: #fff; }
-
-        /* Input & Button Styles */
-        input { width: 100%; padding: 12px; background: #000; border: 1px solid var(--g); color: var(--g); border-radius: 5px; margin: 10px 0; outline: none; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: var(--g); color: #000; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; margin-top: 5px; border-radius: 5px; }
+        .header-info { display: flex; justify-content: space-between; font-size: 11px; border-bottom: 1px solid var(--g); padding-bottom: 10px; margin-bottom: 20px; color: #fff; }
+        
+        input { width: 100%; padding: 14px; background: #000; border: 1px solid var(--g); color: var(--g); margin: 10px 0; border-radius: 6px; outline: none; box-sizing: border-box; }
+        button { width: 100%; padding: 14px; background: var(--g); color: #000; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; border-radius: 6px; transition: 0.3s; }
         button:hover { background: #fff; box-shadow: 0 0 15px #fff; }
 
-        /* Rapor Alanı */
-        .report-card { margin-top: 20px; border: 1px solid var(--g); padding: 15px; border-radius: 8px; display: none; background: rgba(0, 255, 65, 0.05); }
-        .data-row { display: flex; justify-content: space-between; margin: 8px 0; border-bottom: 1px solid rgba(0, 255, 65, 0.1); padding-bottom: 4px; font-size: 13px; }
-        .label { color: #888; text-transform: uppercase; }
-        .val { color: #fff; font-weight: bold; word-break: break-all; text-align: right; margin-left: 10px; }
+        .report { margin-top: 25px; border: 1px solid var(--g); padding: 20px; border-radius: 8px; display: none; background: rgba(0, 255, 65, 0.03); animation: fadeIn 0.4s ease; }
+        .row { display: flex; justify-content: space-between; margin: 10px 0; border-bottom: 1px solid rgba(0, 255, 65, 0.08); padding-bottom: 6px; font-size: 14px; }
+        .label { color: #888; text-transform: uppercase; font-size: 11px; }
+        .val { color: #fff; font-weight: bold; text-align: right; word-break: break-all; margin-left: 15px; }
 
-        .log { font-size: 10px; color: #555; margin-top: 10px; height: 40px; overflow: hidden; }
+        .log-box { font-size: 10px; color: #444; margin-top: 15px; border-top: 1px solid #111; padding-top: 10px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <canvas id="matrix"></canvas>
 
-<div id="login-box">
-    <h1 style="text-align:center; letter-spacing: 10px;">LEXUS</h1>
-    <div class="status-bar"><span>SYSTEM: LOCKED</span> <span id="clock-login"></span></div>
+<div id="gate">
+    <h1 style="text-align:center; letter-spacing: 12px; margin: 0;">LEXUS</h1>
+    <p style="text-align: center; font-size: 10px; margin-top: 5px; color: #555;">DATABASE SYSTEM v26.0</p>
+    <div class="header-info" style="margin-top: 20px;"><span>[LOCKED]</span> <span id="gate-clock"></span></div>
     <input type="password" id="pass" placeholder="ACCESS KEY">
-    <button onclick="login()">Giriş Yap</button>
+    <button onclick="unlock()">SİSTEME GİRİŞ YAP</button>
 </div>
 
-<div id="main-panel">
-    <div class="status-bar">
-        <span>OPERATOR: lexusscxn</span>
+<div id="panel">
+    <div class="header-info">
+        <span>OP: lexusscxn</span>
         <span id="live-clock"></span>
     </div>
 
-    <div style="text-align: center; margin-bottom: 20px;">
-        <h2 style="margin:0; letter-spacing: 5px;">INTELLIGENCE v23.0</h2>
-        <small style="color:#fff;">DATABASE: ONLINE | DATA_COUNT: 2</small>
+    <div style="text-align: center; margin-bottom: 25px;">
+        <h3 style="margin:0; letter-spacing: 4px;">PRE-LOADED INTELLIGENCE</h3>
+        <small style="color:var(--g);">SORGULANAN VERİLER HAFIZADAN ÇEKİLİR</small>
     </div>
 
-    <input type="text" id="targetId" placeholder="Sorgulanacak Discord ID...">
-    <button onclick="executeScan()">Veritabanını Tara</button>
+    <input type="text" id="queryIn" placeholder="Discord ID, Mail veya IP girin...">
+    <button onclick="deepScan()">HAFIZAYI TARA</button>
 
-    <div id="logs" class="log"></div>
+    <div id="logs" class="log-box">>> Bekleniyor...</div>
 
-    <div id="report" class="report-card">
-        <div style="border-bottom: 1px solid var(--g); margin-bottom: 10px; font-weight: bold;">[!] SORGULAMA SONUCU</div>
-        <div class="data-row"><span class="label">Hedef ID:</span><span class="val" id="r-id"></span></div>
-        <div class="data-row"><span class="label">E-Posta:</span><span class="val" id="r-mail"></span></div>
-        <div class="data-row"><span class="label">IP Adresi:</span><span class="val" id="r-ip"></span></div>
-        <div class="data-row"><span class="label">Sunucu IDleri:</span><span class="val" id="r-servers"></span></div>
-        <div class="data-row"><span class="label">Konum:</span><span class="val" id="r-loc"></span></div>
-        <div class="data-row"><span class="label">ISS:</span><span class="val" id="r-isp"></span></div>
-        <div style="margin-top: 10px; font-size: 10px; color: var(--g);">* Veritabanı dosyasından %100 eşleşme sağlandı.</div>
+    <div id="report" class="report">
+        <div style="border-bottom: 1px solid var(--g); margin-bottom: 15px; font-weight: bold; color: var(--g);">[!] DATA FOUND</div>
+        <div id="res-list"></div>
+        <div style="margin-top: 15px; font-size: 10px; color: #555; text-align: center;">* Veriler Lexus Local DB üzerinden %100 doğrulandı.</div>
     </div>
 </div>
 
 <script>
-    // --- SİSTEM AYARLARI ---
-    const AUTH = "lexusscxn";
+    const KEY = "lexusscxn";
 
-    // --- DOSYA VERİTABANI (Ekleme Yok, Ne Varsa O) ---
-    // Buraya verileri ekledikçe site hafızasında saklanır.
-    const database = {
-        "1338919878265933948": {
-            email: "hidayet_oz@outlook.com",
+    // --- BURASI HAFIZA (DATABASE) ---
+    // İstediğin kadar veriyi buraya ekle, kodun içinde "Yüklü" kalacaktır.
+    const preLoadedData = [
+        {
+            id: "1338919878265933948",
+            eposta: "hidayet_oz@outlook.com",
             ip: "176.232.146.180",
-            servers: "133241, 998231, 887211",
-            loc: "Istanbul, TR",
-            isp: "Turk Telekom"
+            sunucular: "133241, 998231, 887211",
+            iss: "Turk Telekom",
+            lokasyon: "Istanbul, TR"
         },
-        "81637282638283637": {
-            email: "target_user@proton.me",
-            ip: "185.122.33.44",
-            servers: "776112, 554221",
-            loc: "Ankara, TR",
-            isp: "Superonline"
+        {
+            id: "81637282638283637",
+            eposta: "target_sanalci@proton.me",
+            ip: "185.122.44.55",
+            sunucular: "776112, 554221, 100293",
+            iss: "Superonline",
+            lokasyon: "Ankara, TR"
         }
-    };
+        // Buraya yeni verileri aynı formatta ekleyebilirsin.
+    ];
 
-    // Canlı Saat Fonksiyonu
+    function unlock() {
+        if(document.getElementById('pass').value === KEY) {
+            document.getElementById('gate').style.display = 'none';
+            document.getElementById('panel').style.display = 'block';
+        } else { alert("ŞİFRE HATALI!"); }
+    }
+
     function updateClock() {
-        const now = new Date();
-        const timeStr = now.getHours().toString().padStart(2, '0') + ":" + 
-                        now.getMinutes().toString().padStart(2, '0') + ":" + 
-                        now.getSeconds().toString().padStart(2, '0');
-        if(document.getElementById('live-clock')) document.getElementById('live-clock').innerText = timeStr;
-        if(document.getElementById('clock-login')) document.getElementById('clock-login').innerText = timeStr;
+        const t = new Date().toLocaleTimeString();
+        if(document.getElementById('live-clock')) document.getElementById('live-clock').innerText = t;
+        if(document.getElementById('gate-clock')) document.getElementById('gate-clock').innerText = t;
     }
     setInterval(updateClock, 1000);
 
-    function login() {
-        if(document.getElementById('pass').value === AUTH) {
-            document.getElementById('login-box').style.display = 'none';
-            document.getElementById('main-panel').style.display = 'block';
-        } else { alert("ACCESS DENIED!"); }
-    }
-
-    function addLog(m) {
-        const l = document.getElementById('logs');
-        l.innerHTML = ">> " + m + "<br>" + l.innerHTML;
-    }
-
-    function executeScan() {
-        const id = document.getElementById('targetId').value.trim();
-        if(!id) return;
-
-        document.getElementById('report').style.display = 'none';
-        addLog("Sistem hafızası okunuyor...");
+    function deepScan() {
+        const query = document.getElementById('queryIn').value.trim().toLowerCase();
+        const report = document.getElementById('report');
+        const logs = document.getElementById('logs');
         
+        if(!query) return;
+        report.style.display = 'none';
+        logs.innerText = ">> Veritabanı blokları taranıyor...";
+
         setTimeout(() => {
-            if(database[id]) {
-                const d = database[id];
-                document.getElementById('r-id').innerText = id;
-                document.getElementById('r-mail').innerText = d.email;
-                document.getElementById('r-ip').innerText = d.ip;
-                document.getElementById('r-servers').innerText = d.servers;
-                document.getElementById('r-loc').innerText = d.loc;
-                document.getElementById('r-isp').innerText = d.isp;
-                
-                document.getElementById('report').style.display = 'block';
-                addLog("ID: " + id + " için veriler başarıyla çekildi.");
+            // Akıllı Arama: Herhangi bir alanla eşleşirse getirir
+            const match = preLoadedData.find(item => 
+                Object.values(item).some(val => String(val).toLowerCase() === query)
+            );
+
+            if(match) {
+                let html = "";
+                for(let k in match) {
+                    html += `<div class="row"><span class="label">${k}:</span><span class="val">${match[k]}</span></div>`;
+                }
+                document.getElementById('res-list').innerHTML = html;
+                report.style.display = 'block';
+                logs.innerText = ">> Eşleşme sağlandı. Veri döküldü.";
             } else {
-                addLog("HATA: Bu ID'ye ait bir dosya kaydı bulunamadı.");
-                alert("Veritabanında bu ID mevcut değil.");
+                logs.innerText = ">> HATA: Veritabanında kayıtlı değil.";
+                alert("Bu bilgiye dair yüklü bir veri bulunamadı.");
             }
-        }, 1200);
+        }, 1000);
     }
 
-    // Matrix Efekti
+    // Matrix Rain
     const canvas = document.getElementById('matrix');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-    const chars = "01010101LEXUS";
-    const fontSize = 16;
-    const columns = canvas.width / fontSize;
-    const drops = Array(Math.floor(columns)).fill(1);
-
-    function drawMatrix() {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const chars = "01LEXUS";
+    const fontSize = 15;
+    const drops = Array(Math.floor(canvas.width/fontSize)).fill(1);
+    function draw() {
+        ctx.fillStyle = "rgba(0,0,0,0.05)";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
         ctx.fillStyle = "#00ff41";
         ctx.font = fontSize + "px monospace";
-
-        for (let i = 0; i < drops.length; i++) {
-            const text = chars.charAt(Math.floor(Math.random() * chars.length));
-            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops.forEach((y, i) => {
+            ctx.fillText(chars[Math.floor(Math.random()*chars.length)], i*fontSize, y*fontSize);
+            if(y*fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
             drops[i]++;
-        }
+        });
     }
-    setInterval(drawMatrix, 35);
+    setInterval(draw, 35);
 </script>
 </body>
 </html>
