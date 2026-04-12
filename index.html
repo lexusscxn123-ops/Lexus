@@ -2,110 +2,100 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEXUS // 2018-2026</title>
+    <title>LEXUS // CORE</title>
     <style>
-        :root { --g: #00ff41; --d: #000; }
-        body { margin: 0; background: var(--d); color: #fff; font-family: 'Courier New', monospace; scroll-behavior: smooth; overflow-x: hidden; }
-        
-        /* Giriş Paneli */
-        #entry-gate {
+        :root { --main: #fff; --accent: #555; }
+        body { margin: 0; background: #000; color: var(--main); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+
+        /* Arka plandaki derinlik hissi */
+        .bg-gradient {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 999; display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-        }
-        #entry-gate h2 { letter-spacing: 15px; color: var(--g); margin-bottom: 30px; }
-        .gate-btn {
-            padding: 15px 50px; border: 1px solid var(--g); color: var(--g);
-            background: transparent; cursor: pointer; font-weight: bold; transition: 0.5s;
-        }
-        .gate-btn:hover { background: var(--g); color: #000; box-shadow: 0 0 40px var(--g); }
-
-        /* Zaman Çizelgesi */
-        .chronicle { position: relative; max-width: 900px; margin: 100px auto; padding: 40px 0; }
-        .chronicle::before {
-            content: ''; position: absolute; width: 2px; background: linear-gradient(to bottom, transparent, var(--g), transparent);
-            top: 0; bottom: 0; left: 50%; margin-left: -1px;
+            background: radial-gradient(circle at 50% 50%, #111 0%, #000 100%);
+            z-index: -1;
         }
 
-        .milestone { padding: 20px 40px; position: relative; width: 50%; box-sizing: border-box; }
-        .milestone::after {
-            content: ''; position: absolute; width: 10px; height: 10px; background: var(--g);
-            border-radius: 50%; top: 30px; right: -5px; z-index: 1; box-shadow: 0 0 10px var(--g);
-        }
-        .right::after { left: -5px; }
+        .wrapper { max-width: 900px; margin: 100px auto; padding: 0 40px; }
 
-        .left { left: 0; text-align: right; }
-        .right { left: 50%; text-align: left; }
+        /* Üst Kısım: Kimlik */
+        .identity { border-left: 1px solid var(--accent); padding-left: 30px; margin-bottom: 80px; }
+        .identity h1 { font-size: 70px; letter-spacing: -2px; margin: 0; font-weight: 900; }
+        .identity p { font-size: 14px; letter-spacing: 10px; color: var(--accent); text-transform: uppercase; margin-top: 10px; }
 
-        .card { padding: 20px; border: 1px solid #111; background: rgba(5,5,5,0.9); transition: 0.5s; }
-        .card:hover { border-color: var(--g); transform: translateY(-5px); }
-        .card h3 { color: var(--g); margin: 0; font-size: 24px; }
-        .card p { color: #666; font-size: 13px; line-height: 1.6; }
+        /* Hakkında/Özet Kısmı */
+        .bio { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; margin-bottom: 100px; }
+        .bio-box h3 { font-size: 11px; color: var(--accent); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px; }
+        .bio-box p { font-size: 15px; line-height: 1.8; color: #888; margin: 0; }
 
-        /* Sosyal Butonlar */
-        .footer-links { text-align: center; padding: 100px 0; }
-        .footer-links a { 
-            color: #fff; text-decoration: none; margin: 0 20px; font-size: 14px; 
-            border-bottom: 1px solid #333; padding-bottom: 5px; transition: 0.3s;
-        }
-        .footer-links a:hover { color: var(--g); border-color: var(--g); }
+        /* Projeler ve Uzmanlık */
+        .skills { margin-bottom: 100px; }
+        .skill-item { display: flex; justify-content: space-between; border-bottom: 1px solid #111; padding: 20px 0; transition: 0.3s; }
+        .skill-item:hover { border-color: var(--main); }
+        .skill-name { font-size: 18px; font-weight: 500; }
+        .skill-val { color: var(--accent); font-size: 13px; }
 
-        #yt-audio { position: absolute; top: -999px; }
+        /* Linkler: Sade ve Elit */
+        .connect { display: flex; gap: 40px; margin-top: 50px; }
+        .connect a { color: var(--main); text-decoration: none; font-size: 12px; letter-spacing: 4px; border-bottom: 1px solid transparent; transition: 0.5s; padding-bottom: 5px; }
+        .connect a:hover { border-color: var(--main); opacity: 0.5; }
+
+        /* Müzik Kontrol */
+        #yt-player { position: absolute; top: -999px; }
     </style>
 </head>
-<body>
+<body onclick="launch()">
 
-<div id="entry-gate">
-    <h2>LEXUS SYSTEM</h2>
-    <button class="gate-btn" onclick="initiate()">SİSTEMİ BAŞLAT</button>
-    <p style="font-size: 10px; color: #333; margin-top: 20px;">EST. 2018</p>
+<div class="bg-gradient"></div>
+
+<div class="wrapper">
+    <div class="identity">
+        <h1>LEXUS CXNNNN</h1>
+        <p>The Last One Standing / 2018</p>
+    </div>
+
+    <div class="bio">
+        <div class="bio-box">
+            <h3>Hakkımda</h3>
+            <p>2018'den beri sanal dünyada altyapı, otomasyon ve güvenlik üzerine çalışıyorum. Lexus ve Revenge projeleriyle dijital kimliğimi inşa ettim.</p>
+        </div>
+        <div class="bio-box">
+            <h3>Vizyon</h3>
+            <p>Sıradan sistemlerin ötesinde, Python ve Ruby tabanlı araçlarla sanalın kontrolünü elimde tutuyorum. Görünmez ama etkili.</p>
+        </div>
+    </div>
+
+    <div class="skills">
+        <div class="skill-item">
+            <span class="skill-name">Lexus Suite</span>
+            <span class="skill-val">Omnipotence v12.0</span>
+        </div>
+        <div class="skill-item">
+            <span class="skill-name">Automation</span>
+            <span class="skill-val">Discord & Instagram Bots</span>
+        </div>
+        <div class="skill-item">
+            <span class="skill-name">Infrastructure</span>
+            <span class="skill-val">Python / Termux / Ruby</span>
+        </div>
+        <div class="skill-item">
+            <span class="skill-name">Experience</span>
+            <span class="skill-val">Since 2018</span>
+        </div>
+    </div>
+
+    <div class="connect">
+        <a href="https://discord.com/users/e.okul" target="_blank">DISCORD</a>
+        <a href="https://www.tiktok.com/@lexuscxnnn" target="_blank">TIKTOK</a>
+        <a href="https://open.spotify.com/user/lexuscxnnn" target="_blank">SPOTIFY</a>
+    </div>
 </div>
 
-<div class="chronicle">
-    <div class="milestone left">
-        <div class="card">
-            <h3>2018</h3>
-            <p>Sanal dünyaya ilk giriş. Sistemlerin keşfi ve ilk kodların yazımı.</p>
-        </div>
-    </div>
-    <div class="milestone right">
-        <div class="card">
-            <h3>2020</h3>
-            <p>REVENGE dönemi. Altyapı çalışmaları ve dijital kimliğin sağlamlaşması.</p>
-        </div>
-    </div>
-    <div class="milestone left">
-        <div class="card">
-            <h3>2023</h3>
-            <p>LEXUS V serisinin doğuşu. Otomasyon ve güvenlik araçlarının zirvesi.</p>
-        </div>
-    </div>
-    <div class="milestone right">
-        <div class="card">
-            <h3>2026</h3>
-            <p>THE LAST ONE STANDING. Kesintisiz güç, kesintisiz miras.</p>
-        </div>
-    </div>
-</div>
-
-<div class="footer-links">
-    <h1 style="letter-spacing: 15px; margin-bottom: 40px;">LEXUS</h1>
-    <a href="https://discord.com/users/e.okul" target="_blank">DISCORD</a>
-    <a href="https://www.tiktok.com/@lexuscxnnn" target="_blank">TIKTOK</a>
-    <a href="http://open.spotify.com/user/lexuscxnnn" target="_blank">SPOTIFY</a>
-</div>
-
-<iframe id="yt-audio" width="0" height="0" src="" frameborder="0" allow="autoplay"></iframe>
+<iframe id="yt-player" width="0" height="0" src="" frameborder="0" allow="autoplay"></iframe>
 
 <script>
-    function initiate() {
-        // Kapıyı kaldır
-        document.getElementById('entry-gate').style.display = 'none';
-        
-        // Şarkıyı kesin olarak başlat
-        const player = document.getElementById('yt-audio');
-        player.src = "https://www.youtube.com/embed/e6S8-cYp03I?autoplay=1&loop=1&playlist=e6S8-cYp03I";
+    function launch() {
+        // Chief Keef Remix
+        document.getElementById('yt-player').src = "https://www.youtube.com/embed/e6S8-cYp03I?autoplay=1";
+        console.log("System Initialized: Lexus");
     }
 </script>
 
