@@ -3,88 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HİDAYET - LEGACY</title>
+    <title>LEXUS // 2018-2026</title>
     <style>
         :root { --g: #00ff41; --d: #000; }
-        body { margin: 0; background: var(--d); color: var(--g); font-family: 'Courier New', monospace; overflow: hidden; }
+        body { margin: 0; background: var(--d); color: #fff; font-family: 'Courier New', monospace; scroll-behavior: smooth; overflow-x: hidden; }
         
-        /* Arka Plan Matrix */
-        canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.2; }
+        /* Giriş Paneli */
+        #entry-gate {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 999; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+        }
+        #entry-gate h2 { letter-spacing: 15px; color: var(--g); margin-bottom: 30px; }
+        .gate-btn {
+            padding: 15px 50px; border: 1px solid var(--g); color: var(--g);
+            background: transparent; cursor: pointer; font-weight: bold; transition: 0.5s;
+        }
+        .gate-btn:hover { background: var(--g); color: #000; box-shadow: 0 0 40px var(--g); }
 
-        /* Ana Panel */
-        .container {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            text-align: center; width: 100%;
+        /* Zaman Çizelgesi */
+        .chronicle { position: relative; max-width: 900px; margin: 100px auto; padding: 40px 0; }
+        .chronicle::before {
+            content: ''; position: absolute; width: 2px; background: linear-gradient(to bottom, transparent, var(--g), transparent);
+            top: 0; bottom: 0; left: 50%; margin-left: -1px;
         }
 
-        /* Daktilo Efektli İsim */
-        .typewriter h1 {
-            font-size: 55px; letter-spacing: 15px; color: #fff;
-            overflow: hidden; border-right: .15em solid var(--g);
-            white-space: nowrap; margin: 0 auto;
-            animation: typing 3.5s steps(30, end), blink-caret .5s step-end infinite;
+        .milestone { padding: 20px 40px; position: relative; width: 50%; box-sizing: border-box; }
+        .milestone::after {
+            content: ''; position: absolute; width: 10px; height: 10px; background: var(--g);
+            border-radius: 50%; top: 30px; right: -5px; z-index: 1; box-shadow: 0 0 10px var(--g);
         }
+        .right::after { left: -5px; }
 
-        /* Köşe İmzaları */
-        .top-left { position: fixed; top: 20px; left: 20px; font-size: 10px; color: #333; letter-spacing: 3px; }
-        .bottom-info { position: fixed; bottom: 20px; width: 100%; display: flex; justify-content: space-between; padding: 0 30px; box-sizing: border-box; font-size: 10px; color: #444; }
+        .left { left: 0; text-align: right; }
+        .right { left: 50%; text-align: left; }
 
-        @keyframes typing { from { width: 0 } to { width: 50% } }
-        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--g) } }
+        .card { padding: 20px; border: 1px solid #111; background: rgba(5,5,5,0.9); transition: 0.5s; }
+        .card:hover { border-color: var(--g); transform: translateY(-5px); }
+        .card h3 { color: var(--g); margin: 0; font-size: 24px; }
+        .card p { color: #666; font-size: 13px; line-height: 1.6; }
 
-        #yt-player { position: absolute; top: -999px; }
+        /* Sosyal Butonlar */
+        .footer-links { text-align: center; padding: 100px 0; }
+        .footer-links a { 
+            color: #fff; text-decoration: none; margin: 0 20px; font-size: 14px; 
+            border-bottom: 1px solid #333; padding-bottom: 5px; transition: 0.3s;
+        }
+        .footer-links a:hover { color: var(--g); border-color: var(--g); }
+
+        #yt-audio { position: absolute; top: -999px; }
     </style>
 </head>
 <body>
 
-<canvas id="matrix"></canvas>
+<div id="entry-gate">
+    <h2>LEXUS SYSTEM</h2>
+    <button class="gate-btn" onclick="initiate()">SİSTEMİ BAŞLAT</button>
+    <p style="font-size: 10px; color: #333; margin-top: 20px;">EST. 2018</p>
+</div>
 
-<div class="top-left">LEXUS INTELLIGENCE // EST. 2018</div>
-
-<div class="container">
-    <div class="typewriter">
-        <h1>/HİDAYET</h1>
+<div class="chronicle">
+    <div class="milestone left">
+        <div class="card">
+            <h3>2018</h3>
+            <p>Sanal dünyaya ilk giriş. Sistemlerin keşfi ve ilk kodların yazımı.</p>
+        </div>
     </div>
-    <p style="letter-spacing: 5px; font-size: 12px; margin-top: 20px; opacity: 0.6;">I DON'T LIKE . REMIX</p>
+    <div class="milestone right">
+        <div class="card">
+            <h3>2020</h3>
+            <p>REVENGE dönemi. Altyapı çalışmaları ve dijital kimliğin sağlamlaşması.</p>
+        </div>
+    </div>
+    <div class="milestone left">
+        <div class="card">
+            <h3>2023</h3>
+            <p>LEXUS V serisinin doğuşu. Otomasyon ve güvenlik araçlarının zirvesi.</p>
+        </div>
+    </div>
+    <div class="milestone right">
+        <div class="card">
+            <h3>2026</h3>
+            <p>THE LAST ONE STANDING. Kesintisiz güç, kesintisiz miras.</p>
+        </div>
+    </div>
 </div>
 
-<div class="bottom-info">
-    <span>AUDIO ACTIVE: CHIEF KEEF</span>
-    <span id="time">00:00:00</span>
-    <span>STATUS: OPERATIONAL</span>
+<div class="footer-links">
+    <h1 style="letter-spacing: 15px; margin-bottom: 40px;">LEXUS</h1>
+    <a href="https://discord.com/users/e.okul" target="_blank">DISCORD</a>
+    <a href="https://www.tiktok.com/@lexuscxnnn" target="_blank">TIKTOK</a>
+    <a href="http://open.spotify.com/user/lexuscxnnn" target="_blank">SPOTIFY</a>
 </div>
 
-<iframe id="yt-player" width="0" height="0" 
-src="https://www.youtube.com/embed/2WcRXJ4piHg?autoplay=1&loop=1&playlist=2WcRXJ4piHg" 
-frameborder="0" allow="autoplay"></iframe>
+<iframe id="yt-audio" width="0" height="0" src="" frameborder="0" allow="autoplay"></iframe>
 
 <script>
-    // Matrix Efekti
-    const canvas = document.getElementById('matrix');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-    const drops = Array(Math.floor(canvas.width/18)).fill(1);
-    function draw() {
-        ctx.fillStyle = "rgba(0,0,0,0.05)";
-        ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.fillStyle = "#00ff41";
-        drops.forEach((y, i) => {
-            ctx.fillText("01/"[Math.floor(Math.random()*3)], i*18, y*18);
-            if(y*18 > canvas.height && Math.random() > 0.99) drops[i] = 0;
-            drops[i]++;
-        });
+    function initiate() {
+        // Kapıyı kaldır
+        document.getElementById('entry-gate').style.display = 'none';
+        
+        // Şarkıyı kesin olarak başlat
+        const player = document.getElementById('yt-audio');
+        player.src = "https://www.youtube.com/embed/e6S8-cYp03I?autoplay=1&loop=1&playlist=e6S8-cYp03I";
     }
-    setInterval(draw, 50);
-
-    // Saat
-    setInterval(() => { document.getElementById('time').innerText = new Date().toLocaleTimeString(); }, 1000);
-
-    // Müzik Başlatma (İlk Tıklamada)
-    window.onclick = () => { 
-        document.getElementById('yt-player').src += "&enablejsapi=1";
-        const player = document.getElementById('yt-player');
-        player.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-    };
 </script>
+
 </body>
 </html>
