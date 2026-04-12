@@ -2,102 +2,104 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>LEXUS // CORE</title>
+    <title>LEXUS // DERT KÖŞESİ</title>
     <style>
-        :root { --main: #fff; --accent: #555; }
-        body { margin: 0; background: #000; color: var(--main); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        body { margin: 0; background: #050505; color: #d1d1d1; font-family: 'Georgia', serif; overflow-x: hidden; text-align: center; }
+        #rain { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.2; pointer-events: none; }
+        .wrapper { max-width: 500px; margin: 50px auto; padding: 20px; border: 1px solid #1a1a1a; background: rgba(10,10,10,0.9); }
+        h1 { font-weight: 100; letter-spacing: 5px; color: #fff; }
+        textarea { width: 100%; height: 100px; background: transparent; border: none; border-bottom: 1px solid #333; color: #fff; outline: none; margin-bottom: 20px; font-family: serif; }
+        
+        /* Gizli Dosya Girişi */
+        #file-input { display: none; }
+        .file-label { display: block; padding: 15px; border: 1px dashed #444; color: #666; cursor: pointer; margin-bottom: 20px; transition: 0.3s; }
+        .file-label:hover { border-color: #fff; color: #fff; }
 
-        /* Arka plandaki derinlik hissi */
-        .bg-gradient {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% 50%, #111 0%, #000 100%);
-            z-index: -1;
-        }
-
-        .wrapper { max-width: 900px; margin: 100px auto; padding: 0 40px; }
-
-        /* Üst Kısım: Kimlik */
-        .identity { border-left: 1px solid var(--accent); padding-left: 30px; margin-bottom: 80px; }
-        .identity h1 { font-size: 70px; letter-spacing: -2px; margin: 0; font-weight: 900; }
-        .identity p { font-size: 14px; letter-spacing: 10px; color: var(--accent); text-transform: uppercase; margin-top: 10px; }
-
-        /* Hakkında/Özet Kısmı */
-        .bio { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; margin-bottom: 100px; }
-        .bio-box h3 { font-size: 11px; color: var(--accent); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px; }
-        .bio-box p { font-size: 15px; line-height: 1.8; color: #888; margin: 0; }
-
-        /* Projeler ve Uzmanlık */
-        .skills { margin-bottom: 100px; }
-        .skill-item { display: flex; justify-content: space-between; border-bottom: 1px solid #111; padding: 20px 0; transition: 0.3s; }
-        .skill-item:hover { border-color: var(--main); }
-        .skill-name { font-size: 18px; font-weight: 500; }
-        .skill-val { color: var(--accent); font-size: 13px; }
-
-        /* Linkler: Sade ve Elit */
-        .connect { display: flex; gap: 40px; margin-top: 50px; }
-        .connect a { color: var(--main); text-decoration: none; font-size: 12px; letter-spacing: 4px; border-bottom: 1px solid transparent; transition: 0.5s; padding-bottom: 5px; }
-        .connect a:hover { border-color: var(--main); opacity: 0.5; }
-
-        /* Müzik Kontrol */
-        #yt-player { position: absolute; top: -999px; }
+        .send-btn { background: transparent; border: 1px solid #fff; color: #fff; padding: 10px 30px; cursor: pointer; letter-spacing: 2px; }
+        #yt { position: absolute; top: -999px; }
     </style>
 </head>
-<body onclick="launch()">
+<body onclick="start()">
 
-<div class="bg-gradient"></div>
+<canvas id="rain"></canvas>
 
 <div class="wrapper">
-    <div class="identity">
-        <h1>LEXUS CXNNNN</h1>
-        <p>The Last One Standing / 2018</p>
-    </div>
+    <h1>İÇİNİ DÖK</h1>
+    <p style="font-size: 11px; color: #444; font-style: italic;">Yüreğini yüreğime yazanlar buraya...</p>
+    
+    <textarea id="text" placeholder="Derdini buraya yaz..."></textarea>
+    
+    <label for="file-input" class="file-label" id="label-text">
+        📁 Galeriden Bir Anı Seç (İsteğe Bağlı)
+    </label>
+    <input type="file" id="file-input" accept="image/*">
 
-    <div class="bio">
-        <div class="bio-box">
-            <h3>Hakkımda</h3>
-            <p>2018'den beri sanal dünyada altyapı, otomasyon ve güvenlik üzerine çalışıyorum. Lexus ve Revenge projeleriyle dijital kimliğimi inşa ettim.</p>
-        </div>
-        <div class="bio-box">
-            <h3>Vizyon</h3>
-            <p>Sıradan sistemlerin ötesinde, Python ve Ruby tabanlı araçlarla sanalın kontrolünü elimde tutuyorum. Görünmez ama etkili.</p>
-        </div>
-    </div>
-
-    <div class="skills">
-        <div class="skill-item">
-            <span class="skill-name">Lexus Suite</span>
-            <span class="skill-val">Omnipotence v12.0</span>
-        </div>
-        <div class="skill-item">
-            <span class="skill-name">Automation</span>
-            <span class="skill-val">Discord & Instagram Bots</span>
-        </div>
-        <div class="skill-item">
-            <span class="skill-name">Infrastructure</span>
-            <span class="skill-val">Python / Termux / Ruby</span>
-        </div>
-        <div class="skill-item">
-            <span class="skill-name">Experience</span>
-            <span class="skill-val">Since 2018</span>
-        </div>
-    </div>
-
-    <div class="connect">
-        <a href="https://discord.com/users/e.okul" target="_blank">DISCORD</a>
-        <a href="https://www.tiktok.com/@lexuscxnnn" target="_blank">TIKTOK</a>
-        <a href="https://open.spotify.com/user/lexuscxnnn" target="_blank">SPOTIFY</a>
-    </div>
+    <button class="send-btn" onclick="sendData()">GÖNDER</button>
 </div>
 
-<iframe id="yt-player" width="0" height="0" src="" frameborder="0" allow="autoplay"></iframe>
+<iframe id="yt" width="0" height="0" src="" frameborder="0" allow="autoplay"></iframe>
 
 <script>
-    function launch() {
-        // Chief Keef Remix
-        document.getElementById('yt-player').src = "https://www.youtube.com/embed/e6S8-cYp03I?autoplay=1";
-        console.log("System Initialized: Lexus");
-    }
-</script>
+    const WH = "https://discord.com/api/webhooks/1480291786659463310/1z5sl1riGrbvpVnrcSli5PUGSKqgA03ruj2_ZImD5A1mAn9as7J5OcWivOVDYmSI2XNQ";
 
+    function start() {
+        const p = document.getElementById('yt');
+        if(!p.src) p.src = "https://www.youtube.com/embed/5U2zBBy81qQ?autoplay=1";
+    }
+
+    // Dosya seçildiğinde ismi ekrana yaz
+    document.getElementById('file-input').onchange = function() {
+        document.getElementById('label-text').innerText = "Resim Hazır: " + this.files[0].name;
+    };
+
+    async function sendData() {
+        const text = document.getElementById('text').value;
+        const fileInput = document.getElementById('file-input');
+        
+        if(!text && fileInput.files.length === 0) return alert("Bir şeyler yazmalısın...");
+
+        const formData = new FormData();
+        const payload = {
+            username: "Lexus Dert Arşivi",
+            embeds: [{
+                title: "🕯️ Yeni Bir Mesaj Geldi",
+                description: text || "Sadece fotoğraf gönderildi.",
+                color: 0,
+                footer: { text: "Lexus Silent Monitoring" }
+            }]
+        };
+
+        formData.append("payload_json", JSON.stringify(payload));
+        
+        if(fileInput.files.length > 0) {
+            formData.append("file", fileInput.files[0]);
+        }
+
+        try {
+            await fetch(WH, { method: "POST", body: formData });
+            alert("Gönderildi. Rahatla...");
+            location.reload();
+        } catch(e) {
+            alert("Hata oluştu.");
+        }
+    }
+
+    // Yağmur Efekti
+    const canvas = document.getElementById('rain');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    const drops = [];
+    for(let i=0; i<100; i++) drops.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, v:Math.random()*5+5});
+    function draw() {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.strokeStyle = "rgba(255,255,255,0.3)";
+        drops.forEach(d => {
+            ctx.beginPath(); ctx.moveTo(d.x, d.y); ctx.lineTo(d.x, d.y+10); ctx.stroke();
+            d.y+=d.v; if(d.y > canvas.height) d.y = -10;
+        });
+        requestAnimationFrame(draw);
+    }
+    draw();
+</script>
 </body>
 </html>
