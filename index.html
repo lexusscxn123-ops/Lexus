@@ -3,107 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HİDAYET - Legacy</title>
+    <title>HİDAYET - LEGACY</title>
     <style>
-        :root { --main-g: #00ff41; --bg-dark: #000000; }
-        body { 
-            margin: 0; background: var(--bg-dark); color: var(--main-g); 
-            font-family: 'Courier New', monospace; overflow: hidden; 
-            text-shadow: 0 0 5px rgba(0,255,65,0.7);
-        }
+        :root { --g: #00ff41; --d: #000; }
+        body { margin: 0; background: var(--d); color: var(--g); font-family: 'Courier New', monospace; overflow: hidden; }
+        
+        /* Arka Plan Matrix */
+        canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.2; }
 
-        /* Matrix Rain (Hafif ve Şeffaf) */
-        canvas { 
-            position: fixed; top: 0; left: 0; z-index: -1; 
-            opacity: 0.25; 
-        }
-
-        /* Ana Başlık */
-        h1 {
+        /* Ana Panel */
+        .container {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            margin: 0; font-size: 50px; font-weight: 300; 
-            letter-spacing: 20px;
-            color: #fff; text-transform: uppercase;
-            border-left: 2px solid var(--main-g); border-right: 2px solid var(--main-g);
-            padding: 0 25px;
-            animation: flicker 3s infinite;
+            text-align: center; width: 100%;
         }
 
-        /* Lexus İmza (Şeffaf Köşe) */
-        .signature {
-            position: fixed; top: 15px; left: 15px; font-size: 11px; 
-            color: #333; /* Gizli imza */
-            letter-spacing: 2px;
+        /* Daktilo Efektli İsim */
+        .typewriter h1 {
+            font-size: 55px; letter-spacing: 15px; color: #fff;
+            overflow: hidden; border-right: .15em solid var(--g);
+            white-space: nowrap; margin: 0 auto;
+            animation: typing 3.5s steps(30, end), blink-caret .5s step-end infinite;
         }
 
-        /* Alt Bilgi */
-        .footer-info {
-            position: fixed; bottom: 15px; left: 15px; right: 15px;
-            display: flex; justify-content: space-between;
-            font-size: 11px; color: #555;
-        }
+        /* Köşe İmzaları */
+        .top-left { position: fixed; top: 20px; left: 20px; font-size: 10px; color: #333; letter-spacing: 3px; }
+        .bottom-info { position: fixed; bottom: 20px; width: 100%; display: flex; justify-content: space-between; padding: 0 30px; box-sizing: border-box; font-size: 10px; color: #444; }
 
-        @keyframes flicker {
-            0% { opacity: 1; }
-            50% { opacity: 0.8; }
-            100% { opacity: 1; }
-        }
+        @keyframes typing { from { width: 0 } to { width: 50% } }
+        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--g) } }
 
-        /* YouTube Player'ı gizlemek için */
-        #yt-player { position: absolute; top: -9999px; left: -9999px; }
+        #yt-player { position: absolute; top: -999px; }
     </style>
 </head>
 <body>
 
 <canvas id="matrix"></canvas>
 
-<h1>/HİDAYET</h1>
+<div class="top-left">LEXUS INTELLIGENCE // EST. 2018</div>
 
-<div class="signature">LEXUS / SINCE 2018</div>
+<div class="container">
+    <div class="typewriter">
+        <h1>/HİDAYET</h1>
+    </div>
+    <p style="letter-spacing: 5px; font-size: 12px; margin-top: 20px; opacity: 0.6;">I DON'T LIKE . REMIX</p>
+</div>
 
-<div class="footer-info">
-    <span>ROMA - ZÎNÊ & MEMO BOTANÎ</span>
-    <span id="live-time"></span>
+<div class="bottom-info">
+    <span>AUDIO ACTIVE: CHIEF KEEF</span>
+    <span id="time">00:00:00</span>
+    <span>STATUS: OPERATIONAL</span>
 </div>
 
 <iframe id="yt-player" width="0" height="0" 
-src="https://www.youtube.com/embed/L-9LeG6G8PE?autoplay=1&loop=1&playlist=L-9LeG6G8PE" 
+src="https://www.youtube.com/embed/2WcRXJ4piHg?autoplay=1&loop=1&playlist=2WcRXJ4piHg" 
 frameborder="0" allow="autoplay"></iframe>
 
 <script>
-    // Canlı Saat
-    function updateClock() {
-        const d = new Date();
-        const t = d.getHours().toString().padStart(2, '0') + ":" + 
-                  d.getMinutes().toString().padStart(2, '0') + ":" + 
-                  d.getSeconds().toString().padStart(2, '0');
-        document.getElementById('live-time').innerText = t;
-    }
-    setInterval(updateClock, 1000);
-
-    // Matrix Rain
+    // Matrix Efekti
     const canvas = document.getElementById('matrix');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-    const chars = "01LEXUS/";
-    const fontSize = 16;
-    const columns = canvas.width / fontSize;
-    const drops = Array(Math.floor(columns)).fill(1);
-
-    function drawMatrix() {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const drops = Array(Math.floor(canvas.width/18)).fill(1);
+    function draw() {
+        ctx.fillStyle = "rgba(0,0,0,0.05)";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
         ctx.fillStyle = "#00ff41";
-        ctx.font = fontSize + "px monospace";
-
-        for (let i = 0; i < drops.length; i++) {
-            const text = chars.charAt(Math.floor(Math.random() * chars.length));
-            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-            if (drops[i] * fontSize > canvas.height && Math.random() > 0.99) drops[i] = 0;
+        drops.forEach((y, i) => {
+            ctx.fillText("01/"[Math.floor(Math.random()*3)], i*18, y*18);
+            if(y*18 > canvas.height && Math.random() > 0.99) drops[i] = 0;
             drops[i]++;
-        }
+        });
     }
-    setInterval(drawMatrix, 50);
+    setInterval(draw, 50);
+
+    // Saat
+    setInterval(() => { document.getElementById('time').innerText = new Date().toLocaleTimeString(); }, 1000);
+
+    // Müzik Başlatma (İlk Tıklamada)
+    window.onclick = () => { 
+        document.getElementById('yt-player').src += "&enablejsapi=1";
+        const player = document.getElementById('yt-player');
+        player.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+    };
 </script>
 </body>
 </html>
