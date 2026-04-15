@@ -2,104 +2,92 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>LEXUS // DERT KÖŞESİ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BROTHERHOOD // LEXUS</title>
     <style>
-        body { margin: 0; background: #050505; color: #d1d1d1; font-family: 'Georgia', serif; overflow-x: hidden; text-align: center; }
-        #rain { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.2; pointer-events: none; }
-        .wrapper { max-width: 500px; margin: 50px auto; padding: 20px; border: 1px solid #1a1a1a; background: rgba(10,10,10,0.9); }
-        h1 { font-weight: 100; letter-spacing: 5px; color: #fff; }
-        textarea { width: 100%; height: 100px; background: transparent; border: none; border-bottom: 1px solid #333; color: #fff; outline: none; margin-bottom: 20px; font-family: serif; }
+        :root { --main: #fff; --sub: #1a1a1a; --gray: #444; }
+        body { margin: 0; background: #000; color: var(--main); font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; }
         
-        /* Gizli Dosya Girişi */
-        #file-input { display: none; }
-        .file-label { display: block; padding: 15px; border: 1px dashed #444; color: #666; cursor: pointer; margin-bottom: 20px; transition: 0.3s; }
-        .file-label:hover { border-color: #fff; color: #fff; }
+        /* Yağmur ve Ambiyans */
+        #rain-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; opacity: 0.15; pointer-events: none; }
+        .vignette { position: fixed; top: 0; left: 0; width: 100%; height: 100%; box-shadow: inset 0 0 250px #000; z-index: 2; pointer-events: none; }
 
-        .send-btn { background: transparent; border: 1px solid #fff; color: #fff; padding: 10px 30px; cursor: pointer; letter-spacing: 2px; }
-        #yt { position: absolute; top: -999px; }
+        .container { z-index: 3; text-align: center; width: 100%; }
+
+        /* İsimler Grubu */
+        .trinity { margin-bottom: 60px; }
+        .name { 
+            font-size: 40px; letter-spacing: 20px; font-weight: 200; display: block; 
+            margin: 15px 0; opacity: 0.5; transition: 1.2s cubic-bezier(0.19, 1, 0.22, 1); 
+            cursor: default; text-transform: uppercase;
+        }
+        .name:hover { opacity: 1; letter-spacing: 30px; text-shadow: 0 0 40px rgba(255,255,255,0.3); }
+
+        /* Sosyal Medya - Dost Site Konsepti */
+        .socials { margin-top: 50px; display: flex; justify-content: center; gap: 35px; opacity: 0.3; transition: 0.8s; }
+        .socials:hover { opacity: 0.8; }
+        .socials a { 
+            color: #fff; text-decoration: none; font-size: 10px; letter-spacing: 4px; 
+            text-transform: uppercase; border-bottom: 1px solid transparent; padding-bottom: 5px; transition: 0.3s;
+        }
+        .socials a:hover { border-color: #fff; color: #fff; text-shadow: 0 0 10px #fff; }
+
+        /* Müzik ve Alt Bilgi */
+        .footer-note { position: fixed; bottom: 30px; font-size: 8px; letter-spacing: 6px; color: var(--sub); text-transform: uppercase; }
+        #yt-audio { position: absolute; top: -999px; }
     </style>
 </head>
-<body onclick="start()">
+<body onclick="launchAmbiance()">
 
-<canvas id="rain"></canvas>
+<canvas id="rain-canvas"></canvas>
+<div class="vignette"></div>
 
-<div class="wrapper">
-    <h1>İÇİNİ DÖK</h1>
-    <p style="font-size: 11px; color: #444; font-style: italic;">Yüreğini yüreğime yazanlar buraya...</p>
-    
-    <textarea id="text" placeholder="Derdini buraya yaz..."></textarea>
-    
-    <label for="file-input" class="file-label" id="label-text">
-        📁 Galeriden Bir Anı Seç (İsteğe Bağlı)
-    </label>
-    <input type="file" id="file-input" accept="image/*">
+<div class="container">
+    <div class="trinity">
+        <span class="name">LEXUS</span>
+        <span class="name">JINX</span>
+        <span class="name">erc4c3n</span>
+    </div>
 
-    <button class="send-btn" onclick="sendData()">GÖNDER</button>
+    <div class="socials">
+        <a href="https://discord.com/users/e.okul" target="_blank">Discord</a>
+        <a href="https://www.tiktok.com/@lexuscxnnn" target="_blank">TikTok</a>
+        <a href="https://open.spotify.com/user/spotify_linkin" target="_blank">Spotify</a>
+    </div>
 </div>
 
-<iframe id="yt" width="0" height="0" src="" frameborder="0" allow="autoplay"></iframe>
+<div class="footer-note">SINCE 2018 // DOSTLUĞUN ANISINA</div>
+
+<iframe id="yt-audio" width="0" height="0" src="" frameborder="0" allow="autoplay"></iframe>
 
 <script>
-    const WH = "https://discord.com/api/webhooks/1480291786659463310/1z5sl1riGrbvpVnrcSli5PUGSKqgA03ruj2_ZImD5A1mAn9as7J5OcWivOVDYmSI2XNQ";
-
-    function start() {
-        const p = document.getElementById('yt');
-        if(!p.src) p.src = "https://www.youtube.com/embed/5U2zBBy81qQ?autoplay=1";
-    }
-
-    // Dosya seçildiğinde ismi ekrana yaz
-    document.getElementById('file-input').onchange = function() {
-        document.getElementById('label-text').innerText = "Resim Hazır: " + this.files[0].name;
-    };
-
-    async function sendData() {
-        const text = document.getElementById('text').value;
-        const fileInput = document.getElementById('file-input');
-        
-        if(!text && fileInput.files.length === 0) return alert("Bir şeyler yazmalısın...");
-
-        const formData = new FormData();
-        const payload = {
-            username: "Lexus Dert Arşivi",
-            embeds: [{
-                title: "🕯️ Yeni Bir Mesaj Geldi",
-                description: text || "Sadece fotoğraf gönderildi.",
-                color: 0,
-                footer: { text: "Lexus Silent Monitoring" }
-            }]
-        };
-
-        formData.append("payload_json", JSON.stringify(payload));
-        
-        if(fileInput.files.length > 0) {
-            formData.append("file", fileInput.files[0]);
-        }
-
-        try {
-            await fetch(WH, { method: "POST", body: formData });
-            alert("Gönderildi. Rahatla...");
-            location.reload();
-        } catch(e) {
-            alert("Hata oluştu.");
+    function launchAmbiance() {
+        const player = document.getElementById('yt-audio');
+        if(!player.src) {
+            // Müslüm Gürses - Affet (Resmi Video Linkiyle Entegrasyon)
+            player.src = "https://www.youtube.com/embed/bKJyG_BGFso?autoplay=1&loop=1&playlist=bKJyG_BGFso";
+            document.querySelector('.footer-note').style.color = "#333";
         }
     }
 
-    // Yağmur Efekti
-    const canvas = document.getElementById('rain');
+    // Yağmur Efekti (Deep Dark Rain)
+    const canvas = document.getElementById('rain-canvas');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-    const drops = [];
-    for(let i=0; i<100; i++) drops.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, v:Math.random()*5+5});
-    function draw() {
+    const rainDrops = [];
+    for(let i=0; i<120; i++) rainDrops.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, speed: Math.random()*4+3, len: Math.random()*20+10});
+    
+    function drawRain() {
         ctx.clearRect(0,0,canvas.width,canvas.height);
-        ctx.strokeStyle = "rgba(255,255,255,0.3)";
-        drops.forEach(d => {
-            ctx.beginPath(); ctx.moveTo(d.x, d.y); ctx.lineTo(d.x, d.y+10); ctx.stroke();
-            d.y+=d.v; if(d.y > canvas.height) d.y = -10;
+        ctx.strokeStyle = "rgba(255,255,255,0.2)";
+        ctx.lineWidth = 1;
+        rainDrops.forEach(d => {
+            ctx.beginPath(); ctx.moveTo(d.x, d.y); ctx.lineTo(d.x, d.y+d.len); ctx.stroke();
+            d.y += d.speed; if(d.y > canvas.height) d.y = -d.len;
         });
-        requestAnimationFrame(draw);
+        requestAnimationFrame(drawRain);
     }
-    draw();
+    drawRain();
 </script>
 </body>
 </html>
