@@ -3,77 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE TRINITY // VOID</title>
+    <title>LEXUS // TRINITY</title>
     <style>
-        body { margin: 0; background: #000; color: #fff; font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; }
+        :root { --glow: #ffffff; }
+        body { margin: 0; background: #000; color: #fff; font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; user-select: none; }
         
-        /* Yağmur ve Sis Efekti */
-        #canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; opacity: 0.2; pointer-events: none; }
-        .vignette { position: fixed; top: 0; left: 0; width: 100%; height: 100%; box-shadow: inset 0 0 200px #000; z-index: 2; pointer-events: none; }
+        /* Arka Plan Hareketli Parçacıklar */
+        #particles-js { position: fixed; width: 100%; height: 100%; z-index: 1; }
+        .vignette { position: fixed; top: 0; left: 0; width: 100%; height: 100%; box-shadow: inset 0 0 300px #000; z-index: 2; pointer-events: none; }
 
-        .content { z-index: 3; text-align: center; }
+        .container { z-index: 10; text-align: center; }
 
-        /* İsimlerin Stili */
-        .names { margin-bottom: 50px; }
-        .name-item { font-size: 45px; letter-spacing: 25px; font-weight: 100; color: #fff; margin: 20px 0; display: block; text-transform: uppercase; transition: 1.5s; opacity: 0.6; cursor: default; }
-        .name-item:hover { opacity: 1; letter-spacing: 35px; text-shadow: 0 0 30px rgba(255,255,255,0.4); }
+        /* Agresif İsim Tasarımı */
+        .trinity-wrap { margin-bottom: 40px; }
+        .name { 
+            font-size: 65px; letter-spacing: 20px; font-weight: 900; display: block; 
+            margin: 5px 0; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.3);
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: crosshair;
+        }
+        .name:hover { 
+            color: #fff; -webkit-text-stroke: 1px #fff; letter-spacing: 35px;
+            text-shadow: 0 0 50px var(--glow);
+        }
 
-        /* Alt Başlık */
-        .sub { font-size: 10px; letter-spacing: 15px; color: #333; text-transform: uppercase; margin-top: 50px; }
+        /* Sosyal Linkler - Modern Bar */
+        .link-bar { display: flex; justify-content: center; gap: 30px; margin-top: 40px; }
+        .link-bar a { 
+            color: #444; text-decoration: none; font-size: 11px; letter-spacing: 5px; 
+            text-transform: uppercase; transition: 0.4s; padding: 10px 20px; border: 1px solid #111;
+        }
+        .link-bar a:hover { color: #fff; border-color: #fff; background: rgba(255,255,255,0.05); box-shadow: 0 0 20px rgba(255,255,255,0.1); }
 
-        /* Gizli Müzik */
+        /* Shake Animasyonu (Müzik Başlayınca Tetiklenebilir) */
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+        .bass-active { animation: shake 0.5s infinite; }
+
         #yt-player { position: absolute; top: -999px; }
-        
-        /* Tıkla Mesajı */
-        .click-anywhere { position: fixed; bottom: 30px; font-size: 9px; color: #111; letter-spacing: 5px; text-transform: uppercase; }
+        .entry-btn { color: #222; font-size: 10px; letter-spacing: 10px; cursor: pointer; transition: 0.3s; }
+        .entry-btn:hover { color: #fff; }
     </style>
 </head>
-<body onclick="start()">
+<body onclick="launch()">
 
-<canvas id="canvas"></canvas>
+<div id="particles-js"></div>
 <div class="vignette"></div>
 
-<div class="content">
-    <div class="names">
-        <span class="name-item">LEXUS</span>
-        <span class="name-item">JINX</span>
-        <span class="name-item">erc4c3n</span>
-    </div>
-    <div class="sub">SINCE 2018 // THE CORE</div>
-</div>
+<div class="container" id="main-ui">
+    <div class="entry-btn" id="start-txt">SİSTEME GİRİŞ YAP</div>
+    
+    <div class="trinity-wrap" style="display:none;" id="content-area">
+        <span class="name">LEXUS</span>
+        <span class="name">JINX</span>
+        <span class="name">erc4c3n</span>
 
-<div class="click-anywhere">EKRANA DOKUN VE AFFET...</div>
+        <div class="link-bar">
+            <a href="https://discord.com/users/e.okul" target="_blank">Discord</a>
+            <a href="https://www.tiktok.com/@lexuscxnnn" target="_blank">TikTok</a>
+            <a href="https://open.spotify.com/user/spotify_linkin" target="_blank">Spotify</a>
+        </div>
+        <p style="font-size: 9px; color: #111; letter-spacing: 8px; margin-top: 50px;">EST. 2018 // THE UNTOUCHABLES</p>
+    </div>
+</div>
 
 <iframe id="yt-player" width="0" height="0" src="" frameborder="0" allow="autoplay"></iframe>
 
 <script>
-    function start() {
+    function launch() {
+        const startTxt = document.getElementById('start-txt');
+        const contentArea = document.getElementById('content-area');
         const player = document.getElementById('yt-player');
-        if(!player.src) {
-            // Müslüm Gürses - Affet şarkısı
-            player.src = "https://www.youtube.com/embed/bKJyG_BGFso?autoplay=1&loop=1&playlist=bKJyG_BGFso";
-            document.querySelector('.click-anywhere').style.display = 'none';
+        const body = document.querySelector('.container');
+
+        if(startTxt.style.display !== 'none') {
+            startTxt.style.display = 'none';
+            contentArea.style.display = 'block';
+            player.src = "https://www.youtube.com/embed/xbr5sV68laE?autoplay=1&loop=1&playlist=xbr5sV68laE";
+            
+            // Bas hissi için ekranı hafif sars (opsiyonel)
+            body.classList.add('bass-active');
+            setTimeout(() => body.classList.remove('bass-active'), 5000);
         }
     }
+</script>
 
-    // Yağmur Animasyonu
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-    const particles = [];
-    for(let i=0; i<100; i++) particles.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, l: Math.random()*30, v: Math.random()*4+2});
-    
-    function rain() {
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        ctx.strokeStyle = "rgba(255,255,255,0.5)";
-        ctx.lineWidth = 1;
-        particles.forEach(p => {
-            ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x, p.y+p.l); ctx.stroke();
-            p.y += p.v; if(p.y > canvas.height) p.y = -p.l;
-        });
-        requestAnimationFrame(rain);
-    }
-    rain();
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+    particlesJS("particles-js", {
+        "particles": {
+            "number": { "value": 80 },
+            "color": { "value": "#ffffff" },
+            "shape": { "type": "circle" },
+            "opacity": { "value": 0.2 },
+            "size": { "value": 2 },
+            "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.1, "width": 1 },
+            "move": { "enable": true, "speed": 1 }
+        },
+        "interactivity": { "events": { "onhover": { "enable": true, "mode": "repulse" } } }
+    });
 </script>
 </body>
 </html>
