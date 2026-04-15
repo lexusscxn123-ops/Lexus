@@ -3,22 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ASLAN KARDEŞLERİM</title>
+    <title>THE TRINITY // VOID</title>
     <style>
         :root { --main: #ffffff; --sub: #111; --accent: #5865F2; }
         body { margin: 0; background: #000; color: var(--main); font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; user-select: none; }
         
-        /* Arka Plan Modern Parçacıklar */
         #particles-js { position: fixed; width: 100%; height: 100%; z-index: 1; }
         .vignette { position: fixed; top: 0; left: 0; width: 100%; height: 100%; box-shadow: inset 0 0 350px #000; z-index: 2; pointer-events: none; }
 
         .container { z-index: 10; text-align: center; }
 
-        /* Trinity İsimleri - Maksimum Özen */
         .name-box { margin-bottom: 50px; }
         .name { 
             font-size: 75px; letter-spacing: 30px; font-weight: 900; display: block; 
-            margin: 10px 0; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.15);
+            margin: 10px 0; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.25);
             transition: 0.8s cubic-bezier(0.16, 1, 0.3, 1); cursor: default;
             text-transform: uppercase;
         }
@@ -27,7 +25,6 @@
             text-shadow: 0 0 70px rgba(255,255,255,0.4);
         }
 
-        /* Linkler - Sade ve Düz */
         .links { display: flex; justify-content: center; gap: 25px; margin-top: 40px; }
         .links a { 
             color: #666; text-decoration: none; font-size: 11px; letter-spacing: 4px; 
@@ -36,7 +33,6 @@
         .links a:hover { border-color: #fff; color: #fff; background: rgba(255,255,255,0.03); }
         .discord-link:hover { border-color: var(--accent) !important; color: var(--accent) !important; box-shadow: 0 0 20px rgba(88,101,242,0.2); }
 
-        /* O Meşhur Yazı */
         .shoutout {
             position: fixed; bottom: 50px; width: 100%; text-align: center;
             font-size: 12px; letter-spacing: 3px; color: #333; font-style: italic;
@@ -44,10 +40,9 @@
         }
         .container:hover ~ .shoutout { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
 
-        /* Giriş Paneli */
         #gate { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 999; display: flex; align-items: center; justify-content: center; }
-        .gate-btn { color: #222; font-size: 11px; letter-spacing: 12px; cursor: pointer; transition: 0.5s; border: 1px solid #0a0a0a; padding: 25px 50px; }
-        .gate-btn:hover { color: #fff; border-color: #333; letter-spacing: 15px; }
+        .gate-btn { color: #fff; font-size: 11px; letter-spacing: 12px; cursor: pointer; transition: 0.5s; border: 1px solid #222; padding: 25px 50px; text-transform: uppercase; }
+        .gate-btn:hover { border-color: #fff; letter-spacing: 15px; background: rgba(255,255,255,0.05); }
 
         #yt-player { position: absolute; top: -999px; visibility: hidden; }
     </style>
@@ -70,9 +65,8 @@
 
     <div class="links">
         <a href="https://discord.gg/9RYn8dNDh" class="discord-link" target="_blank">Sunucu</a>
-        <a href="https://discord.com/users/e.okul" target="_blank">Discord</a>
+        <a href="https://discord.com/users/e.okul" target="_blank">Lexus</a>
         <a href="https://www.tiktok.com/@lexuscxnnn" target="_blank">TikTok</a>
-        <a href="http://googleusercontent.com/spotify.com/4" target="_blank">Spotify</a>
     </div>
 </div>
 
@@ -89,8 +83,9 @@
         if (gate.style.display !== 'none') {
             gate.style.opacity = '0';
             setTimeout(() => gate.style.display = 'none', 500);
-            // Yener Çevik - Güm Güm
-            player.src = "";https:/xbr5sV68laE?si=acxObLtUFA4suNAa
+            
+            // Belirttiğin güncel YouTube linki entegre edildi
+            player.src = "https://www.youtube.com/embed/xbr5sV68laE?autoplay=1&loop=1&playlist=xbr5sV68laE";
         }
     }
 
