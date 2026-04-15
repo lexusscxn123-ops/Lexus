@@ -8,13 +8,12 @@
         :root { --main: #ffffff; --sub: #0a0a0a; --gray: #222; }
         body { margin: 0; background: #000; color: var(--main); font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; user-select: none; }
         
-        /* Arka Plan Modern Dokunuş */
         #particles-js { position: fixed; width: 100%; height: 100%; z-index: 1; }
         .vignette { position: fixed; top: 0; left: 0; width: 100%; height: 100%; box-shadow: inset 0 0 350px #000; z-index: 2; pointer-events: none; }
 
         .container { z-index: 10; text-align: center; }
 
-        /* Trinity İsimleri - Sert ve Büyük */
+        /* Trinity İsimleri */
         .name-group { margin-bottom: 50px; }
         .name { 
             font-size: 75px; letter-spacing: 25px; font-weight: 900; display: block; 
@@ -27,36 +26,39 @@
             text-shadow: 0 0 70px rgba(255,255,255,0.4);
         }
 
-        /* Linkler - Sadece Discord ve TikTok (Spotify Kaldırıldı) */
+        /* Linkler */
         .links { display: flex; justify-content: center; gap: 30px; margin-top: 40px; }
         .links a { 
             color: #444; text-decoration: none; font-size: 11px; letter-spacing: 5px; 
             text-transform: uppercase; padding: 12px 30px; border: 1px solid #111; transition: 0.4s;
         }
         .links a:hover { border-color: #fff; color: #fff; background: rgba(255,255,255,0.03); }
-        .discord-btn { border-color: #5865F2 !important; color: #5865F2 !important; }
-        .discord-btn:hover { background: #5865F2 !important; color: #fff !important; }
 
-        /* Alt Yazı (Prim Göndermesi) */
+        /* Prim Yazısı */
         .shoutout {
             position: fixed; bottom: 60px; width: 100%; text-align: center;
-            font-size: 12px; letter-spacing: 4px; color: #1a1a1a; font-style: italic;
+            font-size: 11px; letter-spacing: 4px; color: #1a1a1a; font-style: italic;
             transition: 1.5s;
         }
         body:hover .shoutout { color: #555; }
+
+        /* Spotify Gizli Player */
+        #spotify-wrap {
+            position: fixed; bottom: -100px; left: 0; width: 100%; height: 80px;
+            z-index: 100; transition: 0.5s; opacity: 0;
+        }
+        #spotify-wrap.active { bottom: 20px; opacity: 1; }
 
         /* Giriş Paneli */
         #gate { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 999; display: flex; align-items: center; justify-content: center; }
         .gate-btn { color: #1a1a1a; font-size: 11px; letter-spacing: 12px; cursor: pointer; transition: 0.5s; border: 1px solid #0a0a0a; padding: 25px 50px; }
         .gate-btn:hover { color: #fff; border-color: #222; }
-
-        #yt-player { position: absolute; top: -999px; visibility: hidden; }
     </style>
 </head>
 <body onclick="unlock()">
 
 <div id="gate">
-    <div class="gate-btn">DEVAM</div>
+    <div class="gate-btn">SİSTEMİ TETİKLE</div>
 </div>
 
 <div id="particles-js"></div>
@@ -70,7 +72,7 @@
     </div>
 
     <div class="links">
-        <a href="https://discord.gg/9RYn8dNDh" class="discord-btn" target="_blank">Sunucu</a>
+        <a href="https://discord.gg/9RYn8dNDh" target="_blank">Sunucu</a>
         <a href="https://discord.com/users/e.okul" target="_blank">Lexus Profile</a>
         <a href="https://www.tiktok.com/@lexuscxnnn" target="_blank">TikTok</a>
     </div>
@@ -78,19 +80,22 @@
 
 <div class="shoutout">Adımızı etiketleyip prim kasmaya devam edin 😄</div>
 
-<iframe id="yt-player" width="0" height="0" src="" frameborder="0" allow="autoplay"></iframe>
+<div id="spotify-wrap">
+    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/2Z0v0Yxbr5sV68laE?utm_source=generator&theme=0" width="300" height="80" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+</div>
 
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script>
     function unlock() {
         const gate = document.getElementById('gate');
-        const player = document.getElementById('yt-player');
+        const sp = document.getElementById('spotify-wrap');
         
         if (gate.style.display !== 'none') {
             gate.style.opacity = '0';
-            setTimeout(() => gate.style.display = 'none', 500);
-            // Belirttiğin Yener Çevik - Güm Güm Linki
-            player.src = "https://www.youtube.com/embed/xbr5sV68laE?autoplay=1&loop=1&playlist=xbr5sV68laE";
+            setTimeout(() => {
+                gate.style.display = 'none';
+                sp.classList.add('active');
+            }, 500);
         }
     }
 
