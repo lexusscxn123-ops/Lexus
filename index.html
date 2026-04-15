@@ -3,91 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BROTHERHOOD // LEXUS</title>
+    <title>THE TRINITY // VOID</title>
     <style>
-        :root { --main: #fff; --sub: #1a1a1a; --gray: #444; }
-        body { margin: 0; background: #000; color: var(--main); font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; }
+        body { margin: 0; background: #000; color: #fff; font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; }
         
-        /* Yağmur ve Ambiyans */
-        #rain-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; opacity: 0.15; pointer-events: none; }
-        .vignette { position: fixed; top: 0; left: 0; width: 100%; height: 100%; box-shadow: inset 0 0 250px #000; z-index: 2; pointer-events: none; }
+        /* Yağmur ve Sis Efekti */
+        #canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; opacity: 0.2; pointer-events: none; }
+        .vignette { position: fixed; top: 0; left: 0; width: 100%; height: 100%; box-shadow: inset 0 0 200px #000; z-index: 2; pointer-events: none; }
 
-        .container { z-index: 3; text-align: center; width: 100%; }
+        .content { z-index: 3; text-align: center; }
 
-        /* İsimler Grubu */
-        .trinity { margin-bottom: 60px; }
-        .name { 
-            font-size: 40px; letter-spacing: 20px; font-weight: 200; display: block; 
-            margin: 15px 0; opacity: 0.5; transition: 1.2s cubic-bezier(0.19, 1, 0.22, 1); 
-            cursor: default; text-transform: uppercase;
-        }
-        .name:hover { opacity: 1; letter-spacing: 30px; text-shadow: 0 0 40px rgba(255,255,255,0.3); }
+        /* İsimlerin Stili */
+        .names { margin-bottom: 50px; }
+        .name-item { font-size: 45px; letter-spacing: 25px; font-weight: 100; color: #fff; margin: 20px 0; display: block; text-transform: uppercase; transition: 1.5s; opacity: 0.6; cursor: default; }
+        .name-item:hover { opacity: 1; letter-spacing: 35px; text-shadow: 0 0 30px rgba(255,255,255,0.4); }
 
-        /* Sosyal Medya - Dost Site Konsepti */
-        .socials { margin-top: 50px; display: flex; justify-content: center; gap: 35px; opacity: 0.3; transition: 0.8s; }
-        .socials:hover { opacity: 0.8; }
-        .socials a { 
-            color: #fff; text-decoration: none; font-size: 10px; letter-spacing: 4px; 
-            text-transform: uppercase; border-bottom: 1px solid transparent; padding-bottom: 5px; transition: 0.3s;
-        }
-        .socials a:hover { border-color: #fff; color: #fff; text-shadow: 0 0 10px #fff; }
+        /* Alt Başlık */
+        .sub { font-size: 10px; letter-spacing: 15px; color: #333; text-transform: uppercase; margin-top: 50px; }
 
-        /* Müzik ve Alt Bilgi */
-        .footer-note { position: fixed; bottom: 30px; font-size: 8px; letter-spacing: 6px; color: var(--sub); text-transform: uppercase; }
-        #yt-audio { position: absolute; top: -999px; }
+        /* Gizli Müzik */
+        #yt-player { position: absolute; top: -999px; }
+        
+        /* Tıkla Mesajı */
+        .click-anywhere { position: fixed; bottom: 30px; font-size: 9px; color: #111; letter-spacing: 5px; text-transform: uppercase; }
     </style>
 </head>
-<body onclick="launchAmbiance()">
+<body onclick="start()">
 
-<canvas id="rain-canvas"></canvas>
+<canvas id="canvas"></canvas>
 <div class="vignette"></div>
 
-<div class="container">
-    <div class="trinity">
-        <span class="name">LEXUS</span>
-        <span class="name">JINX</span>
-        <span class="name">erc4c3n</span>
+<div class="content">
+    <div class="names">
+        <span class="name-item">LEXUS</span>
+        <span class="name-item">JINX</span>
+        <span class="name-item">erc4c3n</span>
     </div>
-
-    <div class="socials">
-        <a href="https://discord.com/users/e.okul" target="_blank">Discord</a>
-        <a href="https://www.tiktok.com/@lexuscxnnn" target="_blank">TikTok</a>
-        <a href="https://open.spotify.com/user/spotify_linkin" target="_blank">Spotify</a>
-    </div>
+    <div class="sub">SINCE 2018 // THE CORE</div>
 </div>
 
-<div class="footer-note">SINCE 2018 // DOSTLUĞUN ANISINA</div>
+<div class="click-anywhere">EKRANA DOKUN VE AFFET...</div>
 
-<iframe id="yt-audio" width="0" height="0" src="" frameborder="0" allow="autoplay"></iframe>
+<iframe id="yt-player" width="0" height="0" src="" frameborder="0" allow="autoplay"></iframe>
 
 <script>
-    function launchAmbiance() {
-        const player = document.getElementById('yt-audio');
+    function start() {
+        const player = document.getElementById('yt-player');
         if(!player.src) {
-            // Müslüm Gürses - Affet (Resmi Video Linkiyle Entegrasyon)
+            // Müslüm Gürses - Affet şarkısı
             player.src = "https://www.youtube.com/embed/bKJyG_BGFso?autoplay=1&loop=1&playlist=bKJyG_BGFso";
-            document.querySelector('.footer-note').style.color = "#333";
+            document.querySelector('.click-anywhere').style.display = 'none';
         }
     }
 
-    // Yağmur Efekti (Deep Dark Rain)
-    const canvas = document.getElementById('rain-canvas');
+    // Yağmur Animasyonu
+    const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-    const rainDrops = [];
-    for(let i=0; i<120; i++) rainDrops.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, speed: Math.random()*4+3, len: Math.random()*20+10});
+    const particles = [];
+    for(let i=0; i<100; i++) particles.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, l: Math.random()*30, v: Math.random()*4+2});
     
-    function drawRain() {
+    function rain() {
         ctx.clearRect(0,0,canvas.width,canvas.height);
-        ctx.strokeStyle = "rgba(255,255,255,0.2)";
+        ctx.strokeStyle = "rgba(255,255,255,0.5)";
         ctx.lineWidth = 1;
-        rainDrops.forEach(d => {
-            ctx.beginPath(); ctx.moveTo(d.x, d.y); ctx.lineTo(d.x, d.y+d.len); ctx.stroke();
-            d.y += d.speed; if(d.y > canvas.height) d.y = -d.len;
+        particles.forEach(p => {
+            ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x, p.y+p.l); ctx.stroke();
+            p.y += p.v; if(p.y > canvas.height) p.y = -p.l;
         });
-        requestAnimationFrame(drawRain);
+        requestAnimationFrame(rain);
     }
-    drawRain();
+    rain();
 </script>
 </body>
 </html>
