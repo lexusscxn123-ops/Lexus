@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEXUS // JINX // ERC4C3N</title>
+    <title>THE TRINITY // VOID</title>
     <style>
-        :root { --main: #ffffff; --sub: #0a0a0a; --gray: #222; }
+        :root { --main: #ffffff; --sub: #111; --accent: #5865F2; }
         body { margin: 0; background: #000; color: var(--main); font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; user-select: none; }
         
         #particles-js { position: fixed; width: 100%; height: 100%; z-index: 1; }
@@ -13,88 +13,85 @@
 
         .container { z-index: 10; text-align: center; }
 
-        /* Trinity İsimleri */
-        .name-group { margin-bottom: 50px; }
+        .name-box { margin-bottom: 50px; }
         .name { 
-            font-size: 75px; letter-spacing: 25px; font-weight: 900; display: block; 
-            margin: 15px 0; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.15);
+            font-size: 75px; letter-spacing: 30px; font-weight: 900; display: block; 
+            margin: 10px 0; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.15);
             transition: 0.8s cubic-bezier(0.16, 1, 0.3, 1); cursor: default;
             text-transform: uppercase;
         }
         .name:hover { 
-            color: #fff; -webkit-text-stroke: 1px #fff; letter-spacing: 40px;
+            color: #fff; -webkit-text-stroke: 1px #fff; letter-spacing: 45px;
             text-shadow: 0 0 70px rgba(255,255,255,0.4);
         }
 
-        /* Linkler */
-        .links { display: flex; justify-content: center; gap: 30px; margin-top: 40px; }
+        .links { display: flex; justify-content: center; gap: 25px; margin-top: 40px; }
         .links a { 
-            color: #444; text-decoration: none; font-size: 11px; letter-spacing: 5px; 
-            text-transform: uppercase; padding: 12px 30px; border: 1px solid #111; transition: 0.4s;
+            color: #666; text-decoration: none; font-size: 11px; letter-spacing: 4px; 
+            text-transform: uppercase; padding: 12px 25px; border: 1px solid #111; transition: 0.4s;
         }
         .links a:hover { border-color: #fff; color: #fff; background: rgba(255,255,255,0.03); }
+        .discord-link:hover { border-color: var(--accent) !important; color: var(--accent) !important; box-shadow: 0 0 20px rgba(88,101,242,0.2); }
 
-        /* Prim Yazısı */
         .shoutout {
-            position: fixed; bottom: 60px; width: 100%; text-align: center;
-            font-size: 11px; letter-spacing: 4px; color: #1a1a1a; font-style: italic;
-            transition: 1.5s;
+            position: fixed; bottom: 50px; width: 100%; text-align: center;
+            font-size: 12px; letter-spacing: 3px; color: #1a1a1a; font-style: italic;
+            transition: 1s;
         }
-        body:hover .shoutout { color: #555; }
+        .container:hover ~ .shoutout { color: #fff; }
 
-        /* Spotify Gizli Player */
-        #spotify-wrap {
-            position: fixed; bottom: -100px; left: 0; width: 100%; height: 80px;
-            z-index: 100; transition: 0.5s; opacity: 0;
+        /* Spotify Player Alanı */
+        #spotify-container {
+            position: fixed; bottom: -100px; left: 20px; z-index: 100;
+            transition: 1s cubic-bezier(0.16, 1, 0.3, 1); opacity: 0;
         }
-        #spotify-wrap.active { bottom: 20px; opacity: 1; }
+        #spotify-container.active { bottom: 20px; opacity: 1; }
 
-        /* Giriş Paneli */
         #gate { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 999; display: flex; align-items: center; justify-content: center; }
-        .gate-btn { color: #1a1a1a; font-size: 11px; letter-spacing: 12px; cursor: pointer; transition: 0.5s; border: 1px solid #0a0a0a; padding: 25px 50px; }
-        .gate-btn:hover { color: #fff; border-color: #222; }
+        .gate-btn { color: #222; font-size: 11px; letter-spacing: 12px; cursor: pointer; transition: 0.5s; border: 1px solid #0a0a0a; padding: 25px 50px; }
+        .gate-btn:hover { color: #fff; border-color: #333; letter-spacing: 15px; }
     </style>
 </head>
 <body onclick="unlock()">
 
 <div id="gate">
-    <div class="gate-btn">SİSTEMİ TETİKLE</div>
+    <div class="gate-btn">SİSTEME ERİŞİM</div>
 </div>
 
 <div id="particles-js"></div>
 <div class="vignette"></div>
 
 <div class="container">
-    <div class="name-group">
+    <div class="name-box">
         <span class="name">LEXUS</span>
         <span class="name">JINX</span>
         <span class="name">erc4c3n</span>
     </div>
 
     <div class="links">
-        <a href="https://discord.gg/9RYn8dNDh" target="_blank">Sunucu</a>
-        <a href="https://discord.com/users/e.okul" target="_blank">Lexus Profile</a>
+        <a href="https://discord.gg/9RYn8dNDh" class="discord-link" target="_blank">Sunucu</a>
+        <a href="https://discord.com/users/e.okul" target="_blank">Lexus</a>
         <a href="https://www.tiktok.com/@lexuscxnnn" target="_blank">TikTok</a>
     </div>
 </div>
 
 <div class="shoutout">Adımızı etiketleyip prim kasmaya devam edin 😄</div>
 
-<div id="spotify-wrap">
-    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/2Z0v0Yxbr5sV68laE?utm_source=generator&theme=0" width="300" height="80" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+<div id="spotify-container">
+    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/25K4Zt0MvA7v4XzH8zQvRE?utm_source=generator&theme=0" width="300" height="80" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
 </div>
 
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script>
     function unlock() {
         const gate = document.getElementById('gate');
-        const sp = document.getElementById('spotify-wrap');
+        const spotify = document.getElementById('spotify-container');
         
         if (gate.style.display !== 'none') {
             gate.style.opacity = '0';
             setTimeout(() => {
                 gate.style.display = 'none';
-                sp.classList.add('active');
+                spotify.classList.add('active');
             }, 500);
         }
     }
@@ -106,7 +103,7 @@
             "opacity": { "value": 0.05, "random": true },
             "size": { "value": 1, "random": true },
             "line_linked": { "enable": true, "distance": 200, "color": "#ffffff", "opacity": 0.03, "width": 1 },
-            "move": { "enable": true, "speed": 0.4 }
+            "move": { "enable": true, "speed": 0.5, "direction": "none", "random": true, "straight": false, "out_mode": "out" }
         }
     });
 </script>
