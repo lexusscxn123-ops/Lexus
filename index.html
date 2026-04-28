@@ -2,104 +2,150 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE TRINITY // VOID</title>
+    <title>SECURE TERMINAL | LEXUS</title>
     <style>
-        :root { --main: #ffffff; --sub: #111; --accent: #5865F2; }
-        body { margin: 0; background: #000; color: var(--main); font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; user-select: none; }
-        
-        #particles-js { position: fixed; width: 100%; height: 100%; z-index: 1; }
-        .vignette { position: fixed; top: 0; left: 0; width: 100%; height: 100%; box-shadow: inset 0 0 350px #000; z-index: 2; pointer-events: none; }
-
-        .container { z-index: 10; text-align: center; }
-
-        .name-box { margin-bottom: 50px; }
-        .name { 
-            font-size: 75px; letter-spacing: 30px; font-weight: 900; display: block; 
-            margin: 10px 0; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.25);
-            transition: 0.8s cubic-bezier(0.16, 1, 0.3, 1); cursor: default;
-            text-transform: uppercase;
-        }
-        .name:hover { 
-            color: #fff; -webkit-text-stroke: 1px #fff; letter-spacing: 45px;
-            text-shadow: 0 0 70px rgba(255,255,255,0.4);
-        }
-
-        .links { display: flex; justify-content: center; gap: 25px; margin-top: 40px; }
-        .links a { 
-            color: #666; text-decoration: none; font-size: 11px; letter-spacing: 4px; 
-            text-transform: uppercase; padding: 12px 25px; border: 1px solid #111; transition: 0.4s;
-        }
-        .links a:hover { border-color: #fff; color: #fff; background: rgba(255,255,255,0.03); }
-        .discord-link:hover { border-color: var(--accent) !important; color: var(--accent) !important; box-shadow: 0 0 20px rgba(88,101,242,0.2); }
-
-        .shoutout {
-            position: fixed; bottom: 50px; width: 100%; text-align: center;
-            font-size: 12px; letter-spacing: 3px; color: #333; font-style: italic;
-            transition: 1s;
-        }
-        .container:hover ~ .shoutout { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
-
-        #gate { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 999; display: flex; align-items: center; justify-content: center; }
-        .gate-btn { color: #fff; font-size: 11px; letter-spacing: 12px; cursor: pointer; transition: 0.5s; border: 1px solid #222; padding: 25px 50px; text-transform: uppercase; }
-        .gate-btn:hover { border-color: #fff; letter-spacing: 15px; background: rgba(255,255,255,0.05); }
-
-        #yt-player { position: absolute; top: -999px; visibility: hidden; }
+        :root { --c: #00ff41; --bg: #000; --r: #ff0000; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', monospace; user-select: none; }
+        body { background: var(--bg); color: var(--c); height: 100vh; padding: 20px; overflow: hidden; }
+        #term { height: 90vh; overflow-y: auto; border: 1px solid #222; padding: 15px; background: rgba(0,5,0,0.9); position: relative; z-index: 10; }
+        .line { margin-bottom: 5px; }
+        .input-line { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+        input { background: transparent; border: none; color: var(--c); outline: none; width: 100%; font-size: 16px; }
+        .modal { display: none; position: fixed; top: 10%; left: 10%; width: 80%; height: 80%; background: #050505; border: 2px solid var(--r); z-index: 100; padding: 20px; box-shadow: 0 0 50px rgba(255,0,0,0.5); }
+        .tabs { border-bottom: 1px solid var(--r); margin-bottom: 15px; display: flex; gap: 10px; }
+        .tab-btn { padding: 5px 15px; border: 1px solid var(--r); cursor: pointer; color: var(--r); font-weight: bold; }
+        .tab-btn.active { background: var(--r); color: black; }
+        .tab-content { display: none; height: 85%; overflow-y: auto; }
+        .tab-content.active { display: block; }
+        .log-item { border-bottom: 1px solid #300; padding: 8px; font-size: 12px; color: #ffaaaa; }
+        .matrix-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.1; z-index: 1; }
     </style>
 </head>
-<body onclick="unlock()">
+<body oncontextmenu="return false;"> <canvas id="matrix" class="matrix-bg"></canvas>
 
-<div id="gate">
-    <div class="gate-btn">SİSTEME ERİŞİM</div>
-</div>
-
-<div id="particles-js"></div>
-<div class="vignette"></div>
-
-<div class="container">
-    <div class="name-box">
-        <span class="name">LEXUS</span>
-        <span class="name">JINX</span>
-        <span class="name">erc4c3n</span>
-        <span class="name">yexsacxn</span>
+    <div id="term">
+        <div id="out"></div>
+        <div class="input-line">
+            <span>root@lexus:~#</span>
+            <input type="text" id="cmd" autofocus autocomplete="off" onkeydown="handle(event)">
+        </div>
     </div>
 
-    <div class="links">
-        <a href="https://discord.gg/9RYn8dNDh" class="discord-link" target="_blank">Sunucu</a>
-        <a href="https://discord.com/users/e.okul" target="_blank">Discord</a>
-        <a href="https://www.tiktok.com/@lexuscxnnn" target="_blank">TikTok</a>
+    <div id="adminPanel" class="modal">
+        <div class="tabs">
+            <div class="tab-btn active" onclick="tab(0)">LOGS</div>
+            <div class="tab-btn" onclick="tab(1)">IP SORGULA</div>
+            <div class="tab-btn" style="color:#fff; border-color:#fff" onclick="closeA()">X</div>
+        </div>
+        <div id="t0" class="tab-content active"></div>
+        <div id="t1" class="tab-content">
+            <input type="text" id="q-ip" style="border:1px solid var(--r); width:200px" placeholder="IP Adresi">
+            <button class="tab-btn" onclick="query()">SORGULA</button>
+            <div id="res" style="margin-top:20px"></div>
+        </div>
     </div>
-</div>
 
-<div class="shoutout">Adımızı etiketleyip prim kasmaya devam edin 😄</div>
+    <script>
+        // 1. F12 VE KISAYOL ENGELLEME (GÜVENLİK)
+        document.onkeydown = function(e) {
+            if (e.keyCode == 123 || // F12
+                (e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0) || e.keyCode == 'J'.charCodeAt(0) || e.keyCode == 'C'.charCodeAt(0))) || // Ctrl+Shift+I/J/C
+                (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0))) { // Ctrl+U (Kaynak Kodu)
+                saveLog("GÜVENLİK İHLALİ: Birisi F12 veya Kaynak Kodu açmaya çalıştı!");
+                return false;
+            }
+        };
 
-<iframe id="yt-player" width="0" height="0" src="" frameborder="0" allow="autoplay"></iframe>
+        const out = document.getElementById('out');
+        const cmd = document.getElementById('cmd');
 
-<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-<script>
-    function unlock() {
-        const gate = document.getElementById('gate');
-        const player = document.getElementById('yt-player');
-        
-        if (gate.style.display !== 'none') {
-            gate.style.opacity = '0';
-            setTimeout(() => gate.style.display = 'none', 500);
-            
-            // Belirttiğin güncel YouTube linki entegre edildi
-            player.src = "https://www.youtube.com/embed/xbr5sV68laE?autoplay=1&loop=1&playlist=xbr5sV68laE";
+        // 2. TERMİNAL BAŞLANGIÇ
+        const msg = ["LEXUS SECURE OS v3.0", "Security protocols: ACTIVE", "F12/Right-Click: DISABLED", "Waiting for command..."];
+        let idx = 0;
+        function showM() {
+            if(idx < msg.length) {
+                out.innerHTML += `<div class="line">${msg[idx]}</div>`;
+                idx++; setTimeout(showM, 300);
+            }
         }
-    }
+        showM();
 
-    particlesJS("particles-js", {
-        "particles": {
-            "number": { "value": 40, "density": { "enable": true, "value_area": 800 } },
-            "color": { "value": "#ffffff" },
-            "opacity": { "value": 0.05, "random": true },
-            "size": { "value": 1, "random": true },
-            "line_linked": { "enable": true, "distance": 200, "color": "#ffffff", "opacity": 0.03, "width": 1 },
-            "move": { "enable": true, "speed": 0.5, "direction": "none", "random": true, "straight": false, "out_mode": "out" }
+        // 3. KOMUT SİSTEMİ
+        function handle(e) {
+            if(e.key === 'Enter') {
+                const val = cmd.value.trim();
+                out.innerHTML += `<div class="line"><span style="color:#888">root@lexus:~#</span> ${val}</div>`;
+                
+                if(val === 'allahsiken113') {
+                    document.getElementById('adminPanel').style.display = 'block';
+                    loadL();
+                } else if(val === 'help') {
+                    out.innerHTML += `<div class="line">Tools: scan, whoami, clear, login</div>`;
+                } else if(val === 'clear') {
+                    out.innerHTML = "";
+                } else if(val !== "") {
+                    out.innerHTML += `<div class="line">Unknown command. All activities logged.</div>`;
+                    saveLog("Bilinmeyen Komut: " + val);
+                }
+                cmd.value = "";
+                document.getElementById('term').scrollTop = document.getElementById('term').scrollHeight;
+            }
         }
-    });
-</script>
+
+        // 4. LOGLAMA VE IP YAKALAMA
+        function saveLog(m) {
+            let logs = JSON.parse(localStorage.getItem('lexus_vault') || '[]');
+            logs.push(`[${new Date().toLocaleTimeString()}] ${m}`);
+            localStorage.setItem('lexus_vault', JSON.stringify(logs));
+        }
+
+        async function getIP() {
+            try {
+                const r = await fetch('https://api.ipify.org?format=json');
+                const d = await r.json();
+                saveLog("SİSTEME GİRİŞ: IP " + d.ip);
+            } catch(e) {}
+        }
+        getIP();
+
+        // 5. ADMIN PANEL FONKSİYONLARI
+        function tab(n) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('t'+n).classList.add('active');
+        }
+        function closeA() { document.getElementById('adminPanel').style.display = 'none'; }
+        function loadL() {
+            const logs = JSON.parse(localStorage.getItem('lexus_vault') || '[]');
+            document.getElementById('t0').innerHTML = logs.map(l => `<div class="log-item">${l}</div>`).reverse().join('');
+        }
+
+        async function query() {
+            const ip = document.getElementById('q-ip').value;
+            const res = document.getElementById('res');
+            res.innerText = "Sorgulanıyor...";
+            const r = await fetch(`https://ipapi.co/${ip}/json/`);
+            const d = await r.json();
+            res.innerHTML = d.city ? `${d.city} / ${d.country_name} <br> ISP: ${d.org}` : "Hata!";
+        }
+
+        // 6. MATRIX EFEKTİ
+        const can = document.getElementById("matrix");
+        const ctx = can.getContext("2d");
+        can.width = window.innerWidth; can.height = window.innerHeight;
+        const drops = Array(Math.floor(can.width/20)).fill(1);
+        function mat() {
+            ctx.fillStyle = "rgba(0,0,0,0.05)"; ctx.fillRect(0,0,can.width,can.height);
+            ctx.fillStyle = "#0F0";
+            drops.forEach((y, i) => {
+                ctx.fillText(Math.floor(Math.random()*2), i*20, y*20);
+                if(y*20 > can.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            });
+        }
+        setInterval(mat, 50);
+
+        // Korumayı artırmak için konsola uyarı bas
+        setInterval(() => { console.clear(); console.log("%cLEXUS SECURITY: STOP!", "color:red; font-size:40px; font-weight:bold;"); }, 1000);
+    </script>
 </body>
 </html>
