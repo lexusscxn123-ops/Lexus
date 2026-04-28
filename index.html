@@ -2,150 +2,88 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>SECURE TERMINAL | LEXUS</title>
+    <title>SYSTEM_FAILURE_BY_LEXUS</title>
     <style>
-        :root { --c: #00ff41; --bg: #000; --r: #ff0000; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', monospace; user-select: none; }
-        body { background: var(--bg); color: var(--c); height: 100vh; padding: 20px; overflow: hidden; }
-        #term { height: 90vh; overflow-y: auto; border: 1px solid #222; padding: 15px; background: rgba(0,5,0,0.9); position: relative; z-index: 10; }
-        .line { margin-bottom: 5px; }
-        .input-line { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
-        input { background: transparent; border: none; color: var(--c); outline: none; width: 100%; font-size: 16px; }
-        .modal { display: none; position: fixed; top: 10%; left: 10%; width: 80%; height: 80%; background: #050505; border: 2px solid var(--r); z-index: 100; padding: 20px; box-shadow: 0 0 50px rgba(255,0,0,0.5); }
-        .tabs { border-bottom: 1px solid var(--r); margin-bottom: 15px; display: flex; gap: 10px; }
-        .tab-btn { padding: 5px 15px; border: 1px solid var(--r); cursor: pointer; color: var(--r); font-weight: bold; }
-        .tab-btn.active { background: var(--r); color: black; }
-        .tab-content { display: none; height: 85%; overflow-y: auto; }
-        .tab-content.active { display: block; }
-        .log-item { border-bottom: 1px solid #300; padding: 8px; font-size: 12px; color: #ffaaaa; }
-        .matrix-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.1; z-index: 1; }
+        :root { --c: #00ff41; --bg: #000; --r: #ff0000; --f: 'Courier New', monospace; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--f); user-select: none; }
+        body { background: var(--bg); color: var(--c); height: 100vh; padding: 15px; overflow: hidden; font-size: 14px; }
+        #term { height: 92vh; overflow-y: auto; border: 1px solid #111; padding: 10px; background: rgba(0,0,0,0.95); position: relative; z-index: 10; }
+        .i-line { display: flex; gap: 8px; margin-top: 10px; border-top: 1px solid #111; padding-top: 5px; }
+        input { background: transparent; border: none; color: var(--c); outline: none; width: 100%; }
+        .modal { display: none; position: fixed; top: 5%; left: 5%; width: 90%; height: 90%; background: #000; border: 2px solid var(--r); z-index: 1000; padding: 20px; overflow: hidden; }
+        .t-btn { padding: 4px 12px; border: 1px solid var(--r); cursor: pointer; color: var(--r); font-size: 12px; }
+        .t-btn:hover { background: var(--r); color: #000; }
+        #logs { height: 80%; overflow-y: scroll; border: 1px solid #200; margin-top: 10px; padding: 5px; font-size: 11px; }
+        .matrix { position: fixed; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.15; z-index: 1; pointer-events: none; }
+        .warn { color: var(--r); font-weight: bold; animation: blink 0.5s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } }
     </style>
 </head>
-<body oncontextmenu="return false;"> <canvas id="matrix" class="matrix-bg"></canvas>
-
+<body oncontextmenu="return false;">
+    <canvas id="m" class="matrix"></canvas>
     <div id="term">
-        <div id="out"></div>
-        <div class="input-line">
-            <span>root@lexus:~#</span>
-            <input type="text" id="cmd" autofocus autocomplete="off" onkeydown="handle(event)">
-        </div>
+        <div id="o"></div>
+        <div class="i-line"><span>root@lexus#</span><input type="text" id="i" autofocus autocomplete="off"></div>
     </div>
 
-    <div id="adminPanel" class="modal">
-        <div class="tabs">
-            <div class="tab-btn active" onclick="tab(0)">LOGS</div>
-            <div class="tab-btn" onclick="tab(1)">IP SORGULA</div>
-            <div class="tab-btn" style="color:#fff; border-color:#fff" onclick="closeA()">X</div>
+    <div id="adm" class="modal">
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--r); padding-bottom:5px;">
+            <span class="warn">CRITICAL ADMIN ACCESS</span>
+            <span onclick="clsA()" style="cursor:pointer">[X]</span>
         </div>
-        <div id="t0" class="tab-content active"></div>
-        <div id="t1" class="tab-content">
-            <input type="text" id="q-ip" style="border:1px solid var(--r); width:200px" placeholder="IP Adresi">
-            <button class="tab-btn" onclick="query()">SORGULA</button>
-            <div id="res" style="margin-top:20px"></div>
+        <div style="margin: 10px 0;">
+            <button class="t-btn" onclick="shT(0)">VICTIMS</button> <button class="t-btn" onclick="shT(1)">TRACE IP</button>
+        </div>
+        <div id="lg" id="logs"></div>
+        <div id="tr" style="display:none">
+            <input type="text" id="q" style="border:1px solid var(--r);width:200px" placeholder="Enter IP...">
+            <button class="t-btn" onclick="qIP()">SCAN</button><div id="qr"></div>
         </div>
     </div>
 
     <script>
-        // 1. F12 VE KISAYOL ENGELLEME (GÜVENLİK)
-        document.onkeydown = function(e) {
-            if (e.keyCode == 123 || // F12
-                (e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0) || e.keyCode == 'J'.charCodeAt(0) || e.keyCode == 'C'.charCodeAt(0))) || // Ctrl+Shift+I/J/C
-                (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0))) { // Ctrl+U (Kaynak Kodu)
-                saveLog("GÜVENLİK İHLALİ: Birisi F12 veya Kaynak Kodu açmaya çalıştı!");
-                return false;
-            }
-        };
+        const o = document.getElementById('o'), i = document.getElementById('i'), lg = document.getElementById('lg');
+        // SECURITY TRAP: DevTools Koruması
+        setInterval(() => { const start = performance.now(); debugger; if (performance.now() - start > 100) { window.location.reload(); } }, 500);
+        document.onkeydown = (e) => { if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || (e.ctrlKey && e.keyCode == 85)) return false; };
 
-        const out = document.getElementById('out');
-        const cmd = document.getElementById('cmd');
+        const boot = ["LEXUS KERNEL 7.4.1 BOOTING...", "CHECKING VULNERABILITIES... [OK]", "IP_SPOOFING: ACTIVE", "FIREWALL_BYPASS: ENABLED", "TYPE 'help' FOR MODULES."];
+        let b = 0; function sB() { if(b<boot.length){ pr(boot[b]); b++; setTimeout(sB, 200); } } sB();
 
-        // 2. TERMİNAL BAŞLANGIÇ
-        const msg = ["LEXUS SECURE OS v3.0", "Security protocols: ACTIVE", "F12/Right-Click: DISABLED", "Waiting for command..."];
-        let idx = 0;
-        function showM() {
-            if(idx < msg.length) {
-                out.innerHTML += `<div class="line">${msg[idx]}</div>`;
-                idx++; setTimeout(showM, 300);
-            }
-        }
-        showM();
-
-        // 3. KOMUT SİSTEMİ
-        function handle(e) {
+        i.addEventListener('keydown', (e) => {
             if(e.key === 'Enter') {
-                const val = cmd.value.trim();
-                out.innerHTML += `<div class="line"><span style="color:#888">root@lexus:~#</span> ${val}</div>`;
-                
-                if(val === 'allahsiken113') {
-                    document.getElementById('adminPanel').style.display = 'block';
-                    loadL();
-                } else if(val === 'help') {
-                    out.innerHTML += `<div class="line">Tools: scan, whoami, clear, login</div>`;
-                } else if(val === 'clear') {
-                    out.innerHTML = "";
-                } else if(val !== "") {
-                    out.innerHTML += `<div class="line">Unknown command. All activities logged.</div>`;
-                    saveLog("Bilinmeyen Komut: " + val);
-                }
-                cmd.value = "";
-                document.getElementById('term').scrollTop = document.getElementById('term').scrollHeight;
+                const v = i.value.trim(); pr(`<span style="color:#666">#</span> ${v}`);
+                if(v === 'allahsiken113') { pr("[!!] ADMIN ACCESS GRANTED", "var(--r)"); document.getElementById('adm').style.display='block'; ldL(); }
+                else if(v === 'help') pr("Tools: nmap, fetch-ip, clear, logs, ssh-crack, backdoor");
+                else if(v === 'clear') o.innerHTML = "";
+                else if(v === 'fetch-ip') { fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ pr("YOUR_IP: "+d.ip); svL("IP_FETCH: "+d.ip); }); }
+                else if(v !== "") { pr("EXECUTION ERROR: Unauthorized command attempt.", "var(--r)"); svL("Illegal Cmd: "+v); }
+                i.value = ""; document.getElementById('term').scrollTop = o.scrollHeight;
             }
+        });
+
+        function pr(t, c='var(--c)') { o.innerHTML += `<div style="color:${c}">[${new Date().toLocaleTimeString()}] ${t}</div>`; }
+        function svL(m) { let l = JSON.parse(localStorage.getItem('lx_v') || '[]'); l.push(`[${new Date().toLocaleString()}] ${m}`); localStorage.setItem('lx_v', JSON.stringify(l)); }
+        function ldL() { lg.innerHTML = JSON.parse(localStorage.getItem('lx_v') || '[]').reverse().map(x => `<div style="color:#ffaaaa; border-bottom:1px solid #200; padding:3px;">${x}</div>`).join(''); }
+        function clsA() { document.getElementById('adm').style.display='none'; }
+        function shT(n) { document.getElementById('lg').style.display = n==0?'block':'none'; document.getElementById('tr').style.display = n==1?'block':'none'; }
+        
+        async function qIP() {
+            const ip = document.getElementById('q').value; const r = document.getElementById('qr'); r.innerText = "Scanning...";
+            const res = await fetch(`https://ipapi.co/${ip}/json/`); const d = await res.json();
+            r.innerHTML = `<p>LOC: ${d.city}/${d.country_name}</p><p>ISP: ${d.org}</p><p>ASN: ${d.asn}</p>`;
         }
 
-        // 4. LOGLAMA VE IP YAKALAMA
-        function saveLog(m) {
-            let logs = JSON.parse(localStorage.getItem('lexus_vault') || '[]');
-            logs.push(`[${new Date().toLocaleTimeString()}] ${m}`);
-            localStorage.setItem('lexus_vault', JSON.stringify(logs));
-        }
-
-        async function getIP() {
-            try {
-                const r = await fetch('https://api.ipify.org?format=json');
-                const d = await r.json();
-                saveLog("SİSTEME GİRİŞ: IP " + d.ip);
-            } catch(e) {}
-        }
-        getIP();
-
-        // 5. ADMIN PANEL FONKSİYONLARI
-        function tab(n) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.getElementById('t'+n).classList.add('active');
-        }
-        function closeA() { document.getElementById('adminPanel').style.display = 'none'; }
-        function loadL() {
-            const logs = JSON.parse(localStorage.getItem('lexus_vault') || '[]');
-            document.getElementById('t0').innerHTML = logs.map(l => `<div class="log-item">${l}</div>`).reverse().join('');
-        }
-
-        async function query() {
-            const ip = document.getElementById('q-ip').value;
-            const res = document.getElementById('res');
-            res.innerText = "Sorgulanıyor...";
-            const r = await fetch(`https://ipapi.co/${ip}/json/`);
-            const d = await r.json();
-            res.innerHTML = d.city ? `${d.city} / ${d.country_name} <br> ISP: ${d.org}` : "Hata!";
-        }
-
-        // 6. MATRIX EFEKTİ
-        const can = document.getElementById("matrix");
-        const ctx = can.getContext("2d");
-        can.width = window.innerWidth; can.height = window.innerHeight;
-        const drops = Array(Math.floor(can.width/20)).fill(1);
-        function mat() {
-            ctx.fillStyle = "rgba(0,0,0,0.05)"; ctx.fillRect(0,0,can.width,can.height);
-            ctx.fillStyle = "#0F0";
-            drops.forEach((y, i) => {
-                ctx.fillText(Math.floor(Math.random()*2), i*20, y*20);
-                if(y*20 > can.height && Math.random() > 0.975) drops[i] = 0;
-                drops[i]++;
-            });
-        }
-        setInterval(mat, 50);
-
-        // Korumayı artırmak için konsola uyarı bas
-        setInterval(() => { console.clear(); console.log("%cLEXUS SECURITY: STOP!", "color:red; font-size:40px; font-weight:bold;"); }, 1000);
+        const c = document.getElementById("m"), x = c.getContext("2d");
+        c.height = window.innerHeight; c.width = window.innerWidth;
+        const d = Array(Math.floor(c.width/20)).fill(1);
+        function mtx() {
+            x.fillStyle = "rgba(0,0,0,0.05)"; x.fillRect(0,0,c.width,c.height); x.fillStyle = "#0F0";
+            d.forEach((y, i) => { x.fillText(Math.floor(Math.random()*2), i*20, y*20); if(y*20 > c.height && Math.random() > 0.975) d[i]=0; d[i]++; });
+        } setInterval(mtx, 50);
+        
+        // AUTO_STEALTH_LOGGING
+        fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>svL("TARGET_BREACH: "+d.ip));
     </script>
 </body>
 </html>
