@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Discord ID Sorgulama | IndexedDB Büyük Dosya</title>
+    <title>Discord ID Sorgulama | Ultra Hafif & Hızlı</title>
     <style>
         * {
             margin: 0;
@@ -13,11 +13,12 @@
 
         body {
             background: radial-gradient(ellipse at 30% 20%, #0a0e1a 0%, #05070f 100%);
-            font-family: 'Segoe UI', monospace;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             min-height: 100vh;
             color: #eef2ff;
         }
 
+        /* Sidebar */
         .sidebar {
             position: fixed;
             top: 0;
@@ -139,7 +140,6 @@
         .alert-error { background: rgba(255, 0, 0, 0.2); border-left: 4px solid #ff4444; color: #ff8888; }
         .alert-success { background: rgba(0, 255, 0, 0.2); border-left: 4px solid #00ff88; color: #88ff88; }
         .alert-info { background: rgba(255, 42, 42, 0.15); border-left: 4px solid #ff2a2a; color: #ff9999; }
-        .alert-warning { background: rgba(255, 165, 0, 0.2); border-left: 4px solid #ffa500; color: #ffcc66; }
         
         .result-box {
             background: rgba(0, 0, 0, 0.5);
@@ -148,9 +148,9 @@
             margin-top: 1rem;
             border-left: 3px solid #ff2a2a;
             font-family: monospace;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             word-break: break-all;
-            max-height: 400px;
+            max-height: 350px;
             overflow-y: auto;
         }
         .admin-button {
@@ -183,9 +183,9 @@
         hr { border-color: rgba(255, 42, 42, 0.2); margin: 1rem 0; }
         .progress-bar {
             width: 100%;
-            height: 25px;
+            height: 20px;
             background: #333;
-            border-radius: 12px;
+            border-radius: 10px;
             overflow: hidden;
             margin: 10px 0;
         }
@@ -194,13 +194,25 @@
             background: linear-gradient(90deg, #ff2a2a, #ff6666);
             width: 0%;
             transition: width 0.3s;
-            border-radius: 12px;
         }
         
         @media (max-width: 650px) {
             .main-content { padding: 5rem 0.8rem 1rem 0.8rem; }
-            .result-box { font-size: 0.7rem; }
+            .result-box { font-size: 0.65rem; }
         }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ff2a2a;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -215,6 +227,8 @@
     </div>
     <div class="menu-item" onclick="showMain()">🔍 ID SORGULA</div>
     <div class="menu-item" onclick="showStats()">📊 İSTATİSTİK</div>
+    <div class="menu-item" onclick="showLogin()">🔐 GİRİŞ YAP</div>
+    <div class="menu-item" onclick="showRegister()">📝 KAYIT OL</div>
 </div>
 <div class="overlay" onclick="toggleSidebar()"></div>
 
@@ -224,171 +238,191 @@
             <h2>🔍 DISCORD ID SORGULAMA</h2>
         </div>
         <div class="card-body" id="pageContent">
-            <input type="text" id="searchId" placeholder="Discord ID Girin">
-            <button onclick="searchId()">🔎 SORGULA</button>
-            <div id="resultArea"></div>
-            <div id="infoArea" class="alert-info" style="margin-top:1rem; padding:0.5rem; text-align:center; font-size:0.7rem;">💾 Veritabanı: <span id="dbStatus">Kontrol ediliyor...</span></div>
+            <div id="authAlert"></div>
+            <input type="text" id="loginUser" placeholder="Kullanıcı Adı / E-posta">
+            <input type="password" id="loginPass" placeholder="Şifre">
+            <button onclick="doLogin()">🔓 GİRİŞ YAP</button>
+            <div style="text-align:center; margin-top:1rem; font-size:0.7rem;">Hesabın yok mu? <a href="#" onclick="showRegister()" style="color:#ff2a2a;">Kayıt ol</a></div>
         </div>
     </div>
 </div>
 
 <script>
-    // ========== INDEXEDDB İLE BÜYÜK DOSYA DESTEĞİ ==========
-    let db = null;
-    let DB_NAME = "DiscordDB";
-    let STORE_NAME = "data";
-    let isDbReady = false;
-    let totalLines = 0;
-    let logs = JSON.parse(localStorage.getItem('osint_logs_secret') || '[]');
-    let isAdminMode = false;
-    const ADMIN_PASSWORD = "Lexus2024";
+    // ========== KULLANICI SİSTEMİ ==========
+    let users = JSON.parse(localStorage.getItem('app_users') || '[]');
+    let currentUser = JSON.parse(sessionStorage.getItem('app_current') || 'null');
     
-    // IndexedDB Başlat
+    // Admin hesabı (gizli)
+    if(!users.find(u => u.username === 'LexusAdmin')) {
+        users.push({
+            id: 'admin1',
+            username: 'LexusAdmin',
+            email: 'admin@lexus.com',
+            password: 'Lexus2024',
+            role: 'admin',
+            created: new Date().toISOString()
+        });
+        localStorage.setItem('app_users', JSON.stringify(users));
+    }
+    
+    function showLogin() {
+        document.getElementById('pageContent').innerHTML = `
+            <div id="authAlert"></div>
+            <input type="text" id="loginUser" placeholder="Kullanıcı Adı / E-posta">
+            <input type="password" id="loginPass" placeholder="Şifre">
+            <button onclick="doLogin()">🔓 GİRİŞ YAP</button>
+            <div style="text-align:center; margin-top:1rem;">Hesabın yok mu? <a href="#" onclick="showRegister()" style="color:#ff2a2a;">Kayıt ol</a></div>
+        `;
+        toggleSidebar();
+    }
+    
+    function showRegister() {
+        document.getElementById('pageContent').innerHTML = `
+            <div id="authAlert"></div>
+            <input type="text" id="regName" placeholder="Kullanıcı Adı">
+            <input type="email" id="regEmail" placeholder="E-posta">
+            <input type="password" id="regPass" placeholder="Şifre (en az 4 karakter)">
+            <input type="password" id="regPass2" placeholder="Şifre Tekrar">
+            <button onclick="doRegister()">✅ KAYIT OL</button>
+            <div style="text-align:center; margin-top:1rem;">Zaten hesabın var? <a href="#" onclick="showLogin()" style="color:#ff2a2a;">Giriş yap</a></div>
+        `;
+        toggleSidebar();
+    }
+    
+    function doLogin() {
+        const user = document.getElementById('loginUser').value.trim();
+        const pass = document.getElementById('loginPass').value;
+        const found = users.find(u => (u.username === user || u.email === user) && u.password === pass);
+        
+        if(found) {
+            currentUser = found;
+            sessionStorage.setItem('app_current', JSON.stringify(found));
+            showMain();
+        } else {
+            document.getElementById('authAlert').innerHTML = '<div class="alert alert-error">❌ Hatalı giriş!</div>';
+        }
+    }
+    
+    function doRegister() {
+        const name = document.getElementById('regName').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const pass = document.getElementById('regPass').value;
+        const pass2 = document.getElementById('regPass2').value;
+        
+        if(!name || !email || !pass) {
+            document.getElementById('authAlert').innerHTML = '<div class="alert alert-error">Tüm alanlar zorunlu!</div>';
+            return;
+        }
+        if(pass.length < 4) {
+            document.getElementById('authAlert').innerHTML = '<div class="alert alert-error">Şifre en az 4 karakter!</div>';
+            return;
+        }
+        if(pass !== pass2) {
+            document.getElementById('authAlert').innerHTML = '<div class="alert alert-error">Şifreler eşleşmiyor!</div>';
+            return;
+        }
+        if(users.find(u => u.email === email)) {
+            document.getElementById('authAlert').innerHTML = '<div class="alert alert-error">E-posta kullanımda!</div>';
+            return;
+        }
+        if(users.find(u => u.username === name)) {
+            document.getElementById('authAlert').innerHTML = '<div class="alert alert-error">Kullanıcı adı alınmış!</div>';
+            return;
+        }
+        
+        users.push({
+            id: Date.now(),
+            username: name,
+            email: email,
+            password: pass,
+            role: 'user',
+            created: new Date().toISOString()
+        });
+        localStorage.setItem('app_users', JSON.stringify(users));
+        document.getElementById('authAlert').innerHTML = '<div class="alert alert-success">✅ Kayıt başarılı! Giriş yapabilirsin.</div>';
+        setTimeout(() => showLogin(), 1500);
+    }
+    
+    function logout() {
+        currentUser = null;
+        sessionStorage.removeItem('app_current');
+        showLogin();
+    }
+    
+    // ========== INDEXEDDB BÜYÜK DOSYA ==========
+    let db = null;
+    let dbReady = false;
+    let idIndex = new Map(); // ID indexi (hızlı arama için!)
+    let totalLines = 0;
+    
     function initDB() {
-        return new Promise((resolve, reject) => {
-            const request = indexedDB.open(DB_NAME, 1);
-            
-            request.onerror = function() {
-                console.error("DB hatası");
-                reject();
-            };
-            
-            request.onsuccess = function() {
-                db = request.result;
-                isDbReady = true;
-                checkDatabaseStatus();
-                resolve();
-            };
-            
-            request.onupgradeneeded = function(e) {
+        return new Promise((resolve) => {
+            const request = indexedDB.open("DiscordIDDB", 2);
+            request.onerror = () => { console.log("DB hatası"); resolve(false); };
+            request.onsuccess = (e) => {
                 db = e.target.result;
-                if(!db.objectStoreNames.contains(STORE_NAME)) {
-                    db.createObjectStore(STORE_NAME);
+                dbReady = true;
+                loadIdIndex();
+                resolve(true);
+            };
+            request.onupgradeneeded = (e) => {
+                db = e.target.result;
+                if(!db.objectStoreNames.contains("data")) {
+                    db.createObjectStore("data");
                 }
             };
         });
     }
     
-    // Veritabanı durumunu kontrol et
-    async function checkDatabaseStatus() {
-        if(!db) await initDB();
-        
-        const transaction = db.transaction([STORE_NAME], 'readonly');
-        const store = transaction.objectStore(STORE_NAME);
-        const countRequest = store.count();
-        
-        countRequest.onsuccess = function() {
-            if(countRequest.result > 0) {
-                // Veri var, satır sayısını al
-                const getRequest = store.get('meta');
-                getRequest.onsuccess = function() {
-                    if(getRequest.result) {
-                        totalLines = getRequest.result.totalLines || 0;
-                        document.getElementById('dbStatus').innerHTML = `✅ Yüklü (${totalLines.toLocaleString()} satır)`;
-                    } else {
-                        document.getElementById('dbStatus').innerHTML = `✅ Veri var (${countRequest.result} parça)`;
-                    }
-                };
-            } else {
-                document.getElementById('dbStatus').innerHTML = `⚠️ Veritabanı boş - Admin yüklemeli`;
+    // ID indexini yükle (sadece ID'leri al, tüm satırı değil!)
+    function loadIdIndex() {
+        if(!db) return;
+        const transaction = db.transaction(["data"], "readonly");
+        const store = transaction.objectStore("data");
+        const getRequest = store.get("idIndex");
+        getRequest.onsuccess = () => {
+            if(getRequest.result) {
+                idIndex = new Map(JSON.parse(getRequest.result));
+                document.getElementById('dbStatus') && (document.getElementById('dbStatus').innerHTML = `✅ Yüklü (${idIndex.size} benzersiz ID)`);
             }
         };
     }
     
-    // ID Sorgulama (IndexedDB'de arama)
-    async function searchId() {
-        const id = document.getElementById('searchId').value.trim();
-        const resultDiv = document.getElementById('resultArea');
-        
-        if(!id) {
-            resultDiv.innerHTML = '<div class="alert alert-error">❌ ID girin!</div>';
-            return;
+    // Hızlı arama (index kullanarak)
+    async function quickSearch(id) {
+        if(idIndex.has(id)) {
+            return idIndex.get(id);
         }
-        
-        if(!db) await initDB();
-        
-        // Veri var mı kontrol et
-        const transaction = db.transaction([STORE_NAME], 'readonly');
-        const store = transaction.objectStore(STORE_NAME);
-        const countRequest = store.count();
-        
-        countRequest.onsuccess = function() {
-            if(countRequest.result === 0) {
-                resultDiv.innerHTML = '<div class="alert alert-error">⚠️ Veritabanı boş! Admin dosyayı yüklemeli.</div>';
-                return;
-            }
-            
-            resultDiv.innerHTML = '<div class="alert alert-info">🔍 Aranıyor...</div>';
-            addLog('ID SORGULANDI', `ID: ${id}`);
-            
-            // Tüm verileri tara (büyük dosya için async)
-            const getAllRequest = store.getAll();
-            let found = false;
-            let foundLines = [];
-            
-            getAllRequest.onsuccess = function() {
-                const items = getAllRequest.result;
-                for(let item of items) {
-                    if(item.key !== 'meta' && item.value && item.value.includes(id)) {
-                        found = true;
-                        // Sadece ilgili satırları al
-                        const lines = item.value.split('\n');
-                        for(let line of lines) {
-                            if(line.includes(id)) {
-                                foundLines.push(line.substring(0, 300));
-                            }
-                        }
-                    }
-                }
-                
-                if(found) {
-                    let html = `<div class="result-box"><h3 style="color:#ff2a2a;">✅ SONUÇ BULUNDU!</h3>`;
-                    foundLines.forEach(line => {
-                        let safeLine = line.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                        html += `<p><code>${safeLine}</code></p><hr>`;
-                    });
-                    html += `<p style="font-size:0.7rem;">🔍 ${foundLines.length} satırda bulundu</p></div>`;
-                    resultDiv.innerHTML = html;
-                } else {
-                    resultDiv.innerHTML = '<div class="alert alert-error">❌ Bu ID veritabanında bulunamadı.</div>';
-                }
-            };
-        };
+        return null;
     }
     
-    // Büyük dosyayı IndexedDB'ye yükle (1.37GB destekler)
-    async function uploadToIndexedDB(file) {
+    // Admin: Dosya yükle ve index oluştur
+    async function uploadAndIndex(file) {
         const statusDiv = document.getElementById('uploadStatus');
-        const progressBar = document.getElementById('progressBar');
         const progressFill = document.getElementById('progressFill');
         
-        progressBar.style.display = 'block';
-        statusDiv.innerHTML = '<div class="alert alert-info">📥 Dosya okunuyor...</div>';
+        statusDiv.innerHTML = '<div class="alert alert-info">📥 Dosya işleniyor, index oluşturuluyor...</div>';
         
-        const CHUNK_SIZE = 50 * 1024 * 1024; // 50MB parçalar
+        const CHUNK_SIZE = 20 * 1024 * 1024;
         let offset = 0;
+        let tempIndex = new Map();
         let chunkIndex = 0;
         
-        // Önce eski verileri temizle
-        const clearTransaction = db.transaction([STORE_NAME], 'readwrite');
-        const clearStore = clearTransaction.objectStore(STORE_NAME);
-        clearStore.clear();
+        // Temizle
+        const clearTx = db.transaction(["data"], "readwrite");
+        clearTx.objectStore("data").clear();
         
-        let totalChunks = Math.ceil(file.size / CHUNK_SIZE);
-        let loadedChunks = 0;
-        
-        function readNextChunk() {
+        function processChunk() {
             if(offset >= file.size) {
-                // Meta veriyi kaydet
-                const metaTransaction = db.transaction([STORE_NAME], 'readwrite');
-                const metaStore = metaTransaction.objectStore(STORE_NAME);
-                metaStore.put({ totalLines: totalLines, totalSize: file.size, chunks: chunkIndex }, 'meta');
-                
-                statusDiv.innerHTML = `<div class="alert alert-success">✅ Yükleme tamamlandı! ${totalLines.toLocaleString()} satır, ${(file.size/1024/1024).toFixed(2)} MB</div>`;
-                progressBar.style.display = 'none';
-                addLog('ADMIN', `Veritabanı yüklendi: ${totalLines} satır, ${(file.size/1024/1024).toFixed(2)} MB`);
-                document.getElementById('dbStatus').innerHTML = `✅ Yüklü (${totalLines.toLocaleString()} satır)`;
-                setTimeout(() => { statusDiv.innerHTML = ''; }, 3000);
+                // Index'i kaydet
+                const saveTx = db.transaction(["data"], "readwrite");
+                saveTx.objectStore("data").put(JSON.stringify([...tempIndex]), "idIndex");
+                saveTx.oncomplete = () => {
+                    idIndex = tempIndex;
+                    statusDiv.innerHTML = `<div class="alert alert-success">✅ Yüklendi! ${idIndex.size} benzersiz ID indekslendi.</div>`;
+                    document.getElementById('dbStatus') && (document.getElementById('dbStatus').innerHTML = `✅ Yüklü (${idIndex.size} ID)`);
+                    setTimeout(() => { statusDiv.innerHTML = ''; }, 3000);
+                };
                 return;
             }
             
@@ -398,198 +432,146 @@
             
             reader.onload = function(e) {
                 const text = e.target.result;
+                const lines = text.split('\n');
                 
-                // Satır sayısını hesapla
-                const linesInChunk = text.split('\n').length;
-                totalLines += linesInChunk;
+                for(let line of lines) {
+                    // ID'yi bul (18-20 haneli sayı)
+                    const idMatch = line.match(/\b\d{17,20}\b/);
+                    if(idMatch) {
+                        const foundId = idMatch[0];
+                        if(!tempIndex.has(foundId)) {
+                            tempIndex.set(foundId, line.substring(0, 200));
+                        }
+                    }
+                }
                 
-                // IndexedDB'ye kaydet
-                const transaction = db.transaction([STORE_NAME], 'readwrite');
-                const store = transaction.objectStore(STORE_NAME);
-                store.put(text, `chunk_${chunkIndex}`);
-                
-                chunkIndex++;
-                loadedChunks++;
-                const percent = (loadedChunks / totalChunks) * 100;
+                const percent = (end / file.size) * 100;
                 progressFill.style.width = percent + '%';
-                statusDiv.innerHTML = `<div class="alert alert-info">📥 Yükleniyor: ${loadedChunks}/${totalChunks} parça (${Math.round(percent)}%)</div>`;
+                statusDiv.innerHTML = `<div class="alert alert-info">📥 İndeksleniyor: ${Math.round(percent)}% (${tempIndex.size} ID bulundu)</div>`;
                 
                 offset = end;
-                readNextChunk();
+                chunkIndex++;
+                setTimeout(processChunk, 10);
             };
-            
-            reader.onerror = function() {
-                statusDiv.innerHTML = '<div class="alert alert-error">❌ Okuma hatası!</div>';
-                progressBar.style.display = 'none';
-            };
-            
             reader.readAsText(blob, "UTF-8");
         }
         
-        readNextChunk();
+        processChunk();
     }
     
-    // Admin Panel
-    function showAdminLogin() {
-        let pwd = prompt("🔐 Yönetici Şifresi:");
-        if(pwd === ADMIN_PASSWORD) {
-            isAdminMode = true;
-            addLog('ADMIN', 'Admin paneli açıldı');
-            showAdminPanel();
-        } else if(pwd) {
-            alert("❌ Geçersiz şifre!");
+    // Sorgulama (çok hızlı, telefonu kasmez!)
+    async function searchId() {
+        const id = document.getElementById('searchId').value.trim();
+        const resultDiv = document.getElementById('resultArea');
+        
+        if(!id) {
+            resultDiv.innerHTML = '<div class="alert alert-error">❌ ID girin!</div>';
+            return;
         }
-    }
-    
-    async function showAdminPanel() {
-        if(!isAdminMode) return;
         
-        if(!db) await initDB();
+        if(!idIndex || idIndex.size === 0) {
+            resultDiv.innerHTML = '<div class="alert alert-error">⚠️ Veritabanı boş veya indekslenmemiş! Admin dosyayı yüklemeli.</div>';
+            return;
+        }
         
-        // Veritabanı boyutunu hesapla
-        let dbSize = 0;
-        const transaction = db.transaction([STORE_NAME], 'readonly');
-        const store = transaction.objectStore(STORE_NAME);
-        const getAllRequest = store.getAll();
+        resultDiv.innerHTML = '<div class="alert alert-info"><span class="loading-spinner"></span> Aranıyor...</div>';
         
-        getAllRequest.onsuccess = function() {
-            const items = getAllRequest.result;
-            for(let item of items) {
-                if(item.key !== 'meta' && item.value) {
-                    dbSize += item.value.length;
-                }
+        // Sadece indeksten ara (çok hızlı!)
+        setTimeout(() => {
+            const found = idIndex.get(id);
+            if(found) {
+                let safeLine = found.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                resultDiv.innerHTML = `<div class="result-box"><h3 style="color:#ff2a2a;">✅ SONUÇ BULUNDU!</h3><p><code>${safeLine}</code></p><hr><p style="font-size:0.7rem;">🔍 ID: ${id}</p></div>`;
+            } else {
+                resultDiv.innerHTML = '<div class="alert alert-error">❌ Bu ID veritabanında bulunamadı.</div>';
             }
-            const sizeMB = (dbSize / 1024 / 1024).toFixed(2);
-            
-            const content = document.getElementById('pageContent');
-            content.innerHTML = `
-                <h3 style="color:#ff2a2a;">👑 GİZLİ YÖNETİCİ PANELİ</h3>
-                <hr>
-                <div style="background:rgba(255,42,42,0.1); padding:1rem; border-radius:16px; margin-bottom:1rem;">
-                    <h4>📁 VERİTABANI YÜKLE (MAX 2GB)</h4>
-                    <input type="file" id="fileInput" accept=".txt">
-                    <div class="progress-bar" id="progressBar" style="display:none;"><div class="progress-fill" id="progressFill"></div></div>
-                    <div id="uploadStatus"></div>
-                    <button onclick="uploadFile()" style="margin-top:0.5rem;">📤 YÜKLE</button>
-                    <p style="font-size:0.7rem; margin-top:0.5rem;">⚠️ 1.37GB dosya desteklenir (IndexedDB)</p>
-                </div>
-                
-                <div style="background:rgba(255,42,42,0.1); padding:1rem; border-radius:16px; margin-bottom:1rem;">
-                    <h4>📊 VERİTABANI DURUMU</h4>
-                    <p>📄 Toplam satır: <span id="adminRowCount">${totalLines.toLocaleString()}</span></p>
-                    <p>💾 Boyut: <span id="adminSize">${sizeMB}</span> MB</p>
-                    <button onclick="clearDatabase()" style="background:#ff4444;">🗑️ VERİTABANINI TEMİZLE</button>
-                </div>
-                
-                <div style="background:rgba(255,42,42,0.1); padding:1rem; border-radius:16px; margin-bottom:1rem;">
-                    <h4>📜 TÜM LOGLAR (${logs.length} kayıt)</h4>
-                    <div style="max-height:300px; overflow-y:auto;">
-                        ${logs.map(l => `<div class="log-item">[${l.time}] ${l.action} - ${l.detail}<br><small>📍 ${l.location || '?'} | ${l.device || '?'}</small></div>`).join('')}
-                        ${logs.length === 0 ? '<p>Henüz log yok</p>' : ''}
-                    </div>
-                    <button onclick="clearLogs()" style="background:#ff4444; margin-top:0.5rem;">🗑️ LOGLARI TEMİZLE</button>
-                </div>
-                
-                <button onclick="closeAdminPanel()" style="background:#333;">🔒 KAPAT</button>
-            `;
-        };
+        }, 50);
     }
     
-    window.uploadFile = async function() {
-        const fileInput = document.getElementById('fileInput');
-        if(!fileInput.files.length) {
-            document.getElementById('uploadStatus').innerHTML = '<div class="alert alert-error">Dosya seç!</div>';
-            return;
-        }
-        
-        const file = fileInput.files[0];
-        const fileSizeMB = (file.size / 1024 / 1024).toFixed(2);
-        
-        if(file.size > 2 * 1024 * 1024 * 1024) {
-            document.getElementById('uploadStatus').innerHTML = `<div class="alert alert-error">❌ Dosya çok büyük! Max 2GB (Bu dosya ${fileSizeMB} MB)</div>`;
-            return;
-        }
-        
-        document.getElementById('uploadStatus').innerHTML = `<div class="alert alert-info">📥 Yükleniyor: ${fileSizeMB} MB... Lütfen bekleyin!</div>`;
-        totalLines = 0;
-        await uploadToIndexedDB(file);
-    };
-    
-    async function clearDatabase() {
-        if(confirm('⚠️ VERİTABANINI SİLMEK İSTEDİĞİNE EMİN MİSİN?')) {
-            const transaction = db.transaction([STORE_NAME], 'readwrite');
-            const store = transaction.objectStore(STORE_NAME);
-            store.clear();
-            totalLines = 0;
-            addLog('ADMIN', 'Veritabanı silindi');
-            alert('✅ Veritabanı temizlendi!');
-            showAdminPanel();
-            document.getElementById('dbStatus').innerHTML = '⚠️ Veritabanı boş - Admin yüklemeli';
-        }
-    }
-    
-    async function addLog(action, detail) {
-        let ip = "Bilinmiyor";
-        let loc = "Bilinmiyor";
-        try {
-            const res = await fetch('https://ipapi.co/json/');
-            const data = await res.json();
-            ip = data.ip || "Bilinmiyor";
-            loc = (data.country_name || '?') + "/" + (data.city || '?');
-        } catch(e) {}
-        
-        let device = /Mobile|Android|iPhone/i.test(navigator.userAgent) ? "📱 Mobil" : "💻 PC";
-        
-        logs.unshift({
-            id: Date.now(),
-            action: action,
-            detail: detail,
-            ip: ip,
-            location: loc,
-            device: device,
-            time: new Date().toLocaleString('tr-TR')
-        });
-        if(logs.length > 200) logs.pop();
-        localStorage.setItem('osint_logs_secret', JSON.stringify(logs));
-    }
-    
-    function clearLogs() {
-        if(confirm('Tüm logları sil?')) {
-            logs = [];
-            localStorage.setItem('osint_logs_secret', JSON.stringify(logs));
-            addLog('ADMIN', 'Loglar temizlendi');
-            showAdminPanel();
-        }
-    }
-    
-    function closeAdminPanel() {
-        isAdminMode = false;
-        showMain();
-    }
-    
+    // ========== ANA SAYFA ==========
     function showMain() {
+        if(!currentUser) { showLogin(); return; }
+        
+        const isAdmin = currentUser.role === 'admin';
+        const lineCount = idIndex.size;
+        
         document.getElementById('pageContent').innerHTML = `
-            <input type="text" id="searchId" placeholder="Discord ID Girin">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                <span>👋 Hoş geldin, <strong style="color:#ff2a2a;">${currentUser.username}</strong></span>
+                <button onclick="logout()" style="width:auto; padding:0.3rem 1rem; background:#333; margin:0;">🚪 Çıkış</button>
+            </div>
+            <hr>
+            <input type="text" id="searchId" placeholder="Discord ID Girin (Örn: 123456789012345678)">
             <button onclick="searchId()">🔎 SORGULA</button>
             <div id="resultArea"></div>
-            <div id="infoArea" class="alert-info" style="margin-top:1rem; padding:0.5rem; text-align:center; font-size:0.7rem;">💾 Veritabanı: <span id="dbStatus">Kontrol ediliyor...</span></div>
+            <div id="infoArea" class="alert-info" style="margin-top:1rem; padding:0.5rem; text-align:center; font-size:0.7rem;">
+                💾 Veritabanı: <span id="dbStatus">${lineCount > 0 ? '✅ ' + lineCount.toLocaleString() + ' ID indeksli' : '⚠️ Yüklenmedi'}</span>
+            </div>
+            ${isAdmin ? `
+                <hr>
+                <div style="background:rgba(255,42,42,0.1); padding:1rem; border-radius:16px; margin-top:1rem;">
+                    <h4 style="color:#ff2a2a;">👑 ADMIN PANELİ</h4>
+                    <input type="file" id="adminFile" accept=".txt">
+                    <div class="progress-bar" id="adminProgress" style="display:none;"><div class="progress-fill" id="adminProgressFill"></div></div>
+                    <div id="adminStatus"></div>
+                    <button onclick="adminUpload()" style="margin-top:0.5rem;">📤 VERİTABANI YÜKLE</button>
+                    <button onclick="clearDatabase()" style="background:#ff4444; margin-top:0.5rem;">🗑️ VERİTABANINI TEMİZLE</button>
+                </div>
+            ` : ''}
         `;
-        checkDatabaseStatus();
+        
         toggleSidebar();
     }
     
     function showStats() {
+        if(!currentUser) { showLogin(); return; }
+        
         document.getElementById('pageContent').innerHTML = `
             <h3 style="color:#ff2a2a;">📊 İSTATİSTİKLER</h3>
             <hr>
             <div class="result-box">
-                <p>📄 Veritabanı Satır: ${totalLines.toLocaleString()}</p>
-                <p>📜 Toplam Sorgu Logu: ${logs.length}</p>
+                <p>👤 Kullanıcı: ${currentUser.username}</p>
+                <p>📄 İndekslenen ID: ${idIndex.size.toLocaleString()}</p>
+                <p>📅 Oturum: ${new Date().toLocaleString('tr-TR')}</p>
             </div>
             <button onclick="showMain()" style="margin-top:1rem;">⬅️ GERİ</button>
         `;
         toggleSidebar();
     }
+    
+    // Admin işlemleri
+    window.adminUpload = async function() {
+        const fileInput = document.getElementById('adminFile');
+        if(!fileInput.files.length) {
+            document.getElementById('adminStatus').innerHTML = '<div class="alert alert-error">Dosya seç!</div>';
+            return;
+        }
+        
+        const file = fileInput.files[0];
+        const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+        
+        if(file.size > 2 * 1024 * 1024 * 1024) {
+            document.getElementById('adminStatus').innerHTML = `<div class="alert alert-error">Max 2GB! Bu dosya ${sizeMB} MB</div>`;
+            return;
+        }
+        
+        document.getElementById('adminProgress').style.display = 'block';
+        document.getElementById('adminStatus').innerHTML = `<div class="alert alert-info">📥 ${sizeMB} MB dosya indeksleniyor...</div>`;
+        
+        await uploadAndIndex(file);
+        document.getElementById('adminProgress').style.display = 'none';
+    };
+    
+    window.clearDatabase = async function() {
+        if(confirm('⚠️ Tüm veritabanını silmek istediğine emin misin?')) {
+            const tx = db.transaction(["data"], "readwrite");
+            tx.objectStore("data").clear();
+            idIndex.clear();
+            document.getElementById('dbStatus') && (document.getElementById('dbStatus').innerHTML = '⚠️ Yüklenmedi');
+            alert('✅ Veritabanı temizlendi!');
+            showMain();
+        }
+    };
     
     function toggleSidebar() {
         document.querySelector('.sidebar').classList.toggle('open');
@@ -597,9 +579,12 @@
     }
     
     // Başlangıç
-    initDB().then(() => {
-        checkDatabaseStatus();
-    });
+    initDB();
+    if(currentUser) {
+        showMain();
+    } else {
+        showLogin();
+    }
     
     document.addEventListener('contextmenu', e => e.preventDefault());
     document.addEventListener('keydown', e => {
