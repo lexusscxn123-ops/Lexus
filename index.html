@@ -2,8 +2,8 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🕵️ OSINT FRAMEWORK | Profesyonel İstihbarat Platformu</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>🕵️ FindCord+ | Discord Kullanıcı Arama ve OSINT Aracı</title>
     <style>
         * {
             margin: 0;
@@ -12,30 +12,31 @@
         }
 
         body {
-            background: linear-gradient(135deg, #0a0e1a 0%, #0c1020 100%);
-            font-family: 'Segoe UI', 'Poppins', system-ui, sans-serif;
+            background: radial-gradient(ellipse at 20% 30%, #0a0c15 0%, #03050a 100%);
+            font-family: 'Segoe UI', 'Poppins', 'Inter', system-ui, sans-serif;
             min-height: 100vh;
-            color: #e0e0e0;
+            color: #e8eef2;
+            overflow-x: hidden;
         }
 
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #1a1f2e; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #11161f; border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: #00d4ff; border-radius: 10px; }
 
         /* Sidebar */
         .sidebar {
             position: fixed;
             top: 0;
-            left: -300px;
-            width: 300px;
+            left: -320px;
+            width: 320px;
             height: 100%;
-            background: rgba(10, 15, 26, 0.98);
-            backdrop-filter: blur(15px);
-            box-shadow: 5px 0 30px rgba(0, 0, 0, 0.5);
-            transition: 0.3s ease;
+            background: rgba(6, 10, 18, 0.98);
+            backdrop-filter: blur(20px);
+            box-shadow: 8px 0 40px rgba(0, 0, 0, 0.8);
+            transition: 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
             z-index: 1000;
-            padding: 2rem 1rem;
-            border-right: 2px solid #00d4ff;
+            padding: 2rem 1.2rem;
+            border-right: 1px solid rgba(0, 212, 255, 0.4);
             overflow-y: auto;
         }
 
@@ -43,37 +44,59 @@
 
         .sidebar .close-btn {
             position: absolute;
-            top: 1rem;
-            right: 1rem;
+            top: 1.2rem;
+            right: 1.2rem;
             font-size: 1.8rem;
             cursor: pointer;
             color: #00d4ff;
+            transition: 0.2s;
+        }
+        .sidebar .close-btn:hover { opacity: 0.7; transform: scale(1.1); }
+
+        .sidebar .user-info {
+            text-align: center;
+            padding: 1rem 0 1.5rem 0;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+            margin-bottom: 1rem;
+        }
+        .sidebar .user-avatar { font-size: 4rem; margin-bottom: 0.5rem; }
+        .sidebar .user-name { font-size: 1.2rem; font-weight: bold; color: #00d4ff; }
+        .sidebar .user-email { font-size: 0.7rem; opacity: 0.6; margin-top: 4px; }
+        .sidebar .user-badge { 
+            display: inline-block; 
+            background: rgba(0, 212, 255, 0.2); 
+            padding: 0.2rem 0.8rem; 
+            border-radius: 20px; 
+            font-size: 0.7rem; 
+            margin-top: 6px;
         }
 
         .sidebar .menu-category {
             color: #00d4ff;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin: 1rem 0 0.5rem 0;
-            padding-left: 0.5rem;
+            letter-spacing: 2.5px;
+            margin: 1.2rem 0 0.6rem 0.5rem;
+            font-weight: 600;
         }
 
         .sidebar .menu-item {
-            padding: 0.8rem 1rem;
-            margin: 0.3rem 0;
-            background: rgba(0, 212, 255, 0.1);
-            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            margin: 0.25rem 0;
+            background: rgba(0, 212, 255, 0.05);
+            border-radius: 14px;
             cursor: pointer;
-            transition: 0.2s;
+            transition: 0.2s ease;
             display: flex;
             align-items: center;
-            gap: 0.8rem;
+            gap: 0.9rem;
+            font-weight: 500;
+            border: 1px solid transparent;
         }
 
         .sidebar .menu-item:hover {
-            background: #00d4ff;
-            color: #000;
+            background: rgba(0, 212, 255, 0.2);
+            border-color: rgba(0, 212, 255, 0.4);
             transform: translateX(5px);
         }
 
@@ -81,15 +104,17 @@
             position: fixed;
             top: 1rem;
             left: 1rem;
-            font-size: 2rem;
+            font-size: 1.8rem;
             cursor: pointer;
             color: #00d4ff;
             z-index: 999;
             background: rgba(0, 0, 0, 0.6);
-            padding: 0.3rem 0.8rem;
-            border-radius: 12px;
-            backdrop-filter: blur(5px);
+            padding: 0.4rem 0.9rem;
+            border-radius: 16px;
+            backdrop-filter: blur(8px);
+            transition: 0.2s;
         }
+        .menu-toggle:hover { background: rgba(0, 212, 255, 0.2); }
 
         .overlay {
             position: fixed;
@@ -97,17 +122,18 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
             z-index: 998;
             display: none;
         }
-
         .overlay.active { display: block; }
 
         .main-content {
             margin-left: 0;
-            padding: 5rem 1rem 2rem 1rem;
+            padding: 5rem 1.5rem 2rem 1.5rem;
             transition: 0.3s;
+            min-height: 100vh;
         }
 
         .container {
@@ -115,19 +141,21 @@
             margin: 0 auto;
         }
 
+        /* Kartlar */
         .card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            border: 1px solid rgba(0, 212, 255, 0.2);
+            background: rgba(12, 18, 28, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 28px;
+            border: 1px solid rgba(0, 212, 255, 0.25);
             overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
             margin-bottom: 1.5rem;
         }
 
         .card-header {
-            background: linear-gradient(135deg, #00d4ff20, #0099cc20);
-            padding: 1.2rem 1.5rem;
-            border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.12), rgba(0, 153, 204, 0.08));
+            padding: 1.2rem 2rem;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -137,181 +165,179 @@
 
         .card-header h2 {
             color: #00d4ff;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
         }
 
         .profile-area {
             display: flex;
             align-items: center;
             gap: 0.8rem;
-            background: rgba(0, 212, 255, 0.2);
-            padding: 0.4rem 1rem;
-            border-radius: 40px;
+            background: rgba(0, 212, 255, 0.15);
+            padding: 0.4rem 1.2rem;
+            border-radius: 60px;
         }
-
         .profile-avatar { font-size: 1.8rem; }
-        .profile-name { font-weight: bold; }
+        .profile-name { font-weight: 600; font-size: 0.9rem; }
 
-        .card-body { padding: 1.5rem; }
+        .card-body { padding: 2rem; }
 
         input, select, textarea {
             width: 100%;
-            padding: 0.8rem;
-            margin: 0.5rem 0;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(0, 212, 255, 0.5);
-            border-radius: 12px;
+            padding: 0.85rem 1rem;
+            margin: 0.6rem 0;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            border-radius: 16px;
             color: white;
-            font-size: 1rem;
+            font-size: 0.95rem;
             outline: none;
+            transition: 0.2s;
         }
-
         input:focus, select:focus {
             border-color: #00d4ff;
-            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+            box-shadow: 0 0 12px rgba(0, 212, 255, 0.3);
         }
 
         button {
             width: 100%;
-            padding: 0.8rem;
-            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            padding: 0.85rem;
+            background: linear-gradient(95deg, #00b8e6, #0088aa);
             border: none;
-            border-radius: 12px;
+            border-radius: 16px;
             color: white;
-            font-weight: bold;
+            font-weight: 700;
             font-size: 1rem;
             cursor: pointer;
             transition: 0.2s;
-            margin-top: 0.5rem;
+            margin-top: 0.6rem;
         }
-
         button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+            box-shadow: 0 8px 20px rgba(0, 180, 230, 0.4);
         }
 
         .alert {
-            padding: 0.8rem;
-            border-radius: 12px;
-            margin-bottom: 1rem;
+            padding: 0.9rem 1rem;
+            border-radius: 16px;
+            margin-bottom: 1.2rem;
+            font-weight: 500;
         }
-
-        .alert-error { background: rgba(255, 0, 0, 0.2); border-left: 4px solid #ff4444; color: #ff8888; }
-        .alert-success { background: rgba(0, 255, 0, 0.2); border-left: 4px solid #00ff88; color: #88ff88; }
-        .alert-info { background: rgba(0, 212, 255, 0.2); border-left: 4px solid #00d4ff; color: #00d4ff; }
-        .alert-warning { background: rgba(255, 165, 0, 0.2); border-left: 4px solid #ffa500; color: #ffa500; }
+        .alert-error { background: rgba(220, 53, 69, 0.2); border-left: 4px solid #dc3545; color: #ffaaae; }
+        .alert-success { background: rgba(40, 167, 69, 0.2); border-left: 4px solid #28a745; color: #a0e0a0; }
+        .alert-info { background: rgba(0, 212, 255, 0.15); border-left: 4px solid #00d4ff; color: #8fdfff; }
+        .alert-warning { background: rgba(255, 165, 0, 0.15); border-left: 4px solid #ffa500; color: #ffcd7e; }
 
         .result-card {
-            background: rgba(0, 212, 255, 0.1);
-            border-radius: 16px;
-            padding: 1rem;
-            margin-top: 1rem;
-            border-left: 4px solid #00d4ff;
+            background: rgba(0, 212, 255, 0.05);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border: 1px solid rgba(0, 212, 255, 0.2);
         }
 
         .grid-2 {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 1rem;
+            gap: 1.2rem;
         }
 
         .tool-card {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 16px;
-            padding: 1rem;
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 18px;
+            padding: 1.2rem;
             cursor: pointer;
-            transition: 0.2s;
+            transition: 0.25s;
             border: 1px solid rgba(0, 212, 255, 0.2);
         }
-
         .tool-card:hover {
             border-color: #00d4ff;
             transform: translateY(-3px);
+            background: rgba(0, 212, 255, 0.05);
         }
-
-        .tool-card h4 { color: #00d4ff; margin-bottom: 0.5rem; }
+        .tool-card h4 { color: #00d4ff; margin-bottom: 0.5rem; font-size: 1.1rem; }
         .tool-card p { font-size: 0.8rem; opacity: 0.7; }
 
-        code, .code {
-            background: rgba(0, 0, 0, 0.5);
-            padding: 0.2rem 0.5rem;
-            border-radius: 6px;
-            font-family: monospace;
-            font-size: 0.85rem;
-            word-break: break-all;
+        .discord-profile {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            flex-wrap: wrap;
         }
-
-        hr { border-color: rgba(0, 212, 255, 0.2); margin: 1rem 0; }
-
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #00d4ff;
-            border-top-color: transparent;
+        .discord-avatar img {
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            margin-right: 8px;
-            vertical-align: middle;
+            border: 3px solid #00d4ff;
+        }
+        .discord-info h3 { color: #fff; margin-bottom: 0.5rem; }
+        .discord-info p { margin: 0.3rem 0; opacity: 0.8; }
+
+        .boost-protected {
+            background: linear-gradient(135deg, rgba(255, 165, 0, 0.15), rgba(255, 69, 0, 0.1));
+            border-left: 4px solid #ffa500;
+            padding: 1rem;
+            border-radius: 14px;
+            margin-top: 1rem;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        .badge-admin { background: #ff4444; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.7rem; }
+        .badge-user { background: #0099cc; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.7rem; }
 
-        @media (max-width: 768px) {
-            .sidebar { width: 260px; }
-            .card-header { flex-direction: column; text-align: center; }
-            .grid-2 { grid-template-columns: 1fr; }
-        }
-
-        /* Admin Panel için gizli buton */
-        .hidden-admin {
+        .admin-button {
             position: fixed;
-            bottom: 10px;
-            right: 10px;
-            width: 30px;
-            height: 30px;
-            background: transparent;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ff4444, #cc0000);
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
             z-index: 9999;
-            opacity: 0;
+            font-size: 1.6rem;
+            box-shadow: 0 4px 18px rgba(255,0,0,0.3);
+            transition: 0.2s;
+            opacity: 0.75;
         }
-        
-        .hidden-admin:hover {
-            opacity: 0.3;
+        .admin-button:hover { opacity: 1; transform: scale(1.08); box-shadow: 0 0 20px #ff4444; }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 280px; }
+            .card-header { flex-direction: column; text-align: center; }
+            .discord-profile { flex-direction: column; text-align: center; }
+            .admin-button { width: 44px; height: 44px; font-size: 1.3rem; }
         }
     </style>
 </head>
 <body>
 
+<div class="admin-button" onclick="showAdminLogin()" title="Admin Paneli">👑</div>
 <div class="menu-toggle" onclick="toggleSidebar()">☰</div>
-<div class="hidden-admin" onclick="showAdminLogin()" title="Admin Girişi"></div>
 
 <div class="sidebar">
     <div class="close-btn" onclick="toggleSidebar()">✕</div>
-    <div style="text-align: center; margin-bottom: 2rem;">
-        <div style="font-size: 3rem;" id="sidebarAvatar">🕵️</div>
-        <div style="color: #00d4ff; font-weight: bold; font-size: 1.2rem;" id="sidebarName">OSINT FRAMEWORK</div>
-        <div style="font-size: 0.8rem; opacity: 0.7;" id="sidebarRole">Giriş Yapılmadı</div>
+    <div class="user-info">
+        <div class="user-avatar" id="sideAvatar">🔐</div>
+        <div class="user-name" id="sideName">Misafir</div>
+        <div class="user-email" id="sideEmail"></div>
+        <div class="user-badge" id="sideRole">Giriş Yapılmadı</div>
     </div>
-    
     <div class="menu-category">🔐 HESAP</div>
-    <div class="menu-item" onclick="showPage('dashboard')">📊 DASHBOARD</div>
-    <div class="menu-item" onclick="showPage('profile')">👤 PROFİLİM</div>
-    
-    <div class="menu-category">🛠️ OSINT ARAÇLARI</div>
-    <div class="menu-item" onclick="showTool('ip')">🌐 IP LOOKUP</div>
-    <div class="menu-item" onclick="showTool('dns')">🔍 DNS LOOKUP</div>
-    <div class="menu-item" onclick="showTool('whois')">📋 WHOIS</div>
-    <div class="menu-item" onclick="showTool('email')">📧 EMAIL OSINT</div>
-    <div class="menu-item" onclick="showTool('phone')">📱 TELEFON</div>
-    <div class="menu-item" onclick="showTool('breach')">⚠️ SIZINTI KONTROL</div>
-    <div class="menu-item" onclick="showTool('hash')">🔐 HASH ÇÖZ</div>
-    <div class="menu-item" onclick="showTool('location')">📍 KONUM + HARİTA</div>
-    
+    <div class="menu-item" onclick="if(currentUser) showPage('dashboard')"><span>📊</span> DASHBOARD</div>
+    <div class="menu-item" onclick="if(currentUser) showPage('profile')"><span>👤</span> PROFİLİM</div>
+    <div class="menu-category">🎮 DISCORD OSINT</div>
+    <div class="menu-item" onclick="if(currentUser) showPage('discord_search')"><span>🔍</span> KULLANICI ARA</div>
+    <div class="menu-item" onclick="if(currentUser) showPage('boost_protect')"><span>🛡️</span> GİZLİLİK KORUMASI</div>
+    <div class="menu-category">🛠️ DİĞER ARAÇLAR</div>
+    <div class="menu-item" onclick="if(currentUser) showPage('ip_lookup')"><span>🌐</span> IP LOOKUP</div>
+    <div class="menu-item" onclick="if(currentUser) showPage('dns_lookup')"><span>🔍</span> DNS LOOKUP</div>
+    <div class="menu-item" onclick="if(currentUser) showPage('hash_tool')"><span>🔐</span> HASH ÇÖZÜCÜ</div>
     <div class="menu-category">⚙️</div>
-    <div class="menu-item" onclick="logout()">🚪 ÇIKIŞ YAP</div>
+    <div class="menu-item" onclick="logout()"><span>🚪</span> ÇIKIŞ YAP</div>
 </div>
 <div class="overlay" onclick="toggleSidebar()"></div>
 
@@ -319,60 +345,45 @@
     <div class="container">
         <!-- GİRİŞ EKRANI -->
         <div id="loginScreen" class="card" style="max-width: 480px; margin: 0 auto;">
-            <div class="card-header">
-                <h2>🔐 OSINT FRAMEWORK</h2>
-                <p>Giriş Yap</p>
-            </div>
+            <div class="card-header"><h2>🔐 FindCord+ GİRİŞ</h2><p>Discord OSINT Platformu</p></div>
             <div class="card-body">
                 <div id="loginAlert"></div>
-                <div><label>👤 E-posta veya Kullanıcı Adı</label><input type="text" id="loginIdentifier" placeholder="E-posta veya kullanıcı adı"></div>
-                <div><label>🔒 Şifre</label><input type="password" id="loginPassword" placeholder="Şifre"></div>
+                <input type="text" id="loginIdentifier" placeholder="E-posta veya Kullanıcı Adı">
+                <input type="password" id="loginPassword" placeholder="Şifre">
                 <button onclick="doLogin()">🔓 GİRİŞ YAP</button>
-                <div style="text-align: center; margin-top: 1rem;">
-                    Hesabınız yok mu? <a href="#" onclick="showRegister()" style="color: #00d4ff;">Kayıt ol</a>
-                </div>
+                <div style="text-align:center; margin-top:1rem;">Hesabın yok mu? <a href="#" onclick="showRegister()" style="color:#00d4ff;">Kayıt ol</a></div>
             </div>
         </div>
 
         <!-- KAYIT EKRANI -->
         <div id="registerScreen" class="card" style="max-width: 480px; margin: 0 auto; display: none;">
-            <div class="card-header">
-                <h2>📝 KAYIT OL</h2>
-            </div>
+            <div class="card-header"><h2>📝 KAYIT OL</h2></div>
             <div class="card-body">
                 <div id="registerAlert"></div>
-                <div><label>👤 Kullanıcı Adı</label><input type="text" id="regName" placeholder="Kullanıcı adı"></div>
-                <div><label>📧 E-posta</label><input type="email" id="regEmail" placeholder="E-posta"></div>
-                <div><label>🔒 Şifre</label><input type="password" id="regPassword" placeholder="Şifre (min 4 karakter)"></div>
-                <div><label>🔒 Şifre (Tekrar)</label><input type="password" id="regConfirm" placeholder="Şifreyi tekrar girin"></div>
+                <input type="text" id="regName" placeholder="Kullanıcı Adı">
+                <input type="email" id="regEmail" placeholder="E-posta">
+                <input type="password" id="regPassword" placeholder="Şifre (min 4 karakter)">
+                <input type="password" id="regConfirm" placeholder="Şifre Tekrar">
                 <button onclick="doRegister()">✅ KAYIT OL</button>
-                <div style="text-align: center; margin-top: 1rem;">
-                    Zaten hesabınız var mı? <a href="#" onclick="showLogin()" style="color: #00d4ff;">Giriş yap</a>
-                </div>
+                <div style="text-align:center; margin-top:1rem;"><a href="#" onclick="showLogin()" style="color:#00d4ff;">Zaten hesabın var mı? Giriş yap</a></div>
             </div>
         </div>
 
-        <!-- ANA PANEL -->
+        <!-- ANA PANEL (GİRİŞ YAPINCA) -->
         <div id="panelScreen" style="display: none;">
             <div class="card">
                 <div class="card-header">
                     <h2 id="pageTitle">📊 DASHBOARD</h2>
-                    <div class="profile-area">
-                        <span class="profile-avatar" id="headerAvatar">😎</span>
-                        <span class="profile-name" id="headerName">User</span>
-                    </div>
+                    <div class="profile-area"><span class="profile-avatar" id="headerAvatar">😎</span><span class="profile-name" id="headerName">User</span></div>
                 </div>
                 <div class="card-body" id="pageContent"></div>
             </div>
         </div>
 
-        <!-- GİZLİ ADMIN PANELİ -->
+        <!-- GİZLİ ADMIN PANEL -->
         <div id="adminPanel" style="display: none;">
             <div class="card">
-                <div class="card-header">
-                    <h2>👑 GİZLİ YÖNETİCİ PANELİ</h2>
-                    <button onclick="closeAdminPanel()" style="width:auto; padding:0.5rem 1rem;">✕ Kapat</button>
-                </div>
+                <div class="card-header"><h2>👑 GİZLİ YÖNETİCİ PANELİ</h2><button onclick="closeAdminPanel()" style="width:auto;">✕ Kapat</button></div>
                 <div class="card-body" id="adminContent"></div>
             </div>
         </div>
@@ -380,662 +391,106 @@
 </div>
 
 <script>
-    // ========== VERİ DEPOLAMA (localStorage şifreli) ==========
+    // ========== VERİ TABANI (ŞİFRELİ localStorage) ==========
     let users = [];
     let logs = [];
     let sessions = [];
     let currentUser = null;
     let isAdminMode = false;
-
-    // Admin bilgileri (GİZLİ - kimse bilmez)
-    const ADMIN_EMAIL = 'admin@osint.com';
     const ADMIN_PASS = 'Lexus2024';
-    const ADMIN_NAME = 'RootAdmin';
+    const ADMIN_EMAIL = 'admin@findcord.com';
 
-    // Verileri yükle
+    // Veri yükle/kaydet
     function loadData() {
-        const savedUsers = localStorage.getItem('osint_users_enc');
-        if (savedUsers) {
-            try {
-                users = JSON.parse(atob(savedUsers));
-            } catch(e) { users = []; }
-        }
-        
-        const savedLogs = localStorage.getItem('osint_logs_enc');
-        if (savedLogs) {
-            try {
-                logs = JSON.parse(atob(savedLogs));
-            } catch(e) { logs = []; }
-        }
-        
-        const savedSessions = localStorage.getItem('osint_sessions_enc');
-        if (savedSessions) {
-            try {
-                sessions = JSON.parse(atob(savedSessions));
-            } catch(e) { sessions = []; }
-        }
-        
-        // Admin yoksa ekle
-        if (!users.find(u => u.email === ADMIN_EMAIL)) {
-            users.push({
-                id: 'admin_root',
-                name: ADMIN_NAME,
-                email: ADMIN_EMAIL,
-                password: ADMIN_PASS,
-                role: 'admin',
-                avatar: '👑',
-                created: new Date().toISOString()
-            });
+        try { users = JSON.parse(atob(localStorage.getItem('fc_users') || '[]')); } catch(e){ users=[]; }
+        try { logs = JSON.parse(atob(localStorage.getItem('fc_logs') || '[]')); } catch(e){ logs=[]; }
+        try { sessions = JSON.parse(atob(localStorage.getItem('fc_sessions') || '[]')); } catch(e){ sessions=[]; }
+        if (!users.find(u=>u.email === ADMIN_EMAIL)) {
+            users.push({ id:'admin_root', name:'RootAdmin', email:ADMIN_EMAIL, password:ADMIN_PASS, role:'admin', avatar:'👑', created:new Date().toISOString() });
             saveData();
         }
-        
-        const savedCurrent = sessionStorage.getItem('osint_current');
-        if (savedCurrent) {
-            try {
-                currentUser = JSON.parse(atob(savedCurrent));
-            } catch(e) { currentUser = null; }
-        }
+        try { currentUser = JSON.parse(atob(sessionStorage.getItem('fc_current') || 'null')); } catch(e){ currentUser=null; }
     }
-
-    // Verileri kaydet (base64 şifreli)
     function saveData() {
-        localStorage.setItem('osint_users_enc', btoa(JSON.stringify(users)));
-        localStorage.setItem('osint_logs_enc', btoa(JSON.stringify(logs)));
-        localStorage.setItem('osint_sessions_enc', btoa(JSON.stringify(sessions)));
+        localStorage.setItem('fc_users', btoa(JSON.stringify(users)));
+        localStorage.setItem('fc_logs', btoa(JSON.stringify(logs)));
+        localStorage.setItem('fc_sessions', btoa(JSON.stringify(sessions)));
     }
 
-    // Cihaz bilgisi
-    function getDeviceInfo() {
-        const ua = navigator.userAgent;
-        let device = '💻 Bilgisayar';
-        if (/Mobile|Android|iPhone|iPad/i.test(ua)) device = '📱 Mobil';
+    // Cihaz ve lokasyon (IP API)
+    async function getDeviceInfo() {
+        let ua = navigator.userAgent;
+        let device = /Mobile|Android|iPhone|iPad/i.test(ua) ? '📱 Mobil' : '💻 Bilgisayar';
         let browser = 'Chrome';
-        if (/Firefox/i.test(ua)) browser = 'Firefox';
-        else if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) browser = 'Safari';
-        else if (/Edge/i.test(ua)) browser = 'Edge';
+        if (/Firefox/i.test(ua)) browser='Firefox';
+        else if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) browser='Safari';
+        else if (/Edge/i.test(ua)) browser='Edge';
         return `${device} | ${browser}`;
     }
-
-    // Lokasyon al
     async function getLocationInfo() {
         try {
-            const res = await fetch('https://ipapi.co/json/');
-            const data = await res.json();
-            return {
-                country: data.country_name || 'Bilinmiyor',
-                city: data.city || 'Bilinmiyor',
-                region: data.region || 'Bilinmiyor',
-                ip: data.ip || 'Bilinmiyor',
-                lat: data.latitude || 0,
-                lon: data.longitude || 0
-            };
-        } catch(e) {
-            return { country: 'Türkiye', city: 'İstanbul', region: 'Kadıköy', ip: '127.0.0.1', lat: 41.0082, lon: 28.9784 };
-        }
+            let res = await fetch('https://ipapi.co/json/');
+            let data = await res.json();
+            return { country: data.country_name || 'Bilinmiyor', city: data.city || 'Bilinmiyor', region: data.region || 'Bilinmiyor', ip: data.ip || '0.0.0.0', lat: data.latitude || 0, lon: data.longitude || 0 };
+        } catch(e) { return { country:'Türkiye', city:'İstanbul', region:'Kadıköy', ip:'127.0.0.1', lat:41.0082, lon:28.9784 }; }
     }
 
-    // Log ekle
     async function addLog(action, detail) {
-        const loc = await getLocationInfo();
-        const device = getDeviceInfo();
-        logs.unshift({
-            id: Date.now(),
-            userId: currentUser?.id || 'guest',
-            userName: currentUser?.name || 'Misafir',
-            action: action,
-            detail: detail,
-            device: device,
-            country: loc.country,
-            city: loc.city,
-            region: loc.region,
-            ip: loc.ip,
-            time: new Date().toLocaleString('tr-TR')
-        });
-        if (logs.length > 500) logs.pop();
+        let loc = await getLocationInfo();
+        let device = await getDeviceInfo();
+        logs.unshift({ id:Date.now(), userId:currentUser?.id || 'guest', userName:currentUser?.name || 'Misafir', action, detail, device, country:loc.country, city:loc.city, region:loc.region, ip:loc.ip, time:new Date().toLocaleString('tr-TR') });
+        if(logs.length>500) logs.pop();
         saveData();
     }
-
-    // Oturum logu
     async function addSession(type) {
-        const loc = await getLocationInfo();
-        const device = getDeviceInfo();
-        sessions.unshift({
-            id: Date.now(),
-            userId: currentUser?.id,
-            userName: currentUser?.name,
-            type: type,
-            device: device,
-            country: loc.country,
-            city: loc.city,
-            region: loc.region,
-            ip: loc.ip,
-            time: new Date().toLocaleString('tr-TR')
-        });
-        if (sessions.length > 200) sessions.pop();
+        let loc = await getLocationInfo();
+        let device = await getDeviceInfo();
+        sessions.unshift({ id:Date.now(), userId:currentUser?.id, userName:currentUser?.name, type, device, country:loc.country, city:loc.city, region:loc.region, ip:loc.ip, time:new Date().toLocaleString('tr-TR') });
+        if(sessions.length>200) sessions.pop();
         saveData();
     }
 
-    function toggleSidebar() {
-        document.querySelector('.sidebar').classList.toggle('open');
-        document.querySelector('.overlay').classList.toggle('active');
-    }
-
-    // Giriş
+    // Giriş / Kayıt / Çıkış
     async function doLogin() {
-        const identifier = document.getElementById('loginIdentifier').value;
-        const password = document.getElementById('loginPassword').value;
-        const alertDiv = document.getElementById('loginAlert');
-        
-        const user = users.find(u => (u.email === identifier || u.name === identifier) && u.password === password);
-        
-        if (user) {
+        let id = document.getElementById('loginIdentifier').value;
+        let pwd = document.getElementById('loginPassword').value;
+        let user = users.find(u=> (u.email === id || u.name === id) && u.password === pwd);
+        if(user){
             currentUser = user;
-            sessionStorage.setItem('osint_current', btoa(JSON.stringify(user)));
+            sessionStorage.setItem('fc_current', btoa(JSON.stringify(user)));
             await addLog('GİRİŞ', 'Başarılı giriş');
             await addSession('GİRİŞ');
             showPanel();
         } else {
-            alertDiv.innerHTML = '<div class="alert alert-error">⚠️ Hatalı giriş bilgileri!</div>';
-            await addLog('BAŞARISIZ GİRİŞ', `ID: ${identifier}`);
+            document.getElementById('loginAlert').innerHTML = '<div class="alert alert-error">❌ Hatalı giriş!</div>';
+            await addLog('BAŞARISIZ GİRİŞ', `ID: ${id}`);
         }
     }
-
-    // Kayıt
     async function doRegister() {
-        const name = document.getElementById('regName').value.trim();
-        const email = document.getElementById('regEmail').value.trim();
-        const password = document.getElementById('regPassword').value;
-        const confirm = document.getElementById('regConfirm').value;
-        const alertDiv = document.getElementById('registerAlert');
-        
-        if (!name || !email || !password) {
-            alertDiv.innerHTML = '<div class="alert alert-error">⚠️ Tüm alanlar zorunludur!</div>';
-            return;
-        }
-        if (password.length < 4) {
-            alertDiv.innerHTML = '<div class="alert alert-error">⚠️ Şifre en az 4 karakter olmalı!</div>';
-            return;
-        }
-        if (password !== confirm) {
-            alertDiv.innerHTML = '<div class="alert alert-error">⚠️ Şifreler eşleşmiyor!</div>';
-            return;
-        }
-        if (!email.includes('@')) {
-            alertDiv.innerHTML = '<div class="alert alert-error">⚠️ Geçerli bir e-posta girin!</div>';
-            return;
-        }
-        if (users.find(u => u.email === email)) {
-            alertDiv.innerHTML = '<div class="alert alert-error">⚠️ Bu e-posta zaten kayıtlı!</div>';
-            return;
-        }
-        if (users.find(u => u.name === name)) {
-            alertDiv.innerHTML = '<div class="alert alert-error">⚠️ Bu kullanıcı adı zaten alınmış!</div>';
-            return;
-        }
-        
-        const newUser = {
-            id: 'user_' + Date.now(),
-            name: name,
-            email: email,
-            password: password,
-            role: 'user',
-            avatar: '😎',
-            created: new Date().toISOString()
-        };
+        let name = document.getElementById('regName').value.trim();
+        let email = document.getElementById('regEmail').value.trim();
+        let pwd = document.getElementById('regPassword').value;
+        let confirm = document.getElementById('regConfirm').value;
+        let alertDiv = document.getElementById('registerAlert');
+        if(!name || !email || !pwd) { alertDiv.innerHTML = '<div class="alert alert-error">Tüm alanlar zorunlu!</div>'; return; }
+        if(pwd.length<4){ alertDiv.innerHTML = '<div class="alert alert-error">Şifre min 4 karakter!</div>'; return; }
+        if(pwd !== confirm){ alertDiv.innerHTML = '<div class="alert alert-error">Şifreler eşleşmiyor!</div>'; return; }
+        if(users.find(u=>u.email === email)){ alertDiv.innerHTML = '<div class="alert alert-error">E-posta zaten kayıtlı!</div>'; return; }
+        if(users.find(u=>u.name === name)){ alertDiv.innerHTML = '<div class="alert alert-error">Kullanıcı adı alınmış!</div>'; return; }
+        let newUser = { id:'user_'+Date.now(), name, email, password:pwd, role:'user', avatar:'😎', created:new Date().toISOString() };
         users.push(newUser);
         saveData();
-        await addLog('KAYIT', `Yeni kullanıcı: ${name} (${email})`);
-        alertDiv.innerHTML = '<div class="alert alert-success">✅ Kayıt başarılı! Giriş yapabilirsiniz.</div>';
-        setTimeout(() => showLogin(), 1500);
+        await addLog('KAYIT', `${name} (${email})`);
+        alertDiv.innerHTML = '<div class="alert alert-success">✅ Kayıt başarılı! Giriş yapabilirsin.</div>';
+        setTimeout(()=>showLogin(),1500);
     }
-
-    // Çıkış
     async function logout() {
-        if (currentUser) {
-            await addLog('ÇIKIŞ', '');
-            await addSession('ÇIKIŞ');
-        }
+        if(currentUser){ await addLog('ÇIKIŞ', ''); await addSession('ÇIKIŞ'); }
         currentUser = null;
-        sessionStorage.removeItem('osint_current');
+        sessionStorage.removeItem('fc_current');
         showLogin();
     }
-
-    function showLogin() {
-        document.getElementById('loginScreen').style.display = 'block';
-        document.getElementById('registerScreen').style.display = 'none';
-        document.getElementById('panelScreen').style.display = 'none';
-        document.getElementById('adminPanel').style.display = 'none';
-    }
-
-    function showRegister() {
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('registerScreen').style.display = 'block';
-        document.getElementById('panelScreen').style.display = 'none';
-        document.getElementById('adminPanel').style.display = 'none';
-    }
-
-    function showPanel() {
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('registerScreen').style.display = 'none';
-        document.getElementById('panelScreen').style.display = 'block';
-        document.getElementById('adminPanel').style.display = 'none';
-        
-        document.getElementById('headerName').innerText = currentUser.name;
-        document.getElementById('headerAvatar').innerText = currentUser.avatar || '😎';
-        document.getElementById('sidebarName').innerText = currentUser.name;
-        document.getElementById('sidebarRole').innerHTML = currentUser.role === 'admin' ? '👑 ADMIN' : '👤 ÜYE';
-        document.getElementById('sidebarAvatar').innerText = currentUser.avatar || '🕵️';
-        
-        showPage('dashboard');
-    }
-
-    // Gizli Admin Girişi
-    async function showAdminLogin() {
-        const pwd = prompt('🔐 YÖNETİCİ DOĞRULAMA\n\nAdmin şifresini girin:');
-        if (pwd === ADMIN_PASS) {
-            isAdminMode = true;
-            await addLog('ADMIN PANEL', 'Admin paneli açıldı');
-            showAdminPanel();
-        } else if (pwd) {
-            alert('❌ Geçersiz şifre!');
-            await addLog('ADMIN PANEL', 'Başarısız giriş denemesi');
-        }
-    }
-
-    function showAdminPanel() {
-        if (!isAdminMode) return;
-        
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('registerScreen').style.display = 'none';
-        document.getElementById('panelScreen').style.display = 'none';
-        document.getElementById('adminPanel').style.display = 'block';
-        
-        const totalUsers = users.length;
-        const totalLogs = logs.length;
-        const totalSessions = sessions.length;
-        
-        let userTable = '<div style="overflow-x:auto;"><table style="width:100%"><thead><tr><th>ID</th><th>Kullanıcı</th><th>E-posta</th><th>Rol</th><th>Kayıt</th><th>İşlem</th></tr></thead><tbody>';
-        users.forEach(user => {
-            userTable += `<tr>
-                <td>${user.id === 'admin_root' ? '🔒' : user.id.substring(0, 10)}</td>
-                <td>${user.name}</td>
-                <td>${user.email}</td>
-                <td><span class="badge ${user.role === 'admin' ? 'badge-admin' : 'badge-user'}">${user.role}</span></td>
-                <td>${new Date(user.created).toLocaleDateString()}</td>
-                <td>${user.id !== 'admin_root' ? `<button onclick="deleteUser('${user.id}')" style="background:#ff4444; padding:0.2rem 0.5rem;">Sil</button>` : 'Admin'}</td>
-            </tr>`;
-        });
-        userTable += '</tbody></table></div>';
-        
-        let logTable = '<div style="overflow-x:auto; max-height:400px; overflow-y:auto;"><table style="width:100%"><thead><tr><th>Zaman</th><th>Kullanıcı</th><th>İşlem</th><th>Detay</th><th>Cihaz</th><th>Konum</th><th>IP</th></tr></thead><tbody>';
-        logs.slice(0, 100).forEach(log => {
-            logTable += `<tr>
-                <td style="font-size:0.7rem;">${log.time}</td>
-                <td>${log.userName}</td>
-                <td>${log.action}</td>
-                <td style="max-width:200px; overflow:hidden;">${log.detail}</td>
-                <td style="font-size:0.7rem;">${log.device}</td>
-                <td style="font-size:0.7rem;">${log.country}/${log.city}</td>
-                <td style="font-size:0.7rem;">${log.ip}</td>
-            </tr>`;
-        });
-        if (logs.length === 0) logTable += '<tr><td colspan="7">Henüz log yok</td></tr>';
-        logTable += '</tbody></table></div>';
-        
-        let sessionTable = '<div style="overflow-x:auto; max-height:300px; overflow-y:auto;"><table style="width:100%"><thead><tr><th>Zaman</th><th>Kullanıcı</th><th>Tür</th><th>Cihaz</th><th>Konum</th><th>IP</th></tr></thead><tbody>';
-        sessions.slice(0, 50).forEach(s => {
-            sessionTable += `<tr>
-                <td style="font-size:0.7rem;">${s.time}</td>
-                <td>${s.userName}</td>
-                <td>${s.type}</td>
-                <td style="font-size:0.7rem;">${s.device}</td>
-                <td style="font-size:0.7rem;">${s.country}/${s.city}</td>
-                <td style="font-size:0.7rem;">${s.ip}</td>
-            </tr>`;
-        });
-        sessionTable += '</tbody></table></div>';
-        
-        document.getElementById('adminContent').innerHTML = `
-            <div style="display:grid; gap:1.5rem;">
-                <div style="background:rgba(0,212,255,0.1); padding:1rem; border-radius:16px;">
-                    <h3>📊 İSTATİSTİKLER</h3>
-                    <p>👥 Toplam Kullanıcı: ${totalUsers}</p>
-                    <p>📜 Toplam Log: ${totalLogs}</p>
-                    <p>🔄 Toplam Oturum: ${totalSessions}</p>
-                </div>
-                
-                <div>
-                    <h3>👥 KULLANICILAR</h3>
-                    ${userTable}
-                </div>
-                
-                <div>
-                    <h3>📜 TÜM LOGLAR (Son 100)</h3>
-                    <button onclick="clearLogs()" style="background:#ff4444; width:auto; padding:0.5rem 1rem; margin-bottom:1rem;">🗑️ TÜM LOGLARI TEMİZLE</button>
-                    ${logTable}
-                </div>
-                
-                <div>
-                    <h3>🔄 OTURUM GEÇMİŞİ</h3>
-                    ${sessionTable}
-                </div>
-            </div>
-        `;
-    }
-
-    function closeAdminPanel() {
-        isAdminMode = false;
-        if (currentUser) showPanel();
-        else showLogin();
-    }
-
-    function deleteUser(userId) {
-        if (confirm('Bu kullanıcıyı silmek istediğinize emin misiniz?')) {
-            users = users.filter(u => u.id !== userId);
-            saveData();
-            addLog('ADMIN', `Kullanıcı silindi: ${userId}`);
-            showAdminPanel();
-        }
-    }
-
-    async function clearLogs() {
-        if (confirm('Tüm logları silmek istediğinize emin misiniz?')) {
-            logs = [];
-            sessions = [];
-            saveData();
-            await addLog('ADMIN', 'Tüm loglar temizlendi');
-            showAdminPanel();
-        }
-    }
-
-    // Sayfa gösterimi
-    function showPage(page) {
-        const content = document.getElementById('pageContent');
-        const title = document.getElementById('pageTitle');
-        
-        if (page === 'dashboard') {
-            title.innerText = '📊 DASHBOARD';
-            content.innerHTML = `
-                <div style="background:rgba(0,212,255,0.1); padding:1.5rem; border-radius:16px;">
-                    <p>📅 Hoş geldin, ${currentUser.name}!</p>
-                    <p>👑 Rol: ${currentUser.role === 'admin' ? 'Yönetici' : 'Üye'}</p>
-                    <hr>
-                    <div class="grid-2">
-                        <div class="tool-card" onclick="showTool('ip')"><h4>🌐 IP LOOKUP</h4><p>IP adresi detaylı analiz</p></div>
-                        <div class="tool-card" onclick="showTool('dns')"><h4>🔍 DNS LOOKUP</h4><p>DNS kayıtları sorgulama</p></div>
-                        <div class="tool-card" onclick="showTool('whois')"><h4>📋 WHOIS</h4><p>Domain kayıt bilgileri</p></div>
-                        <div class="tool-card" onclick="showTool('breach')"><h4>⚠️ SIZINTI KONTROL</h4><p>Veri sızıntısı kontrolü</p></div>
-                    </div>
-                </div>
-            `;
-        }
-        else if (page === 'profile') {
-            title.innerText = '👤 PROFİLİM';
-            content.innerHTML = `
-                <div style="text-align:center;"><div style="font-size:4rem;">${currentUser.avatar || '😎'}</div></div>
-                <p><strong>Kullanıcı Adı:</strong> ${currentUser.name}</p>
-                <p><strong>E-posta:</strong> ${currentUser.email}</p>
-                <p><strong>Rol:</strong> ${currentUser.role === 'admin' ? 'Yönetici' : 'Üye'}</p>
-                <p><strong>Kayıt Tarihi:</strong> ${new Date(currentUser.created).toLocaleString('tr-TR')}</p>
-                <hr>
-                <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
-                    ${['😎','🔥','💀','👑','🤖','🎮','⚡','🐉','🚀','⭐','🌈','🎯'].map(emoji => `
-                        <div style="font-size:2rem; cursor:pointer; padding:10px; background:rgba(0,212,255,0.1); border-radius:16px;" onclick="updateAvatar('${emoji}')">${emoji}</div>
-                    `).join('')}
-                </div>
-            `;
-        }
-        toggleSidebar();
-    }
-
-    async function updateAvatar(emoji) {
-        const userIndex = users.findIndex(u => u.id === currentUser.id);
-        if (userIndex !== -1) {
-            users[userIndex].avatar = emoji;
-            currentUser.avatar = emoji;
-            saveData();
-            sessionStorage.setItem('osint_current', btoa(JSON.stringify(currentUser)));
-            await addLog('PROFİL', `Avatar değiştirildi: ${emoji}`);
-            showPage('profile');
-            document.getElementById('headerAvatar').innerText = emoji;
-        }
-    }
-
-    // OSINT Araçları
-    async function showTool(tool) {
-        const content = document.getElementById('pageContent');
-        const title = document.getElementById('pageTitle');
-        
-        if (tool === 'ip') {
-            title.innerText = '🌐 IP LOOKUP';
-            content.innerHTML = `
-                <div class="alert alert-info">🔍 IP adresi girerek detaylı bilgi alın. Boş bırakırsanız kendi IP'niz sorgulanır.</div>
-                <input type="text" id="ipInput" placeholder="IP Adresi">
-                <button onclick="ipLookup()">🔍 SORGULA</button>
-                <div id="ipResult"></div>
-            `;
-        }
-        else if (tool === 'dns') {
-            title.innerText = '🔍 DNS LOOKUP';
-            content.innerHTML = `
-                <input type="text" id="dnsInput" placeholder="Domain (örn: google.com)">
-                <button onclick="dnsLookup()">🔍 SORGULA</button>
-                <div id="dnsResult"></div>
-            `;
-        }
-        else if (tool === 'whois') {
-            title.innerText = '📋 WHOIS';
-            content.innerHTML = `
-                <input type="text" id="whoisInput" placeholder="Domain (örn: google.com)">
-                <button onclick="whoisLookup()">🔍 SORGULA</button>
-                <div id="whoisResult"></div>
-            `;
-        }
-        else if (tool === 'email') {
-            title.innerText = '📧 EMAIL OSINT';
-            content.innerHTML = `
-                <input type="email" id="emailInput" placeholder="E-posta adresi">
-                <button onclick="emailCheck()">🔍 KONTROL</button>
-                <div id="emailResult"></div>
-            `;
-        }
-        else if (tool === 'phone') {
-            title.innerText = '📱 TELEFON';
-            content.innerHTML = `
-                <input type="text" id="phoneInput" placeholder="Telefon (örn: +905551234567)">
-                <button onclick="phoneCheck()">🔍 KONTROL</button>
-                <div id="phoneResult"></div>
-            `;
-        }
-        else if (tool === 'breach') {
-            title.innerText = '⚠️ SIZINTI KONTROL';
-            content.innerHTML = `
-                <div class="alert alert-warning">⚠️ E-posta adresiniz herhangi bir veri sızıntısında var mı?</div>
-                <input type="email" id="breachInput" placeholder="E-posta adresi">
-                <button onclick="breachCheck()">🔍 KONTROL</button>
-                <div id="breachResult"></div>
-            `;
-        }
-        else if (tool === 'hash') {
-            title.innerText = '🔐 HASH ÇÖZ';
-            content.innerHTML = `
-                <select id="hashType"><option value="md5">MD5</option><option value="sha1">SHA1</option><option value="sha256">SHA256</option></select>
-                <input type="text" id="hashInput" placeholder="Hash değeri">
-                <button onclick="hashDecrypt()">🔓 ÇÖZ</button>
-                <div id="hashResult"></div>
-            `;
-        }
-        else if (tool === 'location') {
-            title.innerText = '📍 KONUM + HARİTA';
-            content.innerHTML = `
-                <input type="text" id="locationIp" placeholder="IP Adresi (boş bırak = kendi IP)">
-                <button onclick="locationMap()">🗺️ GÖSTER</button>
-                <div id="locationResult"></div>
-                <div id="mapContainer" style="margin-top:1rem; border-radius:16px; overflow:hidden;"></div>
-            `;
-        }
-        toggleSidebar();
-    }
-
-    // API Fonksiyonları
-    async function ipLookup() {
-        let ip = document.getElementById('ipInput').value;
-        const resultDiv = document.getElementById('ipResult');
-        if (!ip) {
-            const res = await fetch('https://api.ipify.org?format=json');
-            const data = await res.json();
-            ip = data.ip;
-        }
-        resultDiv.innerHTML = '<div class="alert alert-info"><span class="loading"></span> Sorgulanıyor...</div>';
-        addLog('IP LOOKUP', `IP: ${ip}`);
-        
-        try {
-            const res = await fetch(`https://ipapi.co/${ip}/json/`);
-            const data = await res.json();
-            if (data.error) throw new Error();
-            resultDiv.innerHTML = `<div class="result-card"><h4>🌐 ${data.ip}</h4><p>📍 ${data.country_name} (${data.country_code})</p><p>🏙️ ${data.city || 'Bilinmiyor'}</p><p>📡 ISP: ${data.org || 'Bilinmiyor'}</p><p>🗺️ ${data.latitude}, ${data.longitude}</p></div>`;
-        } catch(e) {
-            resultDiv.innerHTML = '<div class="alert alert-error">❌ Sorgu başarısız!</div>';
-        }
-    }
-
-    async function dnsLookup() {
-        const domain = document.getElementById('dnsInput').value;
-        const resultDiv = document.getElementById('dnsResult');
-        if (!domain) { resultDiv.innerHTML = '<div class="alert alert-error">Domain girin!</div>'; return; }
-        resultDiv.innerHTML = '<div class="alert alert-info"><span class="loading"></span> DNS sorgulanıyor...</div>';
-        addLog('DNS LOOKUP', `Domain: ${domain}`);
-        
-        try {
-            const types = ['A', 'AAAA', 'MX', 'TXT', 'NS'];
-            let html = '<div class="result-card"><h4>🔍 ' + domain + '</h4>';
-            for (const type of types) {
-                const res = await fetch(`https://dns.google/resolve?name=${domain}&type=${type}`);
-                const data = await res.json();
-                if (data.Answer && data.Answer.length > 0) {
-                    html += `<p><strong>${type}:</strong><br>`;
-                    data.Answer.slice(0, 3).forEach(r => { html += `<code>${r.data}</code><br>`; });
-                    html += `</p>`;
-                }
-            }
-            html += '</div>';
-            resultDiv.innerHTML = html;
-        } catch(e) {
-            resultDiv.innerHTML = '<div class="alert alert-error">❌ DNS sorgusu başarısız!</div>';
-        }
-    }
-
-    async function whoisLookup() {
-        const domain = document.getElementById('whoisInput').value;
-        const resultDiv = document.getElementById('whoisResult');
-        if (!domain) { resultDiv.innerHTML = '<div class="alert alert-error">Domain girin!</div>'; return; }
-        resultDiv.innerHTML = '<div class="alert alert-info"><span class="loading"></span> WHOIS sorgulanıyor...</div>';
-        addLog('WHOIS', `Domain: ${domain}`);
-        
-        try {
-            const res = await fetch(`https://whoisjson.com/api/v1/whois?domain=${domain}`);
-            const data = await res.json();
-            resultDiv.innerHTML = `<div class="result-card"><h4>📋 ${domain}</h4><p>👤 Kayıt Sahibi: ${data.registrant || 'Gizli'}</p><p>📅 Kayıt: ${data.creation_date || 'Bilinmiyor'}</p><p>⏰ Bitiş: ${data.expiration_date || 'Bilinmiyor'}</p><p>🏢 Kayıtçı: ${data.registrar || 'Bilinmiyor'}</p></div>`;
-        } catch(e) {
-            resultDiv.innerHTML = '<div class="alert alert-error">❌ WHOIS sorgusu başarısız!</div>';
-        }
-    }
-
-    async function emailCheck() {
-        const email = document.getElementById('emailInput').value;
-        const resultDiv = document.getElementById('emailResult');
-        if (!email || !email.includes('@')) { resultDiv.innerHTML = '<div class="alert alert-error">Geçerli e-posta girin!</div>'; return; }
-        resultDiv.innerHTML = '<div class="alert alert-info"><span class="loading"></span> Kontrol ediliyor...</div>';
-        addLog('EMAIL OSINT', `Email: ${email}`);
-        
-        const domain = email.split('@')[1];
-        resultDiv.innerHTML = `<div class="result-card"><h4>📧 ${email}</h4><p>✅ Format: Geçerli</p><p>🌐 Domain: ${domain}</p><p>🔍 MX Kaydı: Kontrol edildi</p><code>💡 Detaylı rapor için premium API önerilir</code></div>`;
-    }
-
-    async function phoneCheck() {
-        const phone = document.getElementById('phoneInput').value;
-        const resultDiv = document.getElementById('phoneResult');
-        if (!phone) { resultDiv.innerHTML = '<div class="alert alert-error">Numara girin!</div>'; return; }
-        resultDiv.innerHTML = '<div class="alert alert-info"><span class="loading"></span> Doğrulanıyor...</div>';
-        addLog('TELEFON', `Numara: ${phone}`);
-        
-        const clean = phone.replace(/[^0-9+]/g, '');
-        const isValid = clean.length >= 10 && clean.length <= 15;
-        resultDiv.innerHTML = `<div class="result-card"><h4>📱 ${phone}</h4><p>${isValid ? '✅ Geçerli format' : '❌ Geçersiz format'}</p><p>📏 Uzunluk: ${clean.length}</p></div>`;
-    }
-
-    async function breachCheck() {
-        const email = document.getElementById('breachInput').value;
-        const resultDiv = document.getElementById('breachResult');
-        if (!email || !email.includes('@')) { resultDiv.innerHTML = '<div class="alert alert-error">E-posta girin!</div>'; return; }
-        resultDiv.innerHTML = '<div class="alert alert-info"><span class="loading"></span> Sızıntı kontrolü yapılıyor...</div>';
-        addLog('BREACH CHECK', `Email: ${email}`);
-        
-        // Demo - gerçek API entegrasyonu için API key gerekir
-        setTimeout(() => {
-            const isPwned = Math.random() > 0.7;
-            if (isPwned) {
-                resultDiv.innerHTML = `<div class="result-card" style="border-left-color:#ff4444;"><h4>⚠️ UYARI!</h4><p>📧 ${email}</p><p>🔴 Bu e-posta VERİ SIZINTISINDA bulundu!</p><p>🔐 Şifrenizi değiştirin!</p></div>`;
-            } else {
-                resultDiv.innerHTML = `<div class="result-card"><h4>✅ TEMİZ</h4><p>📧 ${email}</p><p>🟢 Bilinen sızıntılarda bulunmuyor.</p></div>`;
-            }
-        }, 1000);
-    }
-
-    async function hashDecrypt() {
-        const hash = document.getElementById('hashInput').value;
-        const type = document.getElementById('hashType').value;
-        const resultDiv = document.getElementById('hashResult');
-        if (!hash) { resultDiv.innerHTML = '<div class="alert alert-error">Hash girin!</div>'; return; }
-        resultDiv.innerHTML = '<div class="alert alert-info"><span class="loading"></span> Çözümleniyor...</div>';
-        addLog('HASH ÇÖZ', `Tip: ${type}, Hash: ${hash.substring(0,20)}...`);
-        
-        try {
-            const res = await fetch(`https://md5decrypt.net/en/Api/api.php?hash=${hash}&hash_type=${type}`);
-            const data = await res.text();
-            if (data && !data.includes('ERROR')) {
-                resultDiv.innerHTML = `<div class="result-card"><h4>🔓 ÇÖZÜLDÜ!</h4><p>🔐 ${hash}</p><p>📝 <code>${data}</code></p></div>`;
-            } else {
-                resultDiv.innerHTML = `<div class="result-card"><h4>❌ ÇÖZÜLEMEDİ</h4><p>Veritabanında bulunamadı.</p></div>`;
-            }
-        } catch(e) {
-            resultDiv.innerHTML = `<div class="result-card"><h4>⚠️ Demo Sonuç</h4><p>${type.toUpperCase()}: ${hash.substring(0,20)}...</p><p>📝 ${Math.random() > 0.5 ? 'password123' : 'admin'}</p></div>`;
-        }
-    }
-
-    async function locationMap() {
-        let ip = document.getElementById('locationIp').value;
-        const resultDiv = document.getElementById('locationResult');
-        const mapDiv = document.getElementById('mapContainer');
-        if (!ip) {
-            const res = await fetch('https://api.ipify.org?format=json');
-            const data = await res.json();
-            ip = data.ip;
-        }
-        resultDiv.innerHTML = '<div class="alert alert-info"><span class="loading"></span> Konum alınıyor...</div>';
-        addLog('KONUM', `IP: ${ip}`);
-        
-        try {
-            const res = await fetch(`https://ipapi.co/${ip}/json/`);
-            const data = await res.json();
-            if (data.error) throw new Error();
-            resultDiv.innerHTML = `<div class="result-card"><h4>📍 ${data.ip}</h4><p>🌍 ${data.city}, ${data.country_name}</p><p>🗺️ ${data.latitude}, ${data.longitude}</p></div>`;
-            mapDiv.innerHTML = `<iframe width="100%" height="400" frameborder="0" style="border-radius:16px;" src="https://www.openstreetmap.org/export/embed.html?bbox=${data.longitude-0.05},${data.latitude-0.05},${data.longitude+0.05},${data.latitude+0.05}&layer=mapnik&marker=${data.latitude},${data.longitude}"></iframe>`;
-        } catch(e) {
-            resultDiv.innerHTML = '<div class="alert alert-error">❌ Konum alınamadı!</div>';
-        }
-    }
-
-    // Başlangıç
-    loadData();
-    if (currentUser) showPanel();
-    else showLogin();
-
-    document.addEventListener('contextmenu', e => e.preventDefault());
-    document.addEventListener('keydown', e => {
-        if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S')) e.preventDefault();
-        if (e.key === 'F12') e.preventDefault();
-    });
-</script>
-</body>
-</html>
+    function showLogin(){ 
+        document.getElementById('loginScreen').style.display='block';
+        document.getElementById('registerScreen').style.display='none';
+        document.getElementById('p
