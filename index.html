@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Kazanç Platformu | Affiliate + E-posta + Dijital Ürün + Key Paylaşımı</title>
+    <title>DijitalPazar | Sanal Ürün & Item Satış Platformu</title>
     <style>
         * {
             margin: 0;
@@ -12,13 +12,12 @@
         }
 
         body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
             font-family: 'Segoe UI', 'Poppins', system-ui, sans-serif;
             min-height: 100vh;
             color: #f1f5f9;
         }
 
-        /* Sidebar */
         .sidebar {
             position: fixed;
             top: 0;
@@ -31,7 +30,7 @@
             transition: 0.3s;
             z-index: 1000;
             padding: 2rem 1.2rem;
-            border-right: 2px solid #f59e0b;
+            border-right: 2px solid #a855f7;
             overflow-y: auto;
         }
         .sidebar.open { left: 0; }
@@ -41,12 +40,12 @@
             right: 1rem;
             font-size: 1.8rem;
             cursor: pointer;
-            color: #f59e0b;
+            color: #a855f7;
         }
         .sidebar .menu-item {
             padding: 0.8rem 1rem;
             margin: 0.3rem 0;
-            background: rgba(245, 158, 11, 0.1);
+            background: rgba(168, 85, 247, 0.1);
             border-radius: 12px;
             cursor: pointer;
             transition: 0.2s;
@@ -54,33 +53,29 @@
             align-items: center;
             gap: 0.8rem;
             font-weight: 500;
-            border: 1px solid transparent;
         }
         .sidebar .menu-item:hover {
-            background: #f59e0b;
+            background: #a855f7;
             color: #0f172a;
             transform: translateX(5px);
         }
         .sidebar .menu-category {
-            color: #f59e0b;
+            color: #a855f7;
             font-size: 0.7rem;
             text-transform: uppercase;
             margin: 1rem 0 0.5rem 0;
-            letter-spacing: 1px;
         }
-
         .menu-toggle {
             position: fixed;
             top: 1rem;
             left: 1rem;
             font-size: 1.8rem;
             cursor: pointer;
-            color: #f59e0b;
+            color: #a855f7;
             z-index: 999;
             background: rgba(0, 0, 0, 0.5);
             padding: 0.4rem 0.9rem;
             border-radius: 12px;
-            backdrop-filter: blur(5px);
         }
         .overlay {
             position: fixed;
@@ -93,51 +88,49 @@
             display: none;
         }
         .overlay.active { display: block; }
-
         .main-content {
             padding: 5rem 1.5rem 2rem 1.5rem;
-            max-width: 1300px;
+            max-width: 1400px;
             margin: 0 auto;
         }
         .card {
             background: rgba(30, 41, 59, 0.7);
             backdrop-filter: blur(10px);
             border-radius: 24px;
-            border: 1px solid rgba(245, 158, 11, 0.3);
+            border: 1px solid rgba(168, 85, 247, 0.3);
             overflow: hidden;
             margin-bottom: 1.5rem;
         }
         .card-header {
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05));
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(168, 85, 247, 0.05));
             padding: 1.2rem 1.8rem;
-            border-bottom: 1px solid rgba(245, 158, 11, 0.2);
+            border-bottom: 1px solid rgba(168, 85, 247, 0.2);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
         }
-        .card-header h2 { color: #f59e0b; font-size: 1.4rem; }
+        .card-header h2 { color: #a855f7; font-size: 1.4rem; }
         .card-body { padding: 1.8rem; }
-
         input, textarea, select {
             width: 100%;
             padding: 0.8rem;
             margin: 0.5rem 0;
             background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(245, 158, 11, 0.5);
+            border: 1px solid rgba(168, 85, 247, 0.5);
             border-radius: 12px;
             color: white;
             font-size: 0.95rem;
             outline: none;
         }
         input:focus, textarea:focus {
-            border-color: #f59e0b;
-            box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+            border-color: #a855f7;
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
         }
         button {
             width: 100%;
             padding: 0.8rem;
-            background: linear-gradient(95deg, #f59e0b, #d97706);
+            background: linear-gradient(95deg, #a855f7, #7c3aed);
             border: none;
             border-radius: 12px;
             color: white;
@@ -146,8 +139,7 @@
             transition: 0.2s;
             margin-top: 0.5rem;
         }
-        button:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(245, 158, 11, 0.4); }
-
+        button:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(168, 85, 247, 0.4); }
         .alert {
             padding: 0.8rem;
             border-radius: 12px;
@@ -156,310 +148,410 @@
         }
         .alert-success { background: rgba(34, 197, 94, 0.2); border-left: 4px solid #22c55e; color: #86efac; }
         .alert-error { background: rgba(239, 68, 68, 0.2); border-left: 4px solid #ef4444; color: #fca5a5; }
-        .alert-info { background: rgba(245, 158, 11, 0.15); border-left: 4px solid #f59e0b; color: #fcd34d; }
-
-        .product-card, .affiliate-card, .key-card {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 16px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border: 1px solid rgba(245, 158, 11, 0.2);
-            transition: 0.2s;
-        }
-        .product-card:hover, .affiliate-card:hover, .key-card:hover { border-color: #f59e0b; }
-        .product-title, .affiliate-title, .key-title { color: #f59e0b; font-weight: bold; font-size: 1.1rem; }
-        .price { color: #22c55e; font-size: 1.2rem; font-weight: bold; }
-        .grid-2 {
+        .alert-info { background: rgba(168, 85, 247, 0.15); border-left: 4px solid #a855f7; color: #d8b4fe; }
+        .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.2rem;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
         }
-        hr { border-color: rgba(245, 158, 11, 0.2); margin: 1rem 0; }
+        .product-card {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            padding: 1.2rem;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: #a855f7;
+            box-shadow: 0 10px 25px rgba(168, 85, 247, 0.2);
+        }
+        .product-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .product-title { font-size: 1.2rem; font-weight: bold; color: #a855f7; }
+        .product-price { font-size: 1.3rem; font-weight: bold; color: #22c55e; margin: 0.5rem 0; }
+        .product-category {
+            display: inline-block;
+            background: rgba(168, 85, 247, 0.2);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+        }
+        .cart-badge {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: #a855f7;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            cursor: pointer;
+            z-index: 999;
+            font-weight: bold;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .cart-count {
+            background: white;
+            color: #a855f7;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
         .stat-box {
-            background: rgba(245, 158, 11, 0.1);
+            background: rgba(168, 85, 247, 0.1);
             border-radius: 16px;
             padding: 1rem;
             text-align: center;
         }
-        .stat-number { font-size: 2rem; font-weight: bold; color: #f59e0b; }
-        .subscriber-item {
-            background: rgba(0,0,0,0.3);
-            padding: 0.6rem;
-            border-radius: 10px;
-            margin-bottom: 0.5rem;
+        .stat-number { font-size: 2rem; font-weight: bold; color: #a855f7; }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
         }
-
+        hr { border-color: rgba(168, 85, 247, 0.2); margin: 1rem 0; }
         @media (max-width: 650px) {
             .main-content { padding: 5rem 0.8rem 1rem 0.8rem; }
-            .card-body { padding: 1.2rem; }
+            .product-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
+<div class="cart-badge" onclick="showPage('cart')">
+    🛒 Sepet <span class="cart-count" id="cartCount">0</span>
+</div>
 <div class="menu-toggle" onclick="toggleSidebar()">☰</div>
 <div class="sidebar">
     <div class="close-btn" onclick="toggleSidebar()">✕</div>
     <div style="text-align: center; margin-bottom: 2rem;">
-        <div style="font-size: 2.5rem;">💰</div>
-        <div style="color: #f59e0b; font-weight: bold;">KAZANÇ PLATFORMU</div>
+        <div style="font-size: 2.5rem;">🛍️</div>
+        <div style="color: #a855f7; font-weight: bold;">DİJİTAL PAZAR</div>
     </div>
-    <div class="menu-category">📌 ANA MENÜ</div>
-    <div class="menu-item" onclick="showPage('affiliate')">🔗 AFFILIATE ÜRÜNLER</div>
-    <div class="menu-item" onclick="showPage('email')">📧 E-POSTA ABONELİK</div>
-    <div class="menu-item" onclick="showPage('digital')">🛒 DİJİTAL ÜRÜNLER</div>
-    <div class="menu-item" onclick="showPage('keys')">🔐 KEY PAYLAŞIM</div>
+    <div class="menu-category">📌 MENÜ</div>
+    <div class="menu-item" onclick="showPage('shop')">🛒 MAĞAZA</div>
+    <div class="menu-item" onclick="showPage('cart')">🛍️ SEPETİM</div>
+    <div class="menu-item" onclick="showPage('myOrders')">📦 SİPARİŞLERİM</div>
+    <div class="menu-category">👑 SATICI PANELİ</div>
+    <div class="menu-item" onclick="showPage('addProduct')">➕ ÜRÜN EKLE</div>
+    <div class="menu-item" onclick="showPage('myProducts')">📋 ÜRÜNLERİM</div>
+    <div class="menu-item" onclick="showPage('earnings')">💰 KAZANÇLARIM</div>
+    <div class="menu-category">⚙️</div>
     <div class="menu-item" onclick="showPage('dashboard')">📊 DASHBOARD</div>
+    <div class="menu-item" onclick="logout()">🚪 ÇIKIŞ</div>
 </div>
 <div class="overlay" onclick="toggleSidebar()"></div>
 
 <div class="main-content" id="mainContent">
     <div class="card">
         <div class="card-header">
-            <h2 id="pageTitle">💰 KAZANÇ PLATFORMU</h2>
-            <div style="background:#f59e0b20; padding:0.3rem 1rem; border-radius:40px;">💸 Kazanmaya Başla</div>
+            <h2 id="pageTitle">🛍️ DİJİTAL PAZAR</h2>
+            <div>💎 Sanal Ürün & Item Al/Sat</div>
         </div>
         <div class="card-body" id="pageContent">
-            <!-- Başlangıç içeriği -->
-            <div class="grid-2">
-                <div class="stat-box"><div class="stat-number" id="statAffiliate">0</div><div>Affiliate Link</div></div>
-                <div class="stat-box"><div class="stat-number" id="statSubscribers">0</div><div>E-posta Abone</div></div>
-                <div class="stat-box"><div class="stat-number" id="statProducts">0</div><div>Dijital Ürün</div></div>
-                <div class="stat-box"><div class="stat-number" id="statKeys">0</div><div>Key Paylaşımı</div></div>
-            </div>
-            <hr>
-            <div class="alert alert-info">🔥 Menüden bir seçenek seç: Affiliate Ürün Tanıt, E-posta Abonelik, Dijital Ürün Sat veya Key Paylaş.</div>
+            <div class="alert alert-info">🔥 Hoş geldin! Dijital ürün sat, item al, anında teslim al!</div>
         </div>
     </div>
 </div>
 
 <script>
-    // ========== VERİ YÖNETİMİ ==========
-    let affiliateLinks = JSON.parse(localStorage.getItem('affiliateLinks') || '[]');
-    let subscribers = JSON.parse(localStorage.getItem('subscribers') || '[]');
-    let digitalProducts = JSON.parse(localStorage.getItem('digitalProducts') || '[]');
-    let sharedKeys = JSON.parse(localStorage.getItem('sharedKeys') || '[]');
+    // ========== VERİLER ==========
+    let products = JSON.parse(localStorage.getItem('shop_products') || '[]');
+    let cart = JSON.parse(localStorage.getItem('shop_cart') || '[]');
+    let orders = JSON.parse(localStorage.getItem('shop_orders') || '[]');
+    let currentUser = localStorage.getItem('shop_user');
+    let balance = parseFloat(localStorage.getItem('shop_balance') || '0');
 
-    // İstatistik güncelleme
-    function updateStats() {
-        document.getElementById('statAffiliate').innerText = affiliateLinks.length;
-        document.getElementById('statSubscribers').innerText = subscribers.length;
-        document.getElementById('statProducts').innerText = digitalProducts.length;
-        document.getElementById('statKeys').innerText = sharedKeys.length;
+    // Kategoriler
+    const categories = ['🎮 Oyun Item', '🤖 Discord Bot', '📱 Uygulama', '🔑 Lisans/Key', '🎨 Tasarım', '📚 E-Kitap', '🛡️ Güvenlik', '🎵 Müzik'];
+
+    // Demo ürünler (ilk kez açılışta)
+    if(products.length === 0) {
+        products = [
+            { id: 1, name: 'Minecraft VIP', category: '🎮 Oyun Item', price: 50, seller: 'Admin', description: 'Minecraft sunucusu VIP yetki', stock: 10, image: '🎮' },
+            { id: 2, name: 'Discord Bot Hazır', category: '🤖 Discord Bot', price: 100, seller: 'Admin', description: 'Moderasyon botu (tam hazır)', stock: 5, image: '🤖' },
+            { id: 3, name: 'Windows 10 Pro Key', category: '🔑 Lisans/Key', price: 25, seller: 'Admin', description: 'Ömür boyu lisans', stock: 50, image: '🔑' },
+            { id: 4, name: 'Spotify Premium 1 Ay', category: '🔑 Lisans/Key', price: 15, seller: 'Admin', description: 'Hesap + şifre', stock: 20, image: '🎵' },
+            { id: 5, name: 'Discord Sunucu Tema', category: '🎨 Tasarım', price: 30, seller: 'Admin', description: 'Özel CSS tema', stock: 100, image: '🎨' },
+            { id: 6, name: 'CS2 Skin (MW)', category: '🎮 Oyun Item', price: 120, seller: 'Admin', description: 'StatTrak™', stock: 3, image: '🔫' },
+        ];
+        localStorage.setItem('shop_products', JSON.stringify(products));
     }
 
-    // Sayfa gösterimi
+    function updateCartCount() {
+        let total = cart.reduce((sum, item) => sum + item.quantity, 0);
+        document.getElementById('cartCount').innerText = total;
+        localStorage.setItem('shop_cart', JSON.stringify(cart));
+    }
+
     function showPage(page) {
         const content = document.getElementById('pageContent');
         const title = document.getElementById('pageTitle');
         
-        if(page === 'affiliate') {
-            title.innerText = '🔗 AFFILIATE ÜRÜN TANITIMI';
-            content.innerHTML = `
-                <div class="alert alert-info">🔗 Affiliate linklerini paylaş, her satıştan komisyon kazan! (%~10-40)</div>
-                <div class="grid-2" id="affiliateList">
-                    ${affiliateLinks.map((link, idx) => `
-                        <div class="affiliate-card">
-                            <div class="affiliate-title">${escapeHtml(link.name)}</div>
-                            <p>${escapeHtml(link.description)}</p>
-                            <code style="font-size:0.7rem; word-break:break-all;">${escapeHtml(link.url)}</code>
-                            <div style="margin-top:0.5rem;"><span style="color:#f59e0b;">💰 Komisyon: %${link.commission}</span></div>
-                            <button onclick="copyToClipboard('${link.url}')">📋 Linki Kopyala</button>
-                            <button onclick="deleteAffiliate(${idx})" style="background:#ef4444; margin-top:0.3rem;">🗑️ Sil</button>
-                        </div>
-                    `).join('')}
-                </div>
-                <hr>
-                <h3>➕ Yeni Affiliate Link Ekle</h3>
-                <input type="text" id="affName" placeholder="Ürün Adı (Örn: Trendyol Kazak)">
-                <textarea id="affDesc" placeholder="Açıklama" rows="2"></textarea>
-                <input type="text" id="affUrl" placeholder="Affiliate Linki (kendi referans linkin)">
-                <input type="number" id="affCommission" placeholder="Komisyon % (Örn: 15)" value="15">
-                <button onclick="addAffiliate()">➕ AFFILIATE EKLE</button>
-                <div class="alert alert-info" style="margin-top:1rem;">💡 İpucu: Trendyol, Hepsiburada, Amazon, Getir gibi sitelere üye ol, kendi linkini al ve buraya ekle!</div>
-            `;
-        }
-        else if(page === 'email') {
-            title.innerText = '📧 E-POSTA ABONELİK SİSTEMİ';
-            content.innerHTML = `
-                <div class="alert alert-info">📧 Ziyaretçiler e-posta bıraksın, onlara haftalık e-posta gönderip ürün/affiliate linklerini paylaşarak kazan!</div>
-                <div class="grid-2">
-                    <div style="background:rgba(0,0,0,0.3); border-radius:16px; padding:1rem;">
-                        <h3>📝 Abone Olma Formu</h3>
-                        <input type="text" id="subName" placeholder="Ad Soyad">
-                        <input type="email" id="subEmail" placeholder="E-posta adresi">
-                        <button onclick="addSubscriber()">📧 ABONE OL</button>
+        if(page === 'shop') {
+            title.innerText = '🛒 MAĞAZA';
+            let filtered = products;
+            let html = `<div class="product-grid" id="productGrid">`;
+            filtered.forEach(p => {
+                html += `
+                    <div class="product-card" onclick="addToCart(${p.id})">
+                        <div class="product-icon">${p.image}</div>
+                        <div class="product-title">${escapeHtml(p.name)}</div>
+                        <div class="product-category">${p.category}</div>
+                        <div class="product-price">₺${p.price}</div>
+                        <div class="product-desc" style="font-size:0.75rem; opacity:0.7;">${escapeHtml(p.description)}</div>
+                        <button onclick="event.stopPropagation(); addToCart(${p.id})">🛒 Sepete Ekle</button>
                     </div>
-                    <div style="background:rgba(0,0,0,0.3); border-radius:16px; padding:1rem;">
-                        <h3>📬 Son Aboneler</h3>
-                        <div id="subscriberList">
-                            ${subscribers.slice(0,10).map(sub => `<div class="subscriber-item">📧 ${escapeHtml(sub.email)}<br><small>${sub.date}</small></div>`).join('')}
-                            ${subscribers.length === 0 ? '<p>Henüz abone yok.</p>' : ''}
-                        </div>
-                        <button onclick="exportEmails()" style="background:#22c55e;">📥 E-postaları Dışa Aktar (CSV)</button>
-                    </div>
-                </div>
-                <hr>
-                <h3>✉️ Toplu E-posta Gönderme (Simülasyon)</h3>
-                <textarea id="emailSubject" placeholder="E-posta Konusu" rows="1"></textarea>
-                <textarea id="emailMessage" placeholder="E-posta İçeriği (Affiliate linklerini koy, ürünlerini tanıt)" rows="4"></textarea>
-                <button onclick="sendNewsletter()">📨 GÖNDER (${subscribers.length} aboneye)</button>
-                <div class="alert alert-info">💡 Not: Bu simülasyondur, gerçek e-posta göndermek için SMTP veya Mailchimp gibi servis kullanmalısın.</div>
-            `;
+                `;
+            });
+            html += `</div><div class="alert alert-info" style="margin-top:1rem;">💡 Ürünlere tıkla, sepete ekle, satın al ve anında teslim al!</div>`;
+            content.innerHTML = html;
         }
-        else if(page === 'digital') {
-            title.innerText = '🛒 DİJİTAL ÜRÜN SATIŞI';
-            content.innerHTML = `
-                <div class="alert alert-info">🛒 Kendi dijital ürünlerini ekle, ücret belirle. Kullanıcılar sana ulaşmak için iletişime geçsin!</div>
-                <div class="grid-2" id="productList">
-                    ${digitalProducts.map((prod, idx) => `
+        else if(page === 'cart') {
+            title.innerText = '🛍️ SEPETİM';
+            if(cart.length === 0) {
+                content.innerHTML = `<div class="alert alert-info">Sepetin boş. Alışverişe başla!</div>`;
+            } else {
+                let total = 0;
+                let html = `<div class="product-grid">`;
+                cart.forEach((item, idx) => {
+                    let prod = products.find(p => p.id === item.id);
+                    if(prod) {
+                        total += prod.price * item.quantity;
+                        html += `
+                            <div class="product-card">
+                                <div class="product-icon">${prod.image}</div>
+                                <div class="product-title">${escapeHtml(prod.name)}</div>
+                                <div>₺${prod.price} x ${item.quantity}</div>
+                                <div style="color:#22c55e;">₺${prod.price * item.quantity}</div>
+                                <button onclick="removeFromCart(${idx})" style="background:#ef4444;">🗑️ Çıkar</button>
+                            </div>
+                        `;
+                    }
+                });
+                html += `</div><hr><div style="text-align:right;"><h3>Toplam: ₺${total}</h3><button onclick="checkout()">✅ ÖDEME YAP</button></div>`;
+                content.innerHTML = html;
+            }
+        }
+        else if(page === 'myOrders') {
+            title.innerText = '📦 SİPARİŞLERİM';
+            if(orders.length === 0) {
+                content.innerHTML = `<div class="alert alert-info">Henüz siparişin yok.</div>`;
+            } else {
+                let html = `<div class="product-grid">`;
+                orders.forEach(order => {
+                    html += `
                         <div class="product-card">
-                            <div class="product-title">${escapeHtml(prod.name)}</div>
-                            <p>${escapeHtml(prod.description)}</p>
-                            <div class="price">${prod.price} TL</div>
-                            <button onclick="contactSeller('${prod.name}', '${prod.price}')">📩 Satın Almak İstiyorum</button>
-                            <button onclick="deleteProduct(${idx})" style="background:#ef4444; margin-top:0.3rem;">🗑️ Sil</button>
+                            <div class="product-title">📦 Sipariş #${order.id}</div>
+                            <div>Tarih: ${order.date}</div>
+                            <div>Toplam: ₺${order.total}</div>
+                            <div>Durum: <span style="color:#22c55e;">✅ Teslim Edildi</span></div>
+                            <details><summary>Ürünler</summary>${order.items.map(i => `• ${i.name} x${i.quantity}`).join('<br>')}</details>
                         </div>
-                    `).join('')}
-                </div>
-                <hr>
-                <h3>➕ Yeni Dijital Ürün Ekle</h3>
-                <input type="text" id="prodName" placeholder="Ürün Adı (Örn: Discord Bot Şablonu)">
-                <textarea id="prodDesc" placeholder="Ürün Açıklaması (ne işe yarar, ne içerir?)" rows="2"></textarea>
+                    `;
+                });
+                html += `</div>`;
+                content.innerHTML = html;
+            }
+        }
+        else if(page === 'addProduct') {
+            title.innerText = '➕ ÜRÜN EKLE (SATICI)';
+            content.innerHTML = `
+                <div class="alert alert-info">💎 Ürün ekle, fiyat belirle, satışa başla! Her satıştan %10 komisyon alınır.</div>
+                <select id="prodCategory">${categories.map(c => `<option>${c}</option>`).join('')}</select>
+                <input type="text" id="prodName" placeholder="Ürün Adı">
+                <textarea id="prodDesc" placeholder="Ürün Açıklaması" rows="2"></textarea>
                 <input type="number" id="prodPrice" placeholder="Fiyat (TL)" value="50">
+                <input type="number" id="prodStock" placeholder="Stok Adedi" value="10">
+                <input type="text" id="prodImage" placeholder="Emoji (örnek: 🎮)" value="🎮">
                 <button onclick="addProduct()">➕ ÜRÜN EKLE</button>
-                <div class="alert alert-info">💡 Satılabilir: Discord bot kodları, oyun config dosyaları, e-kitaplar, sticker paketleri, hazır website şablonları.</div>
             `;
         }
-        else if(page === 'keys') {
-            title.innerText = '🔐 OYUN/ PROGRAM KEY PAYLAŞIMI';
-            content.innerHTML = `
-                <div class="alert alert-info">🔐 Bedava veya satılık key'leri paylaş. Premium key'leri satabilir, reklam geliri ekleyebilirsin.</div>
-                <div class="grid-2" id="keyList">
-                    ${sharedKeys.map((key, idx) => `
-                        <div class="key-card">
-                            <div class="key-title">${escapeHtml(key.name)}</div>
-                            <p>${escapeHtml(key.description)}</p>
-                            <code style="font-size:0.7rem;">🔑 ${escapeHtml(key.key)}</code>
-                            <div style="margin-top:0.5rem;">💰 Fiyat: ${key.price === 0 ? 'Ücretsiz' : key.price + ' TL'}</div>
-                            <button onclick="copyToClipboard('${key.key}')">📋 Key\'i Kopyala</button>
-                            <button onclick="deleteKey(${idx})" style="background:#ef4444; margin-top:0.3rem;">🗑️ Sil</button>
+        else if(page === 'myProducts') {
+            title.innerText = '📋 ÜRÜNLERİM (SATICI)';
+            let myProds = products.filter(p => p.seller === (currentUser || 'Admin'));
+            if(myProds.length === 0) {
+                content.innerHTML = `<div class="alert alert-info">Henüz ürün eklememişsin.</div>`;
+            } else {
+                let html = `<div class="product-grid">`;
+                myProds.forEach((p, idx) => {
+                    html += `
+                        <div class="product-card">
+                            <div class="product-icon">${p.image}</div>
+                            <div class="product-title">${escapeHtml(p.name)}</div>
+                            <div>₺${p.price} | Stok: ${p.stock}</div>
+                            <button onclick="deleteProduct(${p.id})" style="background:#ef4444;">🗑️ Sil</button>
                         </div>
-                    `).join('')}
+                    `;
+                });
+                html += `</div>`;
+                content.innerHTML = html;
+            }
+        }
+        else if(page === 'earnings') {
+            title.innerText = '💰 KAZANÇLARIM';
+            let myProductsSold = orders.flatMap(o => o.items.filter(i => i.seller === (currentUser || 'Admin')));
+            let totalEarned = myProductsSold.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+            content.innerHTML = `
+                <div class="grid-2">
+                    <div class="stat-box"><div class="stat-number">₺${totalEarned}</div><div>Toplam Kazanç</div></div>
+                    <div class="stat-box"><div class="stat-number">${myProductsSold.length}</div><div>Satılan Ürün</div></div>
                 </div>
                 <hr>
-                <h3>➕ Yeni Key Paylaş</h3>
-                <input type="text" id="keyName" placeholder="Oyun/Program Adı (Örn: Windows 10 Pro)">
-                <textarea id="keyDesc" placeholder="Açıklama" rows="2"></textarea>
-                <input type="text" id="keyCode" placeholder="Key / Lisans Kodu">
-                <input type="number" id="keyPrice" placeholder="Fiyat (0 = ücretsiz)" value="0">
-                <button onclick="addKey()">➕ KEY PAYLAŞ</button>
-                <div class="alert alert-info">💡 Ücretsiz key'lerle ziyaretçi çek, reklam göster. Satılık key'ler için kendi kaynaklarından sağla.</div>
+                <h3>📊 Satış Geçmişi</h3>
+                ${myProductsSold.map(s => `<div class="stat-box">${s.name} x${s.quantity} = ₺${s.price * s.quantity}</div>`).join('') || '<p>Henüz satış yok.</p>'}
+                <div class="alert alert-info">💡 Para çekme: Satıcı hesabına aktarılacaktır.</div>
             `;
         }
         else if(page === 'dashboard') {
-            title.innerText = '📊 DASHBOARD - KAZANÇ RAPORU';
+            title.innerText = '📊 DASHBOARD';
+            let totalSales = orders.reduce((sum, o) => sum + o.total, 0);
             content.innerHTML = `
                 <div class="grid-2">
-                    <div class="stat-box"><div class="stat-number">${affiliateLinks.length}</div><div>Affiliate Link</div><small>Her satıştan komisyon</small></div>
-                    <div class="stat-box"><div class="stat-number">${subscribers.length}</div><div>E-posta Abone</div><small>E-posta pazarlama ile satış</small></div>
-                    <div class="stat-box"><div class="stat-number">${digitalProducts.length}</div><div>Dijital Ürün</div><small>Direct satış geliri</small></div>
-                    <div class="stat-box"><div class="stat-number">${sharedKeys.length}</div><div>Key Paylaşımı</div><small>Ziyaretçi + reklam geliri</small></div>
+                    <div class="stat-box"><div class="stat-number">${products.length}</div><div>Toplam Ürün</div></div>
+                    <div class="stat-box"><div class="stat-number">${orders.length}</div><div>Sipariş</div></div>
+                    <div class="stat-box"><div class="stat-number">₺${totalSales}</div><div>Ciro</div></div>
+                    <div class="stat-box"><div class="stat-number">${cart.reduce((s,i)=>s+i.quantity,0)}</div><div>Sepetteki Ürün</div></div>
                 </div>
                 <hr>
-                <h3>💸 NASIL PARA KAZANIRSIN?</h3>
-                <ul style="margin-left:1.5rem; line-height:1.8;">
-                    <li>🔗 <strong>Affiliate:</strong> Trendyol, Hepsiburada, Amazon'a üye ol -> Linklerini burada paylaş -> Satıştan % komisyon al.</li>
-                    <li>📧 <strong>E-posta Abonelik:</strong> Ziyaretçilerin e-postalarını topla -> Haftalık bülten gönder -> Affiliate linklerini e-postaya koy -> Satış kazan.</li>
-                    <li>🛒 <strong>Dijital Ürün Sat:</strong> Discord botu, oyun config, e-kitap, sticker -> Kendi ürününü yap veya hazır bul -> Fiyat belirle -> Alıcı senden satın alır.</li>
-                    <li>🔐 <strong>Key Paylaşımı:</strong> Bedava key'lerle ziyaretçi çek -> Siteye reklam koy (Adsterra vb.) -> Her tıklamadan para kazan.</li>
-                </ul>
-                <hr>
-                <h3>📌 TOPLAM POTANSİYEL GELİR TAHMİNİ</h3>
-                <div class="stat-box"><div class="stat-number">₺${(affiliateLinks.length * 150 + digitalProducts.length * 200 + sharedKeys.length * 50).toFixed(0)}</div><div>Aylık Potansiyel (Tahmini)</div></div>
-                <div class="alert alert-info">💡 Gerçek kazanç için ürünlerini tanıt, ziyaretçi çek, reklam ekle!</div>
+                <h3>🌟 Popüler Kategoriler</h3>
+                <div class="product-grid">
+                    ${categories.map(cat => `<div class="product-card" onclick="showCategory('${cat}')"><div class="product-icon">${cat.split(' ')[0]}</div><div>${cat}</div><small>${products.filter(p=>p.category===cat).length} ürün</small></div>`).join('')}
+                </div>
+                <div class="alert alert-info">💎 Satıcı ol, ürün ekle, para kazan!</div>
             `;
         }
-        
-        updateStats();
         toggleSidebar();
     }
 
-    // ========== FONKSİYONLAR ==========
-    function addAffiliate() {
-        let name = document.getElementById('affName').value.trim();
-        let desc = document.getElementById('affDesc').value.trim();
-        let url = document.getElementById('affUrl').value.trim();
-        let commission = document.getElementById('affCommission').value;
-        if(!name || !url) { alert('Ürün adı ve link gerekli!'); return; }
-        affiliateLinks.push({ name, description: desc || 'Affiliate ürün', url, commission: commission || 10 });
-        localStorage.setItem('affiliateLinks', JSON.stringify(affiliateLinks));
-        showPage('affiliate');
+    function addToCart(productId) {
+        let product = products.find(p => p.id === productId);
+        if(!product) return;
+        let existing = cart.find(i => i.id === productId);
+        if(existing) {
+            existing.quantity++;
+        } else {
+            cart.push({ id: productId, quantity: 1 });
+        }
+        updateCartCount();
+        alert(`✅ ${product.name} sepete eklendi!`);
+        showPage('shop');
     }
-    function deleteAffiliate(idx) { affiliateLinks.splice(idx,1); localStorage.setItem('affiliateLinks', JSON.stringify(affiliateLinks)); showPage('affiliate'); }
-    
-    function addSubscriber() {
-        let name = document.getElementById('subName').value.trim();
-        let email = document.getElementById('subEmail').value.trim();
-        if(!email || !email.includes('@')) { alert('Geçerli e-posta girin'); return; }
-        if(subscribers.find(s=>s.email===email)) { alert('Bu e-posta zaten kayıtlı'); return; }
-        subscribers.push({ name: name || 'İsimsiz', email, date: new Date().toLocaleString('tr-TR') });
-        localStorage.setItem('subscribers', JSON.stringify(subscribers));
-        showPage('email');
+
+    function removeFromCart(idx) {
+        cart.splice(idx, 1);
+        updateCartCount();
+        showPage('cart');
     }
-    function exportEmails() {
-        let emails = subscribers.map(s=>s.email).join('\n');
-        let blob = new Blob([emails], {type:'text/csv'});
-        let a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'aboneler.csv';
-        a.click();
+
+    function checkout() {
+        if(cart.length === 0) { alert('Sepetin boş!'); return; }
+        let total = 0;
+        let orderItems = [];
+        for(let item of cart) {
+            let prod = products.find(p => p.id === item.id);
+            if(prod) {
+                total += prod.price * item.quantity;
+                orderItems.push({
+                    id: prod.id,
+                    name: prod.name,
+                    price: prod.price,
+                    quantity: item.quantity,
+                    seller: prod.seller
+                });
+                // Stok düş
+                prod.stock -= item.quantity;
+            }
+        }
+        let order = {
+            id: Date.now(),
+            date: new Date().toLocaleString('tr-TR'),
+            items: orderItems,
+            total: total,
+            status: 'completed'
+        };
+        orders.push(order);
+        localStorage.setItem('shop_orders', JSON.stringify(orders));
+        localStorage.setItem('shop_products', JSON.stringify(products));
+        
+        // Satıcı bakiyesine ekle (komisyon düşülmüş hali)
+        let sellerEarnings = orderItems.reduce((sum, i) => sum + (i.price * i.quantity * 0.9), 0);
+        let currentBalance = parseFloat(localStorage.getItem('shop_balance_' + (currentUser || 'Admin')) || 0);
+        localStorage.setItem('shop_balance_' + (currentUser || 'Admin'), currentBalance + sellerEarnings);
+        
+        cart = [];
+        updateCartCount();
+        alert(`✅ Siparişiniz alındı! Toplam: ₺${total}\nÜrünler hesabınıza tanımlandı.`);
+        showPage('myOrders');
     }
-    function sendNewsletter() {
-        let subject = document.getElementById('emailSubject').value;
-        let message = document.getElementById('emailMessage').value;
-        if(!subject || !message) { alert('Konu ve mesaj girin'); return; }
-        alert(`📧 ${subscribers.length} aboneye e-posta gönderildi (simülasyon).\n\nKonu: ${subject}\nMesaj: ${message}\n\nGerçek e-posta için SMTP ayarı yapmalısın.`);
-    }
-    
+
     function addProduct() {
+        let category = document.getElementById('prodCategory').value;
         let name = document.getElementById('prodName').value.trim();
         let desc = document.getElementById('prodDesc').value.trim();
-        let price = document.getElementById('prodPrice').value;
-        if(!name) { alert('Ürün adı girin'); return; }
-        digitalProducts.push({ name, description: desc || 'Dijital ürün', price: price || 50 });
-        localStorage.setItem('digitalProducts', JSON.stringify(digitalProducts));
-        showPage('digital');
+        let price = parseFloat(document.getElementById('prodPrice').value);
+        let stock = parseInt(document.getElementById('prodStock').value);
+        let image = document.getElementById('prodImage').value;
+        if(!name || !price) { alert('Ürün adı ve fiyat gerekli!'); return; }
+        let newId = Date.now();
+        products.push({
+            id: newId,
+            name: name,
+            category: category,
+            price: price,
+            seller: currentUser || 'Admin',
+            description: desc || 'Açıklama yok',
+            stock: stock || 1,
+            image: image || '📦'
+        });
+        localStorage.setItem('shop_products', JSON.stringify(products));
+        alert('✅ Ürün eklendi!');
+        showPage('myProducts');
     }
-    function deleteProduct(idx) { digitalProducts.splice(idx,1); localStorage.setItem('digitalProducts', JSON.stringify(digitalProducts)); showPage('digital'); }
-    function contactSeller(productName, price) {
-        let email = prompt('Satın almak için e-posta adresinizi girin:', 'ornek@mail.com');
-        if(email) alert(`📩 Talebiniz iletildi! Satıcı ${email} adresine dönüş yapacak.\nÜrün: ${productName}\nFiyat: ${price} TL`);
+
+    function deleteProduct(id) {
+        products = products.filter(p => p.id !== id);
+        localStorage.setItem('shop_products', JSON.stringify(products));
+        showPage('myProducts');
     }
-    
-    function addKey() {
-        let name = document.getElementById('keyName').value.trim();
-        let desc = document.getElementById('keyDesc').value.trim();
-        let key = document.getElementById('keyCode').value.trim();
-        let price = document.getElementById('keyPrice').value;
-        if(!name || !key) { alert('Ürün adı ve key girin'); return; }
-        sharedKeys.push({ name, description: desc || 'Lisans anahtarı', key, price: parseInt(price) || 0 });
-        localStorage.setItem('sharedKeys', JSON.stringify(sharedKeys));
-        showPage('keys');
+
+    function showCategory(cat) {
+        let filtered = products.filter(p => p.category === cat);
+        let html = `<h3>${cat}</h3><div class="product-grid">`;
+        filtered.forEach(p => {
+            html += `
+                <div class="product-card" onclick="addToCart(${p.id})">
+                    <div class="product-icon">${p.image}</div>
+                    <div class="product-title">${escapeHtml(p.name)}</div>
+                    <div class="product-price">₺${p.price}</div>
+                    <button onclick="event.stopPropagation(); addToCart(${p.id})">🛒 Sepete Ekle</button>
+                </div>
+            `;
+        });
+        html += `</div><button onclick="showPage('shop')">⬅️ Tüm Ürünler</button>`;
+        document.getElementById('pageContent').innerHTML = html;
+        document.getElementById('pageTitle').innerText = cat;
+        toggleSidebar();
     }
-    function deleteKey(idx) { sharedKeys.splice(idx,1); localStorage.setItem('sharedKeys', JSON.stringify(sharedKeys)); showPage('keys'); }
-    
-    function copyToClipboard(text) {
-        navigator.clipboard.writeText(text);
-        alert('✅ Kopyalandı: ' + text.slice(0,50));
+
+    function logout() {
+        localStorage.removeItem('shop_user');
+        currentUser = null;
+        location.reload();
     }
-    
+
     function escapeHtml(str) { return String(str).replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
     function toggleSidebar() { document.querySelector('.sidebar').classList.toggle('open'); document.querySelector('.overlay').classList.toggle('active'); }
-    
-    updateStats();
-    showPage('dashboard');
-    
+
+    updateCartCount();
+    showPage('shop');
+
     document.addEventListener('contextmenu', e=>e.preventDefault());
     document.addEventListener('keydown', e=>{ if(e.ctrlKey && (e.key==='u'||e.key==='U')) e.preventDefault(); if(e.key==='F12') e.preventDefault(); });
 </script>
