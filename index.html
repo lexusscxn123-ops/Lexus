@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Discord ID Sorgulama | Ultra Hafif & Hızlı</title>
+    <title>Discord ID Sorgulama | Hızlı & Hafif</title>
     <style>
         * {
             margin: 0;
@@ -18,7 +18,6 @@
             color: #eef2ff;
         }
 
-        /* Sidebar */
         .sidebar {
             position: fixed;
             top: 0;
@@ -157,30 +156,22 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            width: 45px;
-            height: 45px;
-            background: rgba(0, 0, 0, 0.6);
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.7);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             z-index: 9999;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             color: #ff2a2a;
-            border: 1px solid #ff2a2a;
-            opacity: 0.5;
+            border: 2px solid #ff2a2a;
+            transition: 0.2s;
         }
-        .admin-button:hover { opacity: 1; background: #ff2a2a; color: white; }
+        .admin-button:hover { opacity: 1; background: #ff2a2a; color: white; transform: scale(1.05); }
         
-        .log-item {
-            background: rgba(0, 0, 0, 0.4);
-            padding: 0.5rem;
-            margin: 0.3rem 0;
-            border-radius: 8px;
-            font-size: 0.7rem;
-        }
-        hr { border-color: rgba(255, 42, 42, 0.2); margin: 1rem 0; }
         .progress-bar {
             width: 100%;
             height: 20px;
@@ -217,7 +208,9 @@
 </head>
 <body>
 
+<!-- GİZLİ ADMIN BUTONU - SAĞ ALT KÖŞE -->
 <div class="admin-button" onclick="showAdminLogin()">👑</div>
+
 <div class="menu-toggle" onclick="toggleSidebar()">☰</div>
 <div class="sidebar">
     <div class="close-btn" onclick="toggleSidebar()">✕</div>
@@ -227,8 +220,6 @@
     </div>
     <div class="menu-item" onclick="showMain()">🔍 ID SORGULA</div>
     <div class="menu-item" onclick="showStats()">📊 İSTATİSTİK</div>
-    <div class="menu-item" onclick="showLogin()">🔐 GİRİŞ YAP</div>
-    <div class="menu-item" onclick="showRegister()">📝 KAYIT OL</div>
 </div>
 <div class="overlay" onclick="toggleSidebar()"></div>
 
@@ -238,123 +229,25 @@
             <h2>🔍 DISCORD ID SORGULAMA</h2>
         </div>
         <div class="card-body" id="pageContent">
-            <div id="authAlert"></div>
-            <input type="text" id="loginUser" placeholder="Kullanıcı Adı / E-posta">
-            <input type="password" id="loginPass" placeholder="Şifre">
-            <button onclick="doLogin()">🔓 GİRİŞ YAP</button>
-            <div style="text-align:center; margin-top:1rem; font-size:0.7rem;">Hesabın yok mu? <a href="#" onclick="showRegister()" style="color:#ff2a2a;">Kayıt ol</a></div>
+            <input type="text" id="searchId" placeholder="Discord ID Girin (Örn: 123456789012345678)">
+            <button onclick="searchId()">🔎 SORGULA</button>
+            <div id="resultArea"></div>
+            <div id="infoArea" class="alert-info" style="margin-top:1rem; padding:0.5rem; text-align:center; font-size:0.7rem;">
+                💾 Veritabanı: <span id="dbStatus">Kontrol ediliyor...</span>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    // ========== KULLANICI SİSTEMİ ==========
-    let users = JSON.parse(localStorage.getItem('app_users') || '[]');
-    let currentUser = JSON.parse(sessionStorage.getItem('app_current') || 'null');
-    
-    // Admin hesabı (gizli)
-    if(!users.find(u => u.username === 'LexusAdmin')) {
-        users.push({
-            id: 'admin1',
-            username: 'LexusAdmin',
-            email: 'admin@lexus.com',
-            password: 'Lexus2024',
-            role: 'admin',
-            created: new Date().toISOString()
-        });
-        localStorage.setItem('app_users', JSON.stringify(users));
-    }
-    
-    function showLogin() {
-        document.getElementById('pageContent').innerHTML = `
-            <div id="authAlert"></div>
-            <input type="text" id="loginUser" placeholder="Kullanıcı Adı / E-posta">
-            <input type="password" id="loginPass" placeholder="Şifre">
-            <button onclick="doLogin()">🔓 GİRİŞ YAP</button>
-            <div style="text-align:center; margin-top:1rem;">Hesabın yok mu? <a href="#" onclick="showRegister()" style="color:#ff2a2a;">Kayıt ol</a></div>
-        `;
-        toggleSidebar();
-    }
-    
-    function showRegister() {
-        document.getElementById('pageContent').innerHTML = `
-            <div id="authAlert"></div>
-            <input type="text" id="regName" placeholder="Kullanıcı Adı">
-            <input type="email" id="regEmail" placeholder="E-posta">
-            <input type="password" id="regPass" placeholder="Şifre (en az 4 karakter)">
-            <input type="password" id="regPass2" placeholder="Şifre Tekrar">
-            <button onclick="doRegister()">✅ KAYIT OL</button>
-            <div style="text-align:center; margin-top:1rem;">Zaten hesabın var? <a href="#" onclick="showLogin()" style="color:#ff2a2a;">Giriş yap</a></div>
-        `;
-        toggleSidebar();
-    }
-    
-    function doLogin() {
-        const user = document.getElementById('loginUser').value.trim();
-        const pass = document.getElementById('loginPass').value;
-        const found = users.find(u => (u.username === user || u.email === user) && u.password === pass);
-        
-        if(found) {
-            currentUser = found;
-            sessionStorage.setItem('app_current', JSON.stringify(found));
-            showMain();
-        } else {
-            document.getElementById('authAlert').innerHTML = '<div class="alert alert-error">❌ Hatalı giriş!</div>';
-        }
-    }
-    
-    function doRegister() {
-        const name = document.getElementById('regName').value.trim();
-        const email = document.getElementById('regEmail').value.trim();
-        const pass = document.getElementById('regPass').value;
-        const pass2 = document.getElementById('regPass2').value;
-        
-        if(!name || !email || !pass) {
-            document.getElementById('authAlert').innerHTML = '<div class="alert alert-error">Tüm alanlar zorunlu!</div>';
-            return;
-        }
-        if(pass.length < 4) {
-            document.getElementById('authAlert').innerHTML = '<div class="alert alert-error">Şifre en az 4 karakter!</div>';
-            return;
-        }
-        if(pass !== pass2) {
-            document.getElementById('authAlert').innerHTML = '<div class="alert alert-error">Şifreler eşleşmiyor!</div>';
-            return;
-        }
-        if(users.find(u => u.email === email)) {
-            document.getElementById('authAlert').innerHTML = '<div class="alert alert-error">E-posta kullanımda!</div>';
-            return;
-        }
-        if(users.find(u => u.username === name)) {
-            document.getElementById('authAlert').innerHTML = '<div class="alert alert-error">Kullanıcı adı alınmış!</div>';
-            return;
-        }
-        
-        users.push({
-            id: Date.now(),
-            username: name,
-            email: email,
-            password: pass,
-            role: 'user',
-            created: new Date().toISOString()
-        });
-        localStorage.setItem('app_users', JSON.stringify(users));
-        document.getElementById('authAlert').innerHTML = '<div class="alert alert-success">✅ Kayıt başarılı! Giriş yapabilirsin.</div>';
-        setTimeout(() => showLogin(), 1500);
-    }
-    
-    function logout() {
-        currentUser = null;
-        sessionStorage.removeItem('app_current');
-        showLogin();
-    }
-    
     // ========== INDEXEDDB BÜYÜK DOSYA ==========
     let db = null;
     let dbReady = false;
     let idIndex = new Map(); // ID indexi (hızlı arama için!)
-    let totalLines = 0;
+    let isAdminMode = false;
+    const ADMIN_PASSWORD = "Lexus2024";
     
+    // IndexedDB Başlat
     function initDB() {
         return new Promise((resolve) => {
             const request = indexedDB.open("DiscordIDDB", 2);
@@ -374,7 +267,7 @@
         });
     }
     
-    // ID indexini yükle (sadece ID'leri al, tüm satırı değil!)
+    // ID indexini yükle
     function loadIdIndex() {
         if(!db) return;
         const transaction = db.transaction(["data"], "readonly");
@@ -383,30 +276,25 @@
         getRequest.onsuccess = () => {
             if(getRequest.result) {
                 idIndex = new Map(JSON.parse(getRequest.result));
-                document.getElementById('dbStatus') && (document.getElementById('dbStatus').innerHTML = `✅ Yüklü (${idIndex.size} benzersiz ID)`);
+                document.getElementById('dbStatus') && (document.getElementById('dbStatus').innerHTML = `✅ ${idIndex.size.toLocaleString()} ID indeksli`);
+            } else {
+                document.getElementById('dbStatus') && (document.getElementById('dbStatus').innerHTML = `⚠️ Veritabanı boş - Admin yüklemeli`);
             }
         };
     }
     
-    // Hızlı arama (index kullanarak)
-    async function quickSearch(id) {
-        if(idIndex.has(id)) {
-            return idIndex.get(id);
-        }
-        return null;
-    }
-    
     // Admin: Dosya yükle ve index oluştur
     async function uploadAndIndex(file) {
-        const statusDiv = document.getElementById('uploadStatus');
-        const progressFill = document.getElementById('progressFill');
+        const statusDiv = document.getElementById('adminStatus');
+        const progressFill = document.getElementById('adminProgressFill');
+        const progressBar = document.getElementById('adminProgress');
         
         statusDiv.innerHTML = '<div class="alert alert-info">📥 Dosya işleniyor, index oluşturuluyor...</div>';
+        progressBar.style.display = 'block';
         
-        const CHUNK_SIZE = 20 * 1024 * 1024;
+        const CHUNK_SIZE = 20 * 1024 * 1024; // 20MB parçalar
         let offset = 0;
         let tempIndex = new Map();
-        let chunkIndex = 0;
         
         // Temizle
         const clearTx = db.transaction(["data"], "readwrite");
@@ -419,9 +307,10 @@
                 saveTx.objectStore("data").put(JSON.stringify([...tempIndex]), "idIndex");
                 saveTx.oncomplete = () => {
                     idIndex = tempIndex;
-                    statusDiv.innerHTML = `<div class="alert alert-success">✅ Yüklendi! ${idIndex.size} benzersiz ID indekslendi.</div>`;
-                    document.getElementById('dbStatus') && (document.getElementById('dbStatus').innerHTML = `✅ Yüklü (${idIndex.size} ID)`);
-                    setTimeout(() => { statusDiv.innerHTML = ''; }, 3000);
+                    statusDiv.innerHTML = `<div class="alert alert-success">✅ Yüklendi! ${idIndex.size.toLocaleString()} benzersiz ID indekslendi.</div>`;
+                    document.getElementById('dbStatus') && (document.getElementById('dbStatus').innerHTML = `✅ ${idIndex.size.toLocaleString()} ID indeksli`);
+                    progressBar.style.display = 'none';
+                    setTimeout(() => { if(statusDiv) statusDiv.innerHTML = ''; }, 3000);
                 };
                 return;
             }
@@ -435,22 +324,22 @@
                 const lines = text.split('\n');
                 
                 for(let line of lines) {
-                    // ID'yi bul (18-20 haneli sayı)
+                    // ID'yi bul (17-20 haneli sayı)
                     const idMatch = line.match(/\b\d{17,20}\b/);
                     if(idMatch) {
                         const foundId = idMatch[0];
                         if(!tempIndex.has(foundId)) {
-                            tempIndex.set(foundId, line.substring(0, 200));
+                            // Sadece ilk 200 karakteri sakla
+                            tempIndex.set(foundId, line.substring(0, 300));
                         }
                     }
                 }
                 
                 const percent = (end / file.size) * 100;
                 progressFill.style.width = percent + '%';
-                statusDiv.innerHTML = `<div class="alert alert-info">📥 İndeksleniyor: ${Math.round(percent)}% (${tempIndex.size} ID bulundu)</div>`;
+                statusDiv.innerHTML = `<div class="alert alert-info">📥 İndeksleniyor: ${Math.round(percent)}% (${tempIndex.size.toLocaleString()} ID bulundu)</div>`;
                 
                 offset = end;
-                chunkIndex++;
                 setTimeout(processChunk, 10);
             };
             reader.readAsText(blob, "UTF-8");
@@ -459,7 +348,7 @@
         processChunk();
     }
     
-    // Sorgulama (çok hızlı, telefonu kasmez!)
+    // Hızlı sorgulama (sadece indeksten bakar)
     async function searchId() {
         const id = document.getElementById('searchId').value.trim();
         const resultDiv = document.getElementById('resultArea');
@@ -470,13 +359,13 @@
         }
         
         if(!idIndex || idIndex.size === 0) {
-            resultDiv.innerHTML = '<div class="alert alert-error">⚠️ Veritabanı boş veya indekslenmemiş! Admin dosyayı yüklemeli.</div>';
+            resultDiv.innerHTML = '<div class="alert alert-error">⚠️ Veritabanı boş! Admin dosyayı yüklemeli.</div>';
             return;
         }
         
         resultDiv.innerHTML = '<div class="alert alert-info"><span class="loading-spinner"></span> Aranıyor...</div>';
         
-        // Sadece indeksten ara (çok hızlı!)
+        // Mikro gecikme ile UI donmasını engelle
         setTimeout(() => {
             const found = idIndex.get(id);
             if(found) {
@@ -485,61 +374,51 @@
             } else {
                 resultDiv.innerHTML = '<div class="alert alert-error">❌ Bu ID veritabanında bulunamadı.</div>';
             }
-        }, 50);
+        }, 10);
     }
     
-    // ========== ANA SAYFA ==========
-    function showMain() {
-        if(!currentUser) { showLogin(); return; }
-        
-        const isAdmin = currentUser.role === 'admin';
-        const lineCount = idIndex.size;
-        
-        document.getElementById('pageContent').innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-                <span>👋 Hoş geldin, <strong style="color:#ff2a2a;">${currentUser.username}</strong></span>
-                <button onclick="logout()" style="width:auto; padding:0.3rem 1rem; background:#333; margin:0;">🚪 Çıkış</button>
-            </div>
-            <hr>
-            <input type="text" id="searchId" placeholder="Discord ID Girin (Örn: 123456789012345678)">
-            <button onclick="searchId()">🔎 SORGULA</button>
-            <div id="resultArea"></div>
-            <div id="infoArea" class="alert-info" style="margin-top:1rem; padding:0.5rem; text-align:center; font-size:0.7rem;">
-                💾 Veritabanı: <span id="dbStatus">${lineCount > 0 ? '✅ ' + lineCount.toLocaleString() + ' ID indeksli' : '⚠️ Yüklenmedi'}</span>
-            </div>
-            ${isAdmin ? `
-                <hr>
-                <div style="background:rgba(255,42,42,0.1); padding:1rem; border-radius:16px; margin-top:1rem;">
-                    <h4 style="color:#ff2a2a;">👑 ADMIN PANELİ</h4>
-                    <input type="file" id="adminFile" accept=".txt">
-                    <div class="progress-bar" id="adminProgress" style="display:none;"><div class="progress-fill" id="adminProgressFill"></div></div>
-                    <div id="adminStatus"></div>
-                    <button onclick="adminUpload()" style="margin-top:0.5rem;">📤 VERİTABANI YÜKLE</button>
-                    <button onclick="clearDatabase()" style="background:#ff4444; margin-top:0.5rem;">🗑️ VERİTABANINI TEMİZLE</button>
-                </div>
-            ` : ''}
-        `;
-        
-        toggleSidebar();
+    // Admin Girişi
+    function showAdminLogin() {
+        const pwd = prompt("🔐 Yönetici Şifresini Girin:");
+        if(pwd === ADMIN_PASSWORD) {
+            isAdminMode = true;
+            showAdminPanel();
+        } else if(pwd) {
+            alert("❌ Geçersiz şifre!");
+        }
     }
     
-    function showStats() {
-        if(!currentUser) { showLogin(); return; }
+    function showAdminPanel() {
+        if(!isAdminMode) return;
         
-        document.getElementById('pageContent').innerHTML = `
-            <h3 style="color:#ff2a2a;">📊 İSTATİSTİKLER</h3>
+        const content = document.getElementById('pageContent');
+        content.innerHTML = `
+            <h3 style="color:#ff2a2a;">👑 YÖNETİCİ PANELİ</h3>
             <hr>
-            <div class="result-box">
-                <p>👤 Kullanıcı: ${currentUser.username}</p>
-                <p>📄 İndekslenen ID: ${idIndex.size.toLocaleString()}</p>
-                <p>📅 Oturum: ${new Date().toLocaleString('tr-TR')}</p>
+            <div style="background:rgba(255,42,42,0.1); padding:1rem; border-radius:16px;">
+                <h4>📁 VERİTABANI YÜKLE</h4>
+                <input type="file" id="adminFile" accept=".txt">
+                <div class="progress-bar" id="adminProgress" style="display:none;"><div class="progress-fill" id="adminProgressFill"></div></div>
+                <div id="adminStatus"></div>
+                <button onclick="adminUpload()">📤 DOSYAYI YÜKLE VE İNDEKSELE</button>
+                <button onclick="clearDatabase()" style="background:#ff4444; margin-top:0.5rem;">🗑️ VERİTABANINI TEMİZLE</button>
             </div>
-            <button onclick="showMain()" style="margin-top:1rem;">⬅️ GERİ</button>
+            <hr>
+            <div style="background:rgba(255,42,42,0.1); padding:1rem; border-radius:16px;">
+                <h4>📊 DURUM</h4>
+                <p>📄 İndekslenen ID: <strong>${idIndex.size.toLocaleString()}</strong></p>
+                <p>💾 Tarayıcı: ${/Mobile|Android|iPhone/i.test(navigator.userAgent) ? '📱 Mobil' : '💻 Bilgisayar'}</p>
+            </div>
+            <button onclick="closeAdminPanel()" style="background:#333; margin-top:1rem;">🔒 KAPAT</button>
         `;
         toggleSidebar();
     }
     
-    // Admin işlemleri
+    function closeAdminPanel() {
+        isAdminMode = false;
+        showMain();
+    }
+    
     window.adminUpload = async function() {
         const fileInput = document.getElementById('adminFile');
         if(!fileInput.files.length) {
@@ -555,11 +434,9 @@
             return;
         }
         
-        document.getElementById('adminProgress').style.display = 'block';
-        document.getElementById('adminStatus').innerHTML = `<div class="alert alert-info">📥 ${sizeMB} MB dosya indeksleniyor...</div>`;
+        document.getElementById('adminStatus').innerHTML = `<div class="alert alert-info">📥 ${sizeMB} MB dosya indeksleniyor... Lütfen bekleyin!</div>`;
         
         await uploadAndIndex(file);
-        document.getElementById('adminProgress').style.display = 'none';
     };
     
     window.clearDatabase = async function() {
@@ -567,11 +444,38 @@
             const tx = db.transaction(["data"], "readwrite");
             tx.objectStore("data").clear();
             idIndex.clear();
-            document.getElementById('dbStatus') && (document.getElementById('dbStatus').innerHTML = '⚠️ Yüklenmedi');
+            document.getElementById('dbStatus') && (document.getElementById('dbStatus').innerHTML = '⚠️ Veritabanı boş');
             alert('✅ Veritabanı temizlendi!');
-            showMain();
+            showAdminPanel();
         }
     };
+    
+    // Ana Sayfa
+    function showMain() {
+        document.getElementById('pageContent').innerHTML = `
+            <input type="text" id="searchId" placeholder="Discord ID Girin (Örn: 123456789012345678)">
+            <button onclick="searchId()">🔎 SORGULA</button>
+            <div id="resultArea"></div>
+            <div id="infoArea" class="alert-info" style="margin-top:1rem; padding:0.5rem; text-align:center; font-size:0.7rem;">
+                💾 Veritabanı: <span id="dbStatus">${idIndex.size > 0 ? '✅ ' + idIndex.size.toLocaleString() + ' ID indeksli' : '⚠️ Yüklenmedi'}</span>
+            </div>
+        `;
+        toggleSidebar();
+    }
+    
+    function showStats() {
+        document.getElementById('pageContent').innerHTML = `
+            <h3 style="color:#ff2a2a;">📊 İSTATİSTİKLER</h3>
+            <hr>
+            <div class="result-box">
+                <p>📄 İndekslenen ID: ${idIndex.size.toLocaleString()}</p>
+                <p>📅 Tarih: ${new Date().toLocaleString('tr-TR')}</p>
+                <p>🌐 Tarayıcı: ${/Mobile|Android|iPhone/i.test(navigator.userAgent) ? 'Mobil' : 'Bilgisayar'}</p>
+            </div>
+            <button onclick="showMain()" style="margin-top:1rem;">⬅️ GERİ DÖN</button>
+        `;
+        toggleSidebar();
+    }
     
     function toggleSidebar() {
         document.querySelector('.sidebar').classList.toggle('open');
@@ -580,11 +484,7 @@
     
     // Başlangıç
     initDB();
-    if(currentUser) {
-        showMain();
-    } else {
-        showLogin();
-    }
+    showMain();
     
     document.addEventListener('contextmenu', e => e.preventDefault());
     document.addEventListener('keydown', e => {
