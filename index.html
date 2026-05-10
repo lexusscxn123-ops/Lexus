@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>🕵️ FindCord+ | Discord Kullanıcı Arama ve OSINT Aracı</title>
+    <title>Kazanç Platformu | Affiliate + E-posta + Dijital Ürün + Key Paylaşımı</title>
     <style>
         * {
             margin: 0;
@@ -12,92 +12,61 @@
         }
 
         body {
-            background: radial-gradient(ellipse at 20% 30%, #0a0c15 0%, #03050a 100%);
-            font-family: 'Segoe UI', 'Poppins', 'Inter', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            font-family: 'Segoe UI', 'Poppins', system-ui, sans-serif;
             min-height: 100vh;
-            color: #e8eef2;
-            overflow-x: hidden;
+            color: #f1f5f9;
         }
-
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #11161f; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: #00d4ff; border-radius: 10px; }
 
         /* Sidebar */
         .sidebar {
             position: fixed;
             top: 0;
-            left: -320px;
-            width: 320px;
+            left: -300px;
+            width: 300px;
             height: 100%;
-            background: rgba(6, 10, 18, 0.98);
-            backdrop-filter: blur(20px);
-            box-shadow: 8px 0 40px rgba(0, 0, 0, 0.8);
-            transition: 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            background: rgba(15, 23, 42, 0.97);
+            backdrop-filter: blur(15px);
+            box-shadow: 5px 0 30px rgba(0, 0, 0, 0.5);
+            transition: 0.3s;
             z-index: 1000;
             padding: 2rem 1.2rem;
-            border-right: 1px solid rgba(0, 212, 255, 0.4);
+            border-right: 2px solid #f59e0b;
             overflow-y: auto;
         }
-
         .sidebar.open { left: 0; }
-
         .sidebar .close-btn {
             position: absolute;
-            top: 1.2rem;
-            right: 1.2rem;
+            top: 1rem;
+            right: 1rem;
             font-size: 1.8rem;
             cursor: pointer;
-            color: #00d4ff;
-            transition: 0.2s;
+            color: #f59e0b;
         }
-        .sidebar .close-btn:hover { opacity: 0.7; transform: scale(1.1); }
-
-        .sidebar .user-info {
-            text-align: center;
-            padding: 1rem 0 1.5rem 0;
-            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
-            margin-bottom: 1rem;
-        }
-        .sidebar .user-avatar { font-size: 4rem; margin-bottom: 0.5rem; }
-        .sidebar .user-name { font-size: 1.2rem; font-weight: bold; color: #00d4ff; }
-        .sidebar .user-email { font-size: 0.7rem; opacity: 0.6; margin-top: 4px; }
-        .sidebar .user-badge { 
-            display: inline-block; 
-            background: rgba(0, 212, 255, 0.2); 
-            padding: 0.2rem 0.8rem; 
-            border-radius: 20px; 
-            font-size: 0.7rem; 
-            margin-top: 6px;
-        }
-
-        .sidebar .menu-category {
-            color: #00d4ff;
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            letter-spacing: 2.5px;
-            margin: 1.2rem 0 0.6rem 0.5rem;
-            font-weight: 600;
-        }
-
         .sidebar .menu-item {
-            padding: 0.75rem 1rem;
-            margin: 0.25rem 0;
-            background: rgba(0, 212, 255, 0.05);
-            border-radius: 14px;
+            padding: 0.8rem 1rem;
+            margin: 0.3rem 0;
+            background: rgba(245, 158, 11, 0.1);
+            border-radius: 12px;
             cursor: pointer;
-            transition: 0.2s ease;
+            transition: 0.2s;
             display: flex;
             align-items: center;
-            gap: 0.9rem;
+            gap: 0.8rem;
             font-weight: 500;
             border: 1px solid transparent;
         }
-
         .sidebar .menu-item:hover {
-            background: rgba(0, 212, 255, 0.2);
-            border-color: rgba(0, 212, 255, 0.4);
+            background: #f59e0b;
+            color: #0f172a;
             transform: translateX(5px);
+        }
+        .sidebar .menu-category {
+            color: #f59e0b;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            margin: 1rem 0 0.5rem 0;
+            letter-spacing: 1px;
         }
 
         .menu-toggle {
@@ -106,391 +75,393 @@
             left: 1rem;
             font-size: 1.8rem;
             cursor: pointer;
-            color: #00d4ff;
+            color: #f59e0b;
             z-index: 999;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.5);
             padding: 0.4rem 0.9rem;
-            border-radius: 16px;
-            backdrop-filter: blur(8px);
-            transition: 0.2s;
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
         }
-        .menu-toggle:hover { background: rgba(0, 212, 255, 0.2); }
-
         .overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(4px);
+            background: rgba(0, 0, 0, 0.6);
             z-index: 998;
             display: none;
         }
         .overlay.active { display: block; }
 
         .main-content {
-            margin-left: 0;
             padding: 5rem 1.5rem 2rem 1.5rem;
-            transition: 0.3s;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1400px;
+            max-width: 1300px;
             margin: 0 auto;
         }
-
-        /* Kartlar */
         .card {
-            background: rgba(12, 18, 28, 0.85);
-            backdrop-filter: blur(12px);
-            border-radius: 28px;
-            border: 1px solid rgba(0, 212, 255, 0.25);
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            border: 1px solid rgba(245, 158, 11, 0.3);
             overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
             margin-bottom: 1.5rem;
         }
-
         .card-header {
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.12), rgba(0, 153, 204, 0.08));
-            padding: 1.2rem 2rem;
-            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05));
+            padding: 1.2rem 1.8rem;
+            border-bottom: 1px solid rgba(245, 158, 11, 0.2);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 1rem;
         }
+        .card-header h2 { color: #f59e0b; font-size: 1.4rem; }
+        .card-body { padding: 1.8rem; }
 
-        .card-header h2 {
-            color: #00d4ff;
-            font-size: 1.4rem;
-            font-weight: 600;
-            letter-spacing: -0.3px;
-        }
-
-        .profile-area {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            background: rgba(0, 212, 255, 0.15);
-            padding: 0.4rem 1.2rem;
-            border-radius: 60px;
-        }
-        .profile-avatar { font-size: 1.8rem; }
-        .profile-name { font-weight: 600; font-size: 0.9rem; }
-
-        .card-body { padding: 2rem; }
-
-        input, select, textarea {
+        input, textarea, select {
             width: 100%;
-            padding: 0.85rem 1rem;
-            margin: 0.6rem 0;
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(0, 212, 255, 0.4);
-            border-radius: 16px;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(245, 158, 11, 0.5);
+            border-radius: 12px;
             color: white;
             font-size: 0.95rem;
             outline: none;
-            transition: 0.2s;
         }
-        input:focus, select:focus {
-            border-color: #00d4ff;
-            box-shadow: 0 0 12px rgba(0, 212, 255, 0.3);
+        input:focus, textarea:focus {
+            border-color: #f59e0b;
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
         }
-
         button {
             width: 100%;
-            padding: 0.85rem;
-            background: linear-gradient(95deg, #00b8e6, #0088aa);
+            padding: 0.8rem;
+            background: linear-gradient(95deg, #f59e0b, #d97706);
             border: none;
-            border-radius: 16px;
+            border-radius: 12px;
             color: white;
-            font-weight: 700;
-            font-size: 1rem;
+            font-weight: bold;
             cursor: pointer;
             transition: 0.2s;
-            margin-top: 0.6rem;
+            margin-top: 0.5rem;
         }
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 180, 230, 0.4);
-        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(245, 158, 11, 0.4); }
 
         .alert {
-            padding: 0.9rem 1rem;
+            padding: 0.8rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+        }
+        .alert-success { background: rgba(34, 197, 94, 0.2); border-left: 4px solid #22c55e; color: #86efac; }
+        .alert-error { background: rgba(239, 68, 68, 0.2); border-left: 4px solid #ef4444; color: #fca5a5; }
+        .alert-info { background: rgba(245, 158, 11, 0.15); border-left: 4px solid #f59e0b; color: #fcd34d; }
+
+        .product-card, .affiliate-card, .key-card {
+            background: rgba(0, 0, 0, 0.3);
             border-radius: 16px;
-            margin-bottom: 1.2rem;
-            font-weight: 500;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            transition: 0.2s;
         }
-        .alert-error { background: rgba(220, 53, 69, 0.2); border-left: 4px solid #dc3545; color: #ffaaae; }
-        .alert-success { background: rgba(40, 167, 69, 0.2); border-left: 4px solid #28a745; color: #a0e0a0; }
-        .alert-info { background: rgba(0, 212, 255, 0.15); border-left: 4px solid #00d4ff; color: #8fdfff; }
-        .alert-warning { background: rgba(255, 165, 0, 0.15); border-left: 4px solid #ffa500; color: #ffcd7e; }
-
-        .result-card {
-            background: rgba(0, 212, 255, 0.05);
-            border-radius: 20px;
-            padding: 1.5rem;
-            margin-top: 1.5rem;
-            border: 1px solid rgba(0, 212, 255, 0.2);
-        }
-
+        .product-card:hover, .affiliate-card:hover, .key-card:hover { border-color: #f59e0b; }
+        .product-title, .affiliate-title, .key-title { color: #f59e0b; font-weight: bold; font-size: 1.1rem; }
+        .price { color: #22c55e; font-size: 1.2rem; font-weight: bold; }
         .grid-2 {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 1.2rem;
         }
-
-        .tool-card {
-            background: rgba(0, 0, 0, 0.35);
-            border-radius: 18px;
-            padding: 1.2rem;
-            cursor: pointer;
-            transition: 0.25s;
-            border: 1px solid rgba(0, 212, 255, 0.2);
-        }
-        .tool-card:hover {
-            border-color: #00d4ff;
-            transform: translateY(-3px);
-            background: rgba(0, 212, 255, 0.05);
-        }
-        .tool-card h4 { color: #00d4ff; margin-bottom: 0.5rem; font-size: 1.1rem; }
-        .tool-card p { font-size: 0.8rem; opacity: 0.7; }
-
-        .discord-profile {
-            display: flex;
-            gap: 1.5rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .discord-avatar img {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: 3px solid #00d4ff;
-        }
-        .discord-info h3 { color: #fff; margin-bottom: 0.5rem; }
-        .discord-info p { margin: 0.3rem 0; opacity: 0.8; }
-
-        .boost-protected {
-            background: linear-gradient(135deg, rgba(255, 165, 0, 0.15), rgba(255, 69, 0, 0.1));
-            border-left: 4px solid #ffa500;
+        hr { border-color: rgba(245, 158, 11, 0.2); margin: 1rem 0; }
+        .stat-box {
+            background: rgba(245, 158, 11, 0.1);
+            border-radius: 16px;
             padding: 1rem;
-            border-radius: 14px;
-            margin-top: 1rem;
+            text-align: center;
+        }
+        .stat-number { font-size: 2rem; font-weight: bold; color: #f59e0b; }
+        .subscriber-item {
+            background: rgba(0,0,0,0.3);
+            padding: 0.6rem;
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
         }
 
-        .badge-admin { background: #ff4444; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.7rem; }
-        .badge-user { background: #0099cc; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.7rem; }
-
-        .admin-button {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, #ff4444, #cc0000);
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 9999;
-            font-size: 1.6rem;
-            box-shadow: 0 4px 18px rgba(255,0,0,0.3);
-            transition: 0.2s;
-            opacity: 0.75;
-        }
-        .admin-button:hover { opacity: 1; transform: scale(1.08); box-shadow: 0 0 20px #ff4444; }
-
-        @media (max-width: 768px) {
-            .sidebar { width: 280px; }
-            .card-header { flex-direction: column; text-align: center; }
-            .discord-profile { flex-direction: column; text-align: center; }
-            .admin-button { width: 44px; height: 44px; font-size: 1.3rem; }
+        @media (max-width: 650px) {
+            .main-content { padding: 5rem 0.8rem 1rem 0.8rem; }
+            .card-body { padding: 1.2rem; }
         }
     </style>
 </head>
 <body>
 
-<div class="admin-button" onclick="showAdminLogin()" title="Admin Paneli">👑</div>
 <div class="menu-toggle" onclick="toggleSidebar()">☰</div>
-
 <div class="sidebar">
     <div class="close-btn" onclick="toggleSidebar()">✕</div>
-    <div class="user-info">
-        <div class="user-avatar" id="sideAvatar">🔐</div>
-        <div class="user-name" id="sideName">Misafir</div>
-        <div class="user-email" id="sideEmail"></div>
-        <div class="user-badge" id="sideRole">Giriş Yapılmadı</div>
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <div style="font-size: 2.5rem;">💰</div>
+        <div style="color: #f59e0b; font-weight: bold;">KAZANÇ PLATFORMU</div>
     </div>
-    <div class="menu-category">🔐 HESAP</div>
-    <div class="menu-item" onclick="if(currentUser) showPage('dashboard')"><span>📊</span> DASHBOARD</div>
-    <div class="menu-item" onclick="if(currentUser) showPage('profile')"><span>👤</span> PROFİLİM</div>
-    <div class="menu-category">🎮 DISCORD OSINT</div>
-    <div class="menu-item" onclick="if(currentUser) showPage('discord_search')"><span>🔍</span> KULLANICI ARA</div>
-    <div class="menu-item" onclick="if(currentUser) showPage('boost_protect')"><span>🛡️</span> GİZLİLİK KORUMASI</div>
-    <div class="menu-category">🛠️ DİĞER ARAÇLAR</div>
-    <div class="menu-item" onclick="if(currentUser) showPage('ip_lookup')"><span>🌐</span> IP LOOKUP</div>
-    <div class="menu-item" onclick="if(currentUser) showPage('dns_lookup')"><span>🔍</span> DNS LOOKUP</div>
-    <div class="menu-item" onclick="if(currentUser) showPage('hash_tool')"><span>🔐</span> HASH ÇÖZÜCÜ</div>
-    <div class="menu-category">⚙️</div>
-    <div class="menu-item" onclick="logout()"><span>🚪</span> ÇIKIŞ YAP</div>
+    <div class="menu-category">📌 ANA MENÜ</div>
+    <div class="menu-item" onclick="showPage('affiliate')">🔗 AFFILIATE ÜRÜNLER</div>
+    <div class="menu-item" onclick="showPage('email')">📧 E-POSTA ABONELİK</div>
+    <div class="menu-item" onclick="showPage('digital')">🛒 DİJİTAL ÜRÜNLER</div>
+    <div class="menu-item" onclick="showPage('keys')">🔐 KEY PAYLAŞIM</div>
+    <div class="menu-item" onclick="showPage('dashboard')">📊 DASHBOARD</div>
 </div>
 <div class="overlay" onclick="toggleSidebar()"></div>
 
-<div class="main-content">
-    <div class="container">
-        <!-- GİRİŞ EKRANI -->
-        <div id="loginScreen" class="card" style="max-width: 480px; margin: 0 auto;">
-            <div class="card-header"><h2>🔐 FindCord+ GİRİŞ</h2><p>Discord OSINT Platformu</p></div>
-            <div class="card-body">
-                <div id="loginAlert"></div>
-                <input type="text" id="loginIdentifier" placeholder="E-posta veya Kullanıcı Adı">
-                <input type="password" id="loginPassword" placeholder="Şifre">
-                <button onclick="doLogin()">🔓 GİRİŞ YAP</button>
-                <div style="text-align:center; margin-top:1rem;">Hesabın yok mu? <a href="#" onclick="showRegister()" style="color:#00d4ff;">Kayıt ol</a></div>
-            </div>
+<div class="main-content" id="mainContent">
+    <div class="card">
+        <div class="card-header">
+            <h2 id="pageTitle">💰 KAZANÇ PLATFORMU</h2>
+            <div style="background:#f59e0b20; padding:0.3rem 1rem; border-radius:40px;">💸 Kazanmaya Başla</div>
         </div>
-
-        <!-- KAYIT EKRANI -->
-        <div id="registerScreen" class="card" style="max-width: 480px; margin: 0 auto; display: none;">
-            <div class="card-header"><h2>📝 KAYIT OL</h2></div>
-            <div class="card-body">
-                <div id="registerAlert"></div>
-                <input type="text" id="regName" placeholder="Kullanıcı Adı">
-                <input type="email" id="regEmail" placeholder="E-posta">
-                <input type="password" id="regPassword" placeholder="Şifre (min 4 karakter)">
-                <input type="password" id="regConfirm" placeholder="Şifre Tekrar">
-                <button onclick="doRegister()">✅ KAYIT OL</button>
-                <div style="text-align:center; margin-top:1rem;"><a href="#" onclick="showLogin()" style="color:#00d4ff;">Zaten hesabın var mı? Giriş yap</a></div>
+        <div class="card-body" id="pageContent">
+            <!-- Başlangıç içeriği -->
+            <div class="grid-2">
+                <div class="stat-box"><div class="stat-number" id="statAffiliate">0</div><div>Affiliate Link</div></div>
+                <div class="stat-box"><div class="stat-number" id="statSubscribers">0</div><div>E-posta Abone</div></div>
+                <div class="stat-box"><div class="stat-number" id="statProducts">0</div><div>Dijital Ürün</div></div>
+                <div class="stat-box"><div class="stat-number" id="statKeys">0</div><div>Key Paylaşımı</div></div>
             </div>
-        </div>
-
-        <!-- ANA PANEL (GİRİŞ YAPINCA) -->
-        <div id="panelScreen" style="display: none;">
-            <div class="card">
-                <div class="card-header">
-                    <h2 id="pageTitle">📊 DASHBOARD</h2>
-                    <div class="profile-area"><span class="profile-avatar" id="headerAvatar">😎</span><span class="profile-name" id="headerName">User</span></div>
-                </div>
-                <div class="card-body" id="pageContent"></div>
-            </div>
-        </div>
-
-        <!-- GİZLİ ADMIN PANEL -->
-        <div id="adminPanel" style="display: none;">
-            <div class="card">
-                <div class="card-header"><h2>👑 GİZLİ YÖNETİCİ PANELİ</h2><button onclick="closeAdminPanel()" style="width:auto;">✕ Kapat</button></div>
-                <div class="card-body" id="adminContent"></div>
-            </div>
+            <hr>
+            <div class="alert alert-info">🔥 Menüden bir seçenek seç: Affiliate Ürün Tanıt, E-posta Abonelik, Dijital Ürün Sat veya Key Paylaş.</div>
         </div>
     </div>
 </div>
 
 <script>
-    // ========== VERİ TABANI (ŞİFRELİ localStorage) ==========
-    let users = [];
-    let logs = [];
-    let sessions = [];
-    let currentUser = null;
-    let isAdminMode = false;
-    const ADMIN_PASS = 'Lexus2024';
-    const ADMIN_EMAIL = 'admin@findcord.com';
+    // ========== VERİ YÖNETİMİ ==========
+    let affiliateLinks = JSON.parse(localStorage.getItem('affiliateLinks') || '[]');
+    let subscribers = JSON.parse(localStorage.getItem('subscribers') || '[]');
+    let digitalProducts = JSON.parse(localStorage.getItem('digitalProducts') || '[]');
+    let sharedKeys = JSON.parse(localStorage.getItem('sharedKeys') || '[]');
 
-    // Veri yükle/kaydet
-    function loadData() {
-        try { users = JSON.parse(atob(localStorage.getItem('fc_users') || '[]')); } catch(e){ users=[]; }
-        try { logs = JSON.parse(atob(localStorage.getItem('fc_logs') || '[]')); } catch(e){ logs=[]; }
-        try { sessions = JSON.parse(atob(localStorage.getItem('fc_sessions') || '[]')); } catch(e){ sessions=[]; }
-        if (!users.find(u=>u.email === ADMIN_EMAIL)) {
-            users.push({ id:'admin_root', name:'RootAdmin', email:ADMIN_EMAIL, password:ADMIN_PASS, role:'admin', avatar:'👑', created:new Date().toISOString() });
-            saveData();
+    // İstatistik güncelleme
+    function updateStats() {
+        document.getElementById('statAffiliate').innerText = affiliateLinks.length;
+        document.getElementById('statSubscribers').innerText = subscribers.length;
+        document.getElementById('statProducts').innerText = digitalProducts.length;
+        document.getElementById('statKeys').innerText = sharedKeys.length;
+    }
+
+    // Sayfa gösterimi
+    function showPage(page) {
+        const content = document.getElementById('pageContent');
+        const title = document.getElementById('pageTitle');
+        
+        if(page === 'affiliate') {
+            title.innerText = '🔗 AFFILIATE ÜRÜN TANITIMI';
+            content.innerHTML = `
+                <div class="alert alert-info">🔗 Affiliate linklerini paylaş, her satıştan komisyon kazan! (%~10-40)</div>
+                <div class="grid-2" id="affiliateList">
+                    ${affiliateLinks.map((link, idx) => `
+                        <div class="affiliate-card">
+                            <div class="affiliate-title">${escapeHtml(link.name)}</div>
+                            <p>${escapeHtml(link.description)}</p>
+                            <code style="font-size:0.7rem; word-break:break-all;">${escapeHtml(link.url)}</code>
+                            <div style="margin-top:0.5rem;"><span style="color:#f59e0b;">💰 Komisyon: %${link.commission}</span></div>
+                            <button onclick="copyToClipboard('${link.url}')">📋 Linki Kopyala</button>
+                            <button onclick="deleteAffiliate(${idx})" style="background:#ef4444; margin-top:0.3rem;">🗑️ Sil</button>
+                        </div>
+                    `).join('')}
+                </div>
+                <hr>
+                <h3>➕ Yeni Affiliate Link Ekle</h3>
+                <input type="text" id="affName" placeholder="Ürün Adı (Örn: Trendyol Kazak)">
+                <textarea id="affDesc" placeholder="Açıklama" rows="2"></textarea>
+                <input type="text" id="affUrl" placeholder="Affiliate Linki (kendi referans linkin)">
+                <input type="number" id="affCommission" placeholder="Komisyon % (Örn: 15)" value="15">
+                <button onclick="addAffiliate()">➕ AFFILIATE EKLE</button>
+                <div class="alert alert-info" style="margin-top:1rem;">💡 İpucu: Trendyol, Hepsiburada, Amazon, Getir gibi sitelere üye ol, kendi linkini al ve buraya ekle!</div>
+            `;
         }
-        try { currentUser = JSON.parse(atob(sessionStorage.getItem('fc_current') || 'null')); } catch(e){ currentUser=null; }
-    }
-    function saveData() {
-        localStorage.setItem('fc_users', btoa(JSON.stringify(users)));
-        localStorage.setItem('fc_logs', btoa(JSON.stringify(logs)));
-        localStorage.setItem('fc_sessions', btoa(JSON.stringify(sessions)));
-    }
-
-    // Cihaz ve lokasyon (IP API)
-    async function getDeviceInfo() {
-        let ua = navigator.userAgent;
-        let device = /Mobile|Android|iPhone|iPad/i.test(ua) ? '📱 Mobil' : '💻 Bilgisayar';
-        let browser = 'Chrome';
-        if (/Firefox/i.test(ua)) browser='Firefox';
-        else if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) browser='Safari';
-        else if (/Edge/i.test(ua)) browser='Edge';
-        return `${device} | ${browser}`;
-    }
-    async function getLocationInfo() {
-        try {
-            let res = await fetch('https://ipapi.co/json/');
-            let data = await res.json();
-            return { country: data.country_name || 'Bilinmiyor', city: data.city || 'Bilinmiyor', region: data.region || 'Bilinmiyor', ip: data.ip || '0.0.0.0', lat: data.latitude || 0, lon: data.longitude || 0 };
-        } catch(e) { return { country:'Türkiye', city:'İstanbul', region:'Kadıköy', ip:'127.0.0.1', lat:41.0082, lon:28.9784 }; }
-    }
-
-    async function addLog(action, detail) {
-        let loc = await getLocationInfo();
-        let device = await getDeviceInfo();
-        logs.unshift({ id:Date.now(), userId:currentUser?.id || 'guest', userName:currentUser?.name || 'Misafir', action, detail, device, country:loc.country, city:loc.city, region:loc.region, ip:loc.ip, time:new Date().toLocaleString('tr-TR') });
-        if(logs.length>500) logs.pop();
-        saveData();
-    }
-    async function addSession(type) {
-        let loc = await getLocationInfo();
-        let device = await getDeviceInfo();
-        sessions.unshift({ id:Date.now(), userId:currentUser?.id, userName:currentUser?.name, type, device, country:loc.country, city:loc.city, region:loc.region, ip:loc.ip, time:new Date().toLocaleString('tr-TR') });
-        if(sessions.length>200) sessions.pop();
-        saveData();
-    }
-
-    // Giriş / Kayıt / Çıkış
-    async function doLogin() {
-        let id = document.getElementById('loginIdentifier').value;
-        let pwd = document.getElementById('loginPassword').value;
-        let user = users.find(u=> (u.email === id || u.name === id) && u.password === pwd);
-        if(user){
-            currentUser = user;
-            sessionStorage.setItem('fc_current', btoa(JSON.stringify(user)));
-            await addLog('GİRİŞ', 'Başarılı giriş');
-            await addSession('GİRİŞ');
-            showPanel();
-        } else {
-            document.getElementById('loginAlert').innerHTML = '<div class="alert alert-error">❌ Hatalı giriş!</div>';
-            await addLog('BAŞARISIZ GİRİŞ', `ID: ${id}`);
+        else if(page === 'email') {
+            title.innerText = '📧 E-POSTA ABONELİK SİSTEMİ';
+            content.innerHTML = `
+                <div class="alert alert-info">📧 Ziyaretçiler e-posta bıraksın, onlara haftalık e-posta gönderip ürün/affiliate linklerini paylaşarak kazan!</div>
+                <div class="grid-2">
+                    <div style="background:rgba(0,0,0,0.3); border-radius:16px; padding:1rem;">
+                        <h3>📝 Abone Olma Formu</h3>
+                        <input type="text" id="subName" placeholder="Ad Soyad">
+                        <input type="email" id="subEmail" placeholder="E-posta adresi">
+                        <button onclick="addSubscriber()">📧 ABONE OL</button>
+                    </div>
+                    <div style="background:rgba(0,0,0,0.3); border-radius:16px; padding:1rem;">
+                        <h3>📬 Son Aboneler</h3>
+                        <div id="subscriberList">
+                            ${subscribers.slice(0,10).map(sub => `<div class="subscriber-item">📧 ${escapeHtml(sub.email)}<br><small>${sub.date}</small></div>`).join('')}
+                            ${subscribers.length === 0 ? '<p>Henüz abone yok.</p>' : ''}
+                        </div>
+                        <button onclick="exportEmails()" style="background:#22c55e;">📥 E-postaları Dışa Aktar (CSV)</button>
+                    </div>
+                </div>
+                <hr>
+                <h3>✉️ Toplu E-posta Gönderme (Simülasyon)</h3>
+                <textarea id="emailSubject" placeholder="E-posta Konusu" rows="1"></textarea>
+                <textarea id="emailMessage" placeholder="E-posta İçeriği (Affiliate linklerini koy, ürünlerini tanıt)" rows="4"></textarea>
+                <button onclick="sendNewsletter()">📨 GÖNDER (${subscribers.length} aboneye)</button>
+                <div class="alert alert-info">💡 Not: Bu simülasyondur, gerçek e-posta göndermek için SMTP veya Mailchimp gibi servis kullanmalısın.</div>
+            `;
         }
+        else if(page === 'digital') {
+            title.innerText = '🛒 DİJİTAL ÜRÜN SATIŞI';
+            content.innerHTML = `
+                <div class="alert alert-info">🛒 Kendi dijital ürünlerini ekle, ücret belirle. Kullanıcılar sana ulaşmak için iletişime geçsin!</div>
+                <div class="grid-2" id="productList">
+                    ${digitalProducts.map((prod, idx) => `
+                        <div class="product-card">
+                            <div class="product-title">${escapeHtml(prod.name)}</div>
+                            <p>${escapeHtml(prod.description)}</p>
+                            <div class="price">${prod.price} TL</div>
+                            <button onclick="contactSeller('${prod.name}', '${prod.price}')">📩 Satın Almak İstiyorum</button>
+                            <button onclick="deleteProduct(${idx})" style="background:#ef4444; margin-top:0.3rem;">🗑️ Sil</button>
+                        </div>
+                    `).join('')}
+                </div>
+                <hr>
+                <h3>➕ Yeni Dijital Ürün Ekle</h3>
+                <input type="text" id="prodName" placeholder="Ürün Adı (Örn: Discord Bot Şablonu)">
+                <textarea id="prodDesc" placeholder="Ürün Açıklaması (ne işe yarar, ne içerir?)" rows="2"></textarea>
+                <input type="number" id="prodPrice" placeholder="Fiyat (TL)" value="50">
+                <button onclick="addProduct()">➕ ÜRÜN EKLE</button>
+                <div class="alert alert-info">💡 Satılabilir: Discord bot kodları, oyun config dosyaları, e-kitaplar, sticker paketleri, hazır website şablonları.</div>
+            `;
+        }
+        else if(page === 'keys') {
+            title.innerText = '🔐 OYUN/ PROGRAM KEY PAYLAŞIMI';
+            content.innerHTML = `
+                <div class="alert alert-info">🔐 Bedava veya satılık key'leri paylaş. Premium key'leri satabilir, reklam geliri ekleyebilirsin.</div>
+                <div class="grid-2" id="keyList">
+                    ${sharedKeys.map((key, idx) => `
+                        <div class="key-card">
+                            <div class="key-title">${escapeHtml(key.name)}</div>
+                            <p>${escapeHtml(key.description)}</p>
+                            <code style="font-size:0.7rem;">🔑 ${escapeHtml(key.key)}</code>
+                            <div style="margin-top:0.5rem;">💰 Fiyat: ${key.price === 0 ? 'Ücretsiz' : key.price + ' TL'}</div>
+                            <button onclick="copyToClipboard('${key.key}')">📋 Key\'i Kopyala</button>
+                            <button onclick="deleteKey(${idx})" style="background:#ef4444; margin-top:0.3rem;">🗑️ Sil</button>
+                        </div>
+                    `).join('')}
+                </div>
+                <hr>
+                <h3>➕ Yeni Key Paylaş</h3>
+                <input type="text" id="keyName" placeholder="Oyun/Program Adı (Örn: Windows 10 Pro)">
+                <textarea id="keyDesc" placeholder="Açıklama" rows="2"></textarea>
+                <input type="text" id="keyCode" placeholder="Key / Lisans Kodu">
+                <input type="number" id="keyPrice" placeholder="Fiyat (0 = ücretsiz)" value="0">
+                <button onclick="addKey()">➕ KEY PAYLAŞ</button>
+                <div class="alert alert-info">💡 Ücretsiz key'lerle ziyaretçi çek, reklam göster. Satılık key'ler için kendi kaynaklarından sağla.</div>
+            `;
+        }
+        else if(page === 'dashboard') {
+            title.innerText = '📊 DASHBOARD - KAZANÇ RAPORU';
+            content.innerHTML = `
+                <div class="grid-2">
+                    <div class="stat-box"><div class="stat-number">${affiliateLinks.length}</div><div>Affiliate Link</div><small>Her satıştan komisyon</small></div>
+                    <div class="stat-box"><div class="stat-number">${subscribers.length}</div><div>E-posta Abone</div><small>E-posta pazarlama ile satış</small></div>
+                    <div class="stat-box"><div class="stat-number">${digitalProducts.length}</div><div>Dijital Ürün</div><small>Direct satış geliri</small></div>
+                    <div class="stat-box"><div class="stat-number">${sharedKeys.length}</div><div>Key Paylaşımı</div><small>Ziyaretçi + reklam geliri</small></div>
+                </div>
+                <hr>
+                <h3>💸 NASIL PARA KAZANIRSIN?</h3>
+                <ul style="margin-left:1.5rem; line-height:1.8;">
+                    <li>🔗 <strong>Affiliate:</strong> Trendyol, Hepsiburada, Amazon'a üye ol -> Linklerini burada paylaş -> Satıştan % komisyon al.</li>
+                    <li>📧 <strong>E-posta Abonelik:</strong> Ziyaretçilerin e-postalarını topla -> Haftalık bülten gönder -> Affiliate linklerini e-postaya koy -> Satış kazan.</li>
+                    <li>🛒 <strong>Dijital Ürün Sat:</strong> Discord botu, oyun config, e-kitap, sticker -> Kendi ürününü yap veya hazır bul -> Fiyat belirle -> Alıcı senden satın alır.</li>
+                    <li>🔐 <strong>Key Paylaşımı:</strong> Bedava key'lerle ziyaretçi çek -> Siteye reklam koy (Adsterra vb.) -> Her tıklamadan para kazan.</li>
+                </ul>
+                <hr>
+                <h3>📌 TOPLAM POTANSİYEL GELİR TAHMİNİ</h3>
+                <div class="stat-box"><div class="stat-number">₺${(affiliateLinks.length * 150 + digitalProducts.length * 200 + sharedKeys.length * 50).toFixed(0)}</div><div>Aylık Potansiyel (Tahmini)</div></div>
+                <div class="alert alert-info">💡 Gerçek kazanç için ürünlerini tanıt, ziyaretçi çek, reklam ekle!</div>
+            `;
+        }
+        
+        updateStats();
+        toggleSidebar();
     }
-    async function doRegister() {
-        let name = document.getElementById('regName').value.trim();
-        let email = document.getElementById('regEmail').value.trim();
-        let pwd = document.getElementById('regPassword').value;
-        let confirm = document.getElementById('regConfirm').value;
-        let alertDiv = document.getElementById('registerAlert');
-        if(!name || !email || !pwd) { alertDiv.innerHTML = '<div class="alert alert-error">Tüm alanlar zorunlu!</div>'; return; }
-        if(pwd.length<4){ alertDiv.innerHTML = '<div class="alert alert-error">Şifre min 4 karakter!</div>'; return; }
-        if(pwd !== confirm){ alertDiv.innerHTML = '<div class="alert alert-error">Şifreler eşleşmiyor!</div>'; return; }
-        if(users.find(u=>u.email === email)){ alertDiv.innerHTML = '<div class="alert alert-error">E-posta zaten kayıtlı!</div>'; return; }
-        if(users.find(u=>u.name === name)){ alertDiv.innerHTML = '<div class="alert alert-error">Kullanıcı adı alınmış!</div>'; return; }
-        let newUser = { id:'user_'+Date.now(), name, email, password:pwd, role:'user', avatar:'😎', created:new Date().toISOString() };
-        users.push(newUser);
-        saveData();
-        await addLog('KAYIT', `${name} (${email})`);
-        alertDiv.innerHTML = '<div class="alert alert-success">✅ Kayıt başarılı! Giriş yapabilirsin.</div>';
-        setTimeout(()=>showLogin(),1500);
+
+    // ========== FONKSİYONLAR ==========
+    function addAffiliate() {
+        let name = document.getElementById('affName').value.trim();
+        let desc = document.getElementById('affDesc').value.trim();
+        let url = document.getElementById('affUrl').value.trim();
+        let commission = document.getElementById('affCommission').value;
+        if(!name || !url) { alert('Ürün adı ve link gerekli!'); return; }
+        affiliateLinks.push({ name, description: desc || 'Affiliate ürün', url, commission: commission || 10 });
+        localStorage.setItem('affiliateLinks', JSON.stringify(affiliateLinks));
+        showPage('affiliate');
     }
-    async function logout() {
-        if(currentUser){ await addLog('ÇIKIŞ', ''); await addSession('ÇIKIŞ'); }
-        currentUser = null;
-        sessionStorage.removeItem('fc_current');
-        showLogin();
+    function deleteAffiliate(idx) { affiliateLinks.splice(idx,1); localStorage.setItem('affiliateLinks', JSON.stringify(affiliateLinks)); showPage('affiliate'); }
+    
+    function addSubscriber() {
+        let name = document.getElementById('subName').value.trim();
+        let email = document.getElementById('subEmail').value.trim();
+        if(!email || !email.includes('@')) { alert('Geçerli e-posta girin'); return; }
+        if(subscribers.find(s=>s.email===email)) { alert('Bu e-posta zaten kayıtlı'); return; }
+        subscribers.push({ name: name || 'İsimsiz', email, date: new Date().toLocaleString('tr-TR') });
+        localStorage.setItem('subscribers', JSON.stringify(subscribers));
+        showPage('email');
     }
-    function showLogin(){ 
-        document.getElementById('loginScreen').style.display='block';
-        document.getElementById('registerScreen').style.display='none';
-        document.getElementById('p
+    function exportEmails() {
+        let emails = subscribers.map(s=>s.email).join('\n');
+        let blob = new Blob([emails], {type:'text/csv'});
+        let a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'aboneler.csv';
+        a.click();
+    }
+    function sendNewsletter() {
+        let subject = document.getElementById('emailSubject').value;
+        let message = document.getElementById('emailMessage').value;
+        if(!subject || !message) { alert('Konu ve mesaj girin'); return; }
+        alert(`📧 ${subscribers.length} aboneye e-posta gönderildi (simülasyon).\n\nKonu: ${subject}\nMesaj: ${message}\n\nGerçek e-posta için SMTP ayarı yapmalısın.`);
+    }
+    
+    function addProduct() {
+        let name = document.getElementById('prodName').value.trim();
+        let desc = document.getElementById('prodDesc').value.trim();
+        let price = document.getElementById('prodPrice').value;
+        if(!name) { alert('Ürün adı girin'); return; }
+        digitalProducts.push({ name, description: desc || 'Dijital ürün', price: price || 50 });
+        localStorage.setItem('digitalProducts', JSON.stringify(digitalProducts));
+        showPage('digital');
+    }
+    function deleteProduct(idx) { digitalProducts.splice(idx,1); localStorage.setItem('digitalProducts', JSON.stringify(digitalProducts)); showPage('digital'); }
+    function contactSeller(productName, price) {
+        let email = prompt('Satın almak için e-posta adresinizi girin:', 'ornek@mail.com');
+        if(email) alert(`📩 Talebiniz iletildi! Satıcı ${email} adresine dönüş yapacak.\nÜrün: ${productName}\nFiyat: ${price} TL`);
+    }
+    
+    function addKey() {
+        let name = document.getElementById('keyName').value.trim();
+        let desc = document.getElementById('keyDesc').value.trim();
+        let key = document.getElementById('keyCode').value.trim();
+        let price = document.getElementById('keyPrice').value;
+        if(!name || !key) { alert('Ürün adı ve key girin'); return; }
+        sharedKeys.push({ name, description: desc || 'Lisans anahtarı', key, price: parseInt(price) || 0 });
+        localStorage.setItem('sharedKeys', JSON.stringify(sharedKeys));
+        showPage('keys');
+    }
+    function deleteKey(idx) { sharedKeys.splice(idx,1); localStorage.setItem('sharedKeys', JSON.stringify(sharedKeys)); showPage('keys'); }
+    
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text);
+        alert('✅ Kopyalandı: ' + text.slice(0,50));
+    }
+    
+    function escapeHtml(str) { return String(str).replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+    function toggleSidebar() { document.querySelector('.sidebar').classList.toggle('open'); document.querySelector('.overlay').classList.toggle('active'); }
+    
+    updateStats();
+    showPage('dashboard');
+    
+    document.addEventListener('contextmenu', e=>e.preventDefault());
+    document.addEventListener('keydown', e=>{ if(e.ctrlKey && (e.key==='u'||e.key==='U')) e.preventDefault(); if(e.key==='F12') e.preventDefault(); });
+</script>
+</body>
+</html>
