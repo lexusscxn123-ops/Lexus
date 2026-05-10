@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🕵️ OSINT FRAMEWORK | Tüm Araçlar + Log Sistemi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0e1a 0%, #0f1623 100%);
+            font-family: 'Segoe UI', 'Poppins', system-ui, sans-serif;
+            min-height: 100vh;
+            color: #e0e0e0;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1a1f2e; }
+        ::-webkit-scrollbar-thumb { background: #00d4ff; border-radius: 10px; }
+
+        /* Sidebar Menü */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100%;
+            background: rgba(10, 15, 26, 0.98);
+            backdrop-filter: blur(15px);
+            box-shadow: 5px 0 30px rgba(0, 0, 0, 0.5);
+            transition: 0.3s ease;
+            z-index: 1000;
+            padding: 2rem 1rem;
+            border-right: 2px solid #00d4ff;
+            overflow-y: auto;
+        }
+
+        .sidebar.open { left: 0; }
+
+        .sidebar .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #00d4ff;
+        }
+
+        .sidebar .menu-category {
+            color: #00d4ff;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 1rem 0 0.5rem 0;
+            padding-left: 0.5rem;
+        }
+
+        .sidebar .menu-item {
+            padding: 0.8rem 1rem;
+            margin: 0.3rem 0;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .sidebar .menu-item:hover {
+            background: #00d4ff;
+            color: #000;
+            transform: translateX(5px);
+        }
+
+        .sidebar .menu-item.active {
+            background: #00d4ff;
+            color: #000;
+        }
+
+        .menu-toggle {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #00d4ff;
+            z-index: 999;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 998;
+            display: none;
+        }
+
+        .overlay.active { display: block; }
+
+        .main-content {
+            margin-left: 0;
+            padding: 5rem 1rem 2rem 1rem;
+            transition: 0.3s;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Kartlar */
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #00d4ff20, #0099cc20);
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .card-header h2 {
+            color: #00d4ff;
+            font-size: 1.3rem;
+        }
+
+        .profile-area {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: rgba(0, 212, 255, 0.2);
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+        }
+
+        .profile-avatar { font-size: 1.8rem; }
+        .profile-name { font-weight: bold; }
+
+        .card-body { padding: 1.5rem; }
+
+        /* Formlar */
+        input, select, textarea {
+            width: 100%;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 212, 255, 0.5);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        input:focus, select:focus {
+            border-color: #00d4ff;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+
+        button {
+            width: 100%;
+            padding: 0.8rem;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .alert {
+            padding: 0.8rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-error { background: rgba(255, 0, 0, 0.2); border-left: 4px solid #ff4444; color: #ff8888; }
+        .alert-success { background: rgba(0, 255, 0, 0.2); border-left: 4px solid #00ff88; color: #88ff88; }
+        .alert-info { background: rgba(0, 212, 255, 0.2); border-left: 4px solid #00d4ff; color: #00d4ff; }
+
+        /* Tablo */
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 0.8rem; text-align: left; border-bottom: 1px solid rgba(0, 212, 255, 0.2); }
+        th { color: #00d4ff; }
+
+        .badge {
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        .badge-admin { background: #ff4444; color: white; }
+        .badge-user { background: #0099cc; color: white; }
+
+        .result-card {
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 16px;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-left: 4px solid #00d4ff;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .tool-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .tool-card:hover {
+            border-color: #00d4ff;
+            transform: translateY(-3px);
+        }
+
+        .tool-card h4 { color: #00d4ff; margin-bottom: 0.5rem; }
+        .tool-card p { font-size: 0.8rem; opacity: 0.7; }
+
+        code {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            font-family: monospace;
+        }
+
+        hr { border-color: rgba(0, 212, 255, 0.2); margin: 1rem 0; }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 260px; }
+            .card-header { flex-direction: column; text-align: center; }
+            th, td { font-size: 0.7rem; padding: 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="menu-toggle" onclick="toggleSidebar()">☰</div>
+<div class="sidebar">
+    <div class="close-btn" onclick="toggleSidebar()">✕</div>
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <div style="font-size: 3rem;">🕵️</div>
+        <div style="color: #00d4ff; font-weight: bold; font-size: 1.2rem;" id="sidebarName">OSINT FRAMEWORK</div>
+        <div style="font-size: 0.8rem; opacity: 0.7;" id="sidebarRole">Giriş Yapılmadı</div>
+    </div>
+    
+    <div class="menu-category">🔐 HESAP</div>
+    <div class="menu-item" onclick="showPage('dashboard')">📊 DASHBOARD</div>
+    <div class="menu-item" onclick="showPage('profile')">👤 PROFİLİM</div>
+    
+    <div class="menu-category">🛠️ OSINT ARAÇLARI</div>
+    <div class="menu-item" onclick="showPage('ip_lookup')">🌐 IP LOOKUP</div>
+    <div class="menu-item" onclick="showPage('dns_lookup')">🔍 DNS LOOKUP</div>
+    <div class="menu-item" onclick="showPage('whois')">📋 WHOIS SORGU</div>
+    <div class="menu-item" onclick="showPage('email_osint')">📧 EMAIL OSINT</div>
+    <div class="menu-item" onclick="showPage('phone_osint')">📱 TELEFON OSINT</div>
+    <div class="menu-item" onclick="showPage('username_search')">👤 KULLANICI ADI ARA</div>
+    <div class="menu-item" onclick="showPage('hash_decrypt')">🔐 HASH ÇÖZÜCÜ</div>
+    <div class="menu-item" onclick="showPage('port_scanner')">🚪 PORT TARAYICI</div>
+    <div class="menu-item" onclick="showPage('subdomain_finder')">🌍 SUBDOMAIN BUL</div>
+    <div class="menu-item" onclick="showPage('headers_check')">📡 HEADER ANALİZ</div>
+    
+    <div class="menu-category">⚙️ YÖNETİM</div>
+    <div class="menu-item" onclick="showPage('logs')">📜 TÜM LOGLAR</div>
+    <div class="menu-item" onclick="showPage('admin')">👑 ADMIN PANEL</div>
+    <div class="menu-item" onclick="logout()" style="background:#ff444420;">🚪 ÇIKIŞ YAP</div>
+</div>
+<div class="overlay" onclick="toggleSidebar()"></div>
+
+<div class="main-content">
+    <div class="container">
+        <!-- GİRİŞ EKRANI -->
+        <div id="loginScreen" class="card" style="max-width: 480px; margin: 0 auto;">
+            <div class="card-header">
+                <h2>🔐 OSINT FRAMEWORK</h2>
+                <p>Giriş Yap</p>
+            </div>
+            <div class="card-body">
+                <div id="loginAlert"></div>
+                <div style="margin-bottom: 1rem;">
+                    <label>👤 E-posta veya Kullanıcı Adı</label>
+                    <input type="text" id="loginIdentifier" placeholder="E-posta veya kullanıcı adı">
+                </div>
+                <div style="margin-bottom: 1.5rem;">
+                    <label>🔒 Şifre</label>
+                    <input type="password" id="loginPassword" placeholder="Şifre">
+                </div>
+                <button onclick="doLogin()">🔓 GİRİŞ YAP</button>
+                <div style="text-align: center; margin-top: 1rem;">
+                    Hesabınız yok mu? <a href="#" onclick="showRegister()" style="color: #00d4ff;">Kayıt ol</a>
+                </div>
+                <hr>
+                <div style="text-align: center; font-size: 0.7rem; opacity: 0.5;">
+                    Demo: admin@gmail.com / Lexus
+                </div>
+            </div>
+        </div>
+
+        <!-- KAYIT EKRANI -->
+        <div id="registerScreen" class="card" style="max-width: 480px; margin: 0 auto; display: none;">
+            <div class="card-header">
+                <h2>📝 KAYIT OL</h2>
+            </div>
+            <div class="card-body">
+                <div id="registerAlert"></div>
+                <div><label>👤 Kullanıcı Adı</label><input type="text" id="regName" placeholder="Kullanıcı adı"></div>
+                <div><label>📧 E-posta</label><input type="email" id="regEmail" placeholder="E-posta"></div>
+                <div><label>🔒 Şifre</label><input type="password" id="regPassword" placeholder="Şifre"></div>
+                <div><label>🔒 Şifre (Tekrar)</label><input type="password" id="regConfirm" placeholder="Şifreyi tekrar girin"></div>
+                <button onclick="doRegister()">✅ KAYIT OL</button>
+                <div style="text-align: center; margin-top: 1rem;">
+                    Zaten hesabınız var mı? <a href="#" onclick="showLogin()" style="color: #00d4ff;">Giriş yap</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ANA PANEL -->
+        <div id="panelScreen" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2 id="pageTitle">📊 DASHBOARD</h2>
+                    <div class="profile-area">
+                        <span class="profile-avatar" id="headerAvatar">😎</span>
+                        <span class="profile-name" id="headerName">User</span>
+                    </div>
+                </div>
+                <div class="card-body" id="pageContent">
+                    <!-- Dinamik içerik -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ========== VERİLER ==========
+    let users = JSON.parse(localStorage.getItem('osint_users')) || [];
+    let logs = JSON.parse(localStorage.getItem('osint_logs')) || [];
+    let currentUser = JSON.parse(sessionStorage.getItem('osint_current')) || null;
+    let sessions = JSON.parse(localStorage.getItem('osint_sessions')) || [];
+
+    // Admin ekle
+    if (!users.find(u => u.email === 'admin@gmail.com')) {
+        users.push({
+            id: 'admin',
+            name: 'Admin',
+            email: 'admin@gmail.com',
+            password: 'Lexus',
+            role: 'admin',
+            avatar: '👑',
+            created: new Date().toISOString()
+        });
+        localStorage.setItem('osint_users', JSON.stringify(users));
+    }
+
+    // Cihaz bilgisi ve lokasyon alma
+    function getDeviceInfo() {
+        const ua = navigator.userAgent;
+        let device = 'Bilinmiyor';
+        if (/Mobile|Android|iPhone|iPad/i.test(ua)) device = '📱 Mobil';
+        else device = '💻 Bilgisayar';
+        
+        let browser = 'Bilinmiyor';
+        if (/Chrome/i.test(ua)) browser = 'Chrome';
+        else if (/Firefox/i.test(ua)) browser = 'Firefox';
+        else if (/Safari/i.test(ua)) browser = 'Safari';
+        else if (/Edge/i.test(ua)) browser = 'Edge';
+        
+        return `${device} | ${browser}`;
+    }
+
+    // Lokasyon tahmini (IP üzerinden)
+    async function getLocationInfo() {
+        try {
+            const res = await fetch('https://ipapi.co/json/');
+            const data = await res.json();
+            return {
+                country: data.country_name || 'Bilinmiyor',
+                city: data.city || 'Bilinmiyor',
+                region: data.region || 'Bilinmiyor',
+                ip: data.ip || 'Bilinmiyor'
+            };
+        } catch(e) {
+            return { country: 'Türkiye', city: 'İstanbul', region: 'Kadıköy', ip: '127.0.0.1' };
+        }
+    }
+
+    // Log ekleme
+    async function addLog(action, detail) {
+        const device = getDeviceInfo();
+        const loc = await getLocationInfo();
+        logs.unshift({
+            id: Date.now(),
+            userId: currentUser?.id || 'guest',
+            userName: currentUser?.name || 'Misafir',
+            action: action,
+            detail: detail,
+            device: device,
+            country: loc.country,
+            city: loc.city,
+            region: loc.region,
+            ip: loc.ip,
+            time: new Date().toLocaleString('tr-TR')
+        });
+        if (logs.length > 500) logs.pop();
+        localStorage.setItem('osint_logs', JSON.stringify(logs));
+    }
+
+    // Oturum logu (giriş/çıkış)
+    async function addSessionLog(type) {
+        const device = getDeviceInfo();
+        const loc = await getLocationInfo();
+        sessions.unshift({
+            id: Date.now(),
+            userId: currentUser?.id,
+            userName: currentUser?.name,
+            type: type,
+            device: device,
+            country: loc.country,
+            city: loc.city,
+            region: loc.region,
+            ip: loc.ip,
+            time: new Date().toLocaleString('tr-TR')
+        });
+        localStorage.setItem('osint_sessions', JSON.stringify(sessions));
+    }
+
+    // Toggle sidebar
+    function toggleSidebar() {
+        document.querySelector('.sidebar').classList.toggle('open');
+        document.querySelector('.overlay').classList.toggle('active');
+    }
+
+    // Giriş
+    async function doLogin() {
+        const identifier = document.getElementById('loginIdentifier').value;
+        const password = document.getElementById('loginPassword').value;
+        const alertDiv = document.getElementById('loginAlert');
+        
+        const user = users.find(u => (u.email === identifier || u.name === identifier) && u.password === password);
+        
+        if (user) {
+            currentUser = user;
+            sessionStorage.setItem('osint_current', JSON.stringify(user));
+            await addLog('GİRİŞ YAPTI', 'Başarılı giriş');
+            await addSessionLog('GİRİŞ');
+            showPanel();
+        } else {
+            alertDiv.innerHTML = '<div class="alert alert-error">⚠️ Hatalı kullanıcı adı/e-posta veya şifre!</div>';
+            await addLog('BAŞARISIZ GİRİŞ', `ID: ${identifier}`);
+        }
+    }
+
+    // Kayıt
+    async function doRegister() {
+        const name = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
+        const password = document.getElementById('regPassword').value;
+        const confirm = document.getElementById('regConfirm').value;
+        const alertDiv = document.getElementById('registerAlert');
+        
+        if (!name || !email || !password) {
+            alertDiv.innerHTML = '<div class="alert alert-error">⚠️ Tüm alanlar zorunludur!</div>';
+            return;
+        }
+        if (password !== confirm) {
+            alertDiv.innerHTML = '<div class="alert alert-error">⚠️ Şifreler eşleşmiyor!</div>';
+            return;
+        }
+        if (users.find(u => u.email === email)) {
+            alertDiv.innerHTML = '<div class="alert alert-error">⚠️ Bu e-posta zaten kayıtlı!</div>';
+            return;
+        }
+        
+        const newUser = {
+            id: 'user_' + Date.now(),
+            name: name,
+            email: email,
+            password: password,
+            role: 'user',
+            avatar: '😎',
+            created: new Date().toISOString()
+        };
+        users.push(newUser);
+        localStorage.setItem('osint_users', JSON.stringify(users));
+        await addLog('KAYIT OLDU', `Yeni kullanıcı: ${name} (${email})`);
+        alertDiv.innerHTML = '<div class="alert alert-success">✅ Kayıt başarılı! Giriş yapabilirsiniz.</div>';
+        setTimeout(() => showLogin(), 1500);
+    }
+
+    // Çıkış
+    async function logout() {
+        if (currentUser) {
+            await addLog('ÇIKIŞ YAPTI', '');
+            await addSessionLog('ÇIKIŞ');
+        }
+        currentUser = null;
+        sessionStorage.removeItem('osint_current');
+        showLogin();
+    }
+
+    function showLogin() {
+        document.getElementById('loginScreen').style.display = 'block';
+        document.getElementById('registerScreen').style.display = 'none';
+        document.getElementById('panelScreen').style.display = 'none';
+    }
+
+    function showRegister() {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('registerScreen').style.display = 'block';
+        document.getElementById('panelScreen').style.display = 'none';
+    }
+
+    async function showPanel() {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('registerScreen').style.display = 'none';
+        document.getElementById('panelScreen').style.display = 'block';
+        
+        document.getElementById('headerName').innerText = currentUser.name;
+        document.getElementById('headerAvatar').innerText = currentUser.avatar || '😎';
+        document.getElementById('sidebarName').innerText = currentUser.name;
+        document.getElementById('sidebarRole').innerHTML = currentUser.role === 'admin' ? '<span class="badge-admin" style="padding:2px 8px;">ADMIN</span>' : '<span class="badge-user" style="padding:2px 8px;">ÜYE</span>';
+        
+        showPage('dashboard');
+    }
+
+    // Sayfa gösterimi
+   
