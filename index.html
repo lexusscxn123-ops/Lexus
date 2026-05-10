@@ -1,1 +1,453 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Discord ID Sorgulama | OSINT Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            background: radial-gradient(ellipse at 30% 20%, #0a0e1a 0%, #05070f 100%);
+            font-family: 'Segoe UI', 'Poppins', monospace;
+            min-height: 100vh;
+            color: #eef2ff;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100%;
+            background: rgba(8, 12, 20, 0.98);
+            backdrop-filter: blur(15px);
+            box-shadow: 5px 0 30px rgba(0, 0, 0, 0.6);
+            transition: 0.3s;
+            z-index: 1000;
+            padding: 2rem 1.2rem;
+            border-right: 2px solid #ff2a2a;
+            overflow-y: auto;
+        }
+        .sidebar.open { left: 0; }
+        .sidebar .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #ff2a2a;
+        }
+        .sidebar .menu-item {
+            padding: 0.8rem 1rem;
+            margin: 0.3rem 0;
+            background: rgba(255, 42, 42, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: center;
+            font-weight: bold;
+        }
+        .sidebar .menu-item:hover {
+            background: #ff2a2a;
+            color: #000;
+            transform: translateX(5px);
+        }
+        .menu-toggle {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #ff2a2a;
+            z-index: 999;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 0.4rem 0.9rem;
+            border-radius: 12px;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 998;
+            display: none;
+        }
+        .overlay.active { display: block; }
+        .main-content {
+            padding: 5rem 1.5rem 2rem 1.5rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .card {
+            background: rgba(20, 25, 40, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 42, 42, 0.3);
+            overflow: hidden;
+        }
+        .card-header {
+            background: linear-gradient(135deg, rgba(255, 42, 42, 0.15), rgba(255, 42, 42, 0.05));
+            padding: 1.2rem 1.8rem;
+            border-bottom: 1px solid rgba(255, 42, 42, 0.2);
+            text-align: center;
+        }
+        .card-header h2 {
+            color: #ff2a2a;
+            font-size: 1.4rem;
+        }
+        .card-body { padding: 1.8rem; }
+
+        input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 42, 42, 0.5);
+            border-radius: 14px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            text-align: center;
+        }
+        input:focus {
+            border-color: #ff2a2a;
+            box-shadow: 0 0 10px rgba(255, 42, 42, 0.3);
+        }
+        button {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(95deg, #ff2a2a, #cc0000);
+            border: none;
+            border-radius: 14px;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 1rem;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 42, 42, 0.4);
+        }
+        .alert {
+            padding: 0.8rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            text-align: center;
+        }
+        .alert-error { background: rgba(255, 0, 0, 0.2); border-left: 4px solid #ff4444; color: #ff8888; }
+        .alert-success { background: rgba(0, 255, 0, 0.2); border-left: 4px solid #00ff88; color: #88ff88; }
+        .alert-info { background: rgba(255, 42, 42, 0.15); border-left: 4px solid #ff2a2a; color: #ff9999; }
+        
+        .result-box {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 16px;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-left: 3px solid #ff2a2a;
+            font-family: monospace;
+            font-size: 0.85rem;
+            word-break: break-all;
+        }
+        .admin-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 9999;
+            font-size: 1.2rem;
+            color: #ff2a2a;
+            border: 1px solid #ff2a2a;
+            opacity: 0.4;
+        }
+        .admin-button:hover { opacity: 1; background: #ff2a2a; color: white; }
+        
+        .log-item {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 0.5rem;
+            margin: 0.3rem 0;
+            border-radius: 8px;
+            font-size: 0.75rem;
+        }
+        hr { border-color: rgba(255, 42, 42, 0.2); margin: 1rem 0; }
+    </style>
+</head>
+<body>
+
+<!-- GİZLİ ADMIN BUTONU (Sağ alt köşe) -->
+<div class="admin-button" onclick="showAdminLogin()">👑</div>
+
+<div class="menu-toggle" onclick="toggleSidebar()">☰</div>
+<div class="sidebar">
+    <div class="close-btn" onclick="toggleSidebar()">✕</div>
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <div style="font-size: 2.5rem;">🕵️</div>
+        <div style="color: #ff2a2a; font-weight: bold;">OSINT PANEL</div>
+    </div>
+    <div class="menu-item" onclick="showMain()">🔍 ID SORGULA</div>
+    <div class="menu-item" onclick="showStats()">📊 İSTATİSTİK</div>
+</div>
+<div class="overlay" onclick="toggleSidebar()"></div>
+
+<div class="main-content">
+    <div class="card">
+        <div class="card-header">
+            <h2>🔍 DISCORD ID SORGULAMA</h2>
+        </div>
+        <div class="card-body" id="pageContent">
+            <input type="text" id="searchId" placeholder="Discord ID Girin (Örn: 123456789012345678)">
+            <button onclick="searchId()">🔎 SORGULA</button>
+            <div id="resultArea"></div>
+            <div id="infoArea" class="alert-info" style="margin-top:1rem; padding:0.5rem; text-align:center; font-size:0.7rem;">💾 Veritabanı durumu: <span id="dbStatus">Yüklenmedi</span></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ========== VERİLER ==========
+    let databaseText = "";  // iddxta.txt içeriği (şifreli saklanmaz ama kimse göremez)
+    let logs = JSON.parse(localStorage.getItem('osint_logs_secret') || '[]');
+    let isAdminMode = false;
+    const ADMIN_PASSWORD = "Lexus2024";
+    
+    // Veritabanı yükleme (cached)
+    function loadDatabase() {
+        const saved = localStorage.getItem('iddxta_secret_data');
+        if(saved) {
+            databaseText = saved;
+            document.getElementById('dbStatus').innerHTML = '✅ Veritabanı yüklü (' + (databaseText.split('\n').length) + ' satır)';
+        } else {
+            document.getElementById('dbStatus').innerHTML = '⚠️ Veritabanı yok - Admin yüklemeli';
+        }
+    }
+    
+    // Log ekleme
+    async function addLog(action, detail) {
+        let ip = "Bilinmiyor";
+        let loc = "Bilinmiyor";
+        try {
+            const res = await fetch('https://ipapi.co/json/');
+            const data = await res.json();
+            ip = data.ip || "Bilinmiyor";
+            loc = data.country_name + "/" + (data.city || "?");
+        } catch(e) {}
+        
+        let device = /Mobile|Android|iPhone/i.test(navigator.userAgent) ? "📱 Mobil" : "💻 PC";
+        
+        logs.unshift({
+            id: Date.now(),
+            action: action,
+            detail: detail,
+            ip: ip,
+            location: loc,
+            device: device,
+            time: new Date().toLocaleString('tr-TR')
+        });
+        if(logs.length > 200) logs.pop();
+        localStorage.setItem('osint_logs_secret', JSON.stringify(logs));
+    }
+    
+    // ID Sorgulama
+    async function searchId() {
+        const id = document.getElementById('searchId').value.trim();
+        const resultDiv = document.getElementById('resultArea');
+        
+        if(!id) {
+            resultDiv.innerHTML = '<div class="alert alert-error">❌ Lütfen bir Discord ID girin!</div>';
+            return;
+        }
+        
+        if(!databaseText) {
+            resultDiv.innerHTML = '<div class="alert alert-error">⚠️ Veritabanı yüklü değil! Admin dosyayı yüklemeli.</div>';
+            return;
+        }
+        
+        resultDiv.innerHTML = '<div class="alert alert-info">🔍 Aranıyor...</div>';
+        await addLog('ID SORGULANDI', `ID: ${id}`);
+        
+        // Dosyada ara
+        const lines = databaseText.split('\n');
+        let found = false;
+        let resultLines = [];
+        
+        for(let line of lines) {
+            if(line.includes(id)) {
+                found = true;
+                resultLines.push(line);
+            }
+        }
+        
+        if(found) {
+            let html = `<div class="result-box"><h3 style="color:#ff2a2a;">✅ SONUÇ BULUNDU!</h3>`;
+            resultLines.forEach(line => {
+                let safeLine = line.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                html += `<p><code>${safeLine.substring(0, 500)}</code></p><hr>`;
+            });
+            html += `<p style="font-size:0.7rem; opacity:0.6;">🔍 ${resultLines.length} satırda bulundu</p></div>`;
+            resultDiv.innerHTML = html;
+        } else {
+            resultDiv.innerHTML = '<div class="alert alert-error">❌ Bu ID veritabanında bulunamadı.</div>';
+        }
+    }
+    
+    // Admin Giriş
+    function showAdminLogin() {
+        let pwd = prompt("🔐 Yönetici doğrulaması:\nŞifreyi girin:");
+        if(pwd === ADMIN_PASSWORD) {
+            isAdminMode = true;
+            addLog('ADMIN', 'Admin paneli açıldı');
+            showAdminPanel();
+        } else if(pwd) {
+            alert("❌ Geçersiz şifre!");
+            addLog('ADMIN', 'Başarısız giriş denemesi');
+        }
+    }
+    
+    function showAdminPanel() {
+        if(!isAdminMode) return;
+        
+        const content = document.getElementById('pageContent');
+        content.innerHTML = `
+            <h3 style="color:#ff2a2a;">👑 GİZLİ YÖNETİCİ PANELİ</h3>
+            <hr>
+            <div style="background:rgba(255,42,42,0.1); padding:1rem; border-radius:16px; margin-bottom:1rem;">
+                <h4>📁 VERİTABANI YÜKLE</h4>
+                <input type="file" id="fileInput" accept=".txt">
+                <button onclick="uploadDatabase()">📤 DOSYAYI YÜKLE</button>
+                <div id="uploadStatus"></div>
+                <p style="font-size:0.7rem; margin-top:0.5rem;">⚠️ Yüklenen dosya sadece sende görünür, kimse indiremez!</p>
+            </div>
+            
+            <div style="background:rgba(255,42,42,0.1); padding:1rem; border-radius:16px; margin-bottom:1rem;">
+                <h4>📊 VERİTABANI DURUMU</h4>
+                <p>📄 Satır sayısı: <span id="adminRowCount">0</span></p>
+                <p>💾 Boyut: <span id="adminSize">0</span> KB</p>
+                <button onclick="clearDatabase()" style="background:#ff4444;">🗑️ VERİTABANINI TEMİZLE</button>
+            </div>
+            
+            <div style="background:rgba(255,42,42,0.1); padding:1rem; border-radius:16px; margin-bottom:1rem;">
+                <h4>📜 TÜM LOGLAR (${logs.length} kayıt)</h4>
+                <div style="max-height:300px; overflow-y:auto;">
+                    ${logs.map(l => `<div class="log-item">[${l.time}] ${l.action} - ${l.detail}<br><small>📍 ${l.location} | ${l.device} | IP: ${l.ip}</small></div>`).join('')}
+                    ${logs.length === 0 ? '<p>Henüz log yok</p>' : ''}
+                </div>
+                <button onclick="clearLogs()" style="background:#ff4444; margin-top:0.5rem;">🗑️ TÜM LOGLARI TEMİZLE</button>
+            </div>
+            
+            <button onclick="closeAdminPanel()" style="background:#333;">🔒 ADMIN PANELİNİ KAPAT</button>
+        `;
+        
+        updateAdminStats();
+    }
+    
+    function updateAdminStats() {
+        const lines = databaseText ? databaseText.split('\n').length : 0;
+        const size = databaseText ? (databaseText.length / 1024).toFixed(2) : 0;
+        document.getElementById('adminRowCount') && (document.getElementById('adminRowCount').innerText = lines);
+        document.getElementById('adminSize') && (document.getElementById('adminSize').innerText = size);
+    }
+    
+    function uploadDatabase() {
+        const fileInput = document.getElementById('fileInput');
+        if(!fileInput.files.length) {
+            document.getElementById('uploadStatus').innerHTML = '<div class="alert alert-error">Dosya seç!</div>';
+            return;
+        }
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            databaseText = e.target.result;
+            localStorage.setItem('iddxta_secret_data', databaseText);
+            document.getElementById('uploadStatus').innerHTML = '<div class="alert alert-success">✅ Veritabanı yüklendi! ' + databaseText.split('\n').length + ' satır</div>';
+            updateAdminStats();
+            document.getElementById('dbStatus').innerHTML = '✅ Veritabanı yüklü (' + databaseText.split('\n').length + ' satır)';
+            addLog('ADMIN', 'Yeni veritabanı yüklendi (' + databaseText.split('\n').length + ' satır)');
+            setTimeout(() => { document.getElementById('uploadStatus').innerHTML = ''; }, 3000);
+        };
+        reader.readAsText(file, "UTF-8");
+    }
+    
+    function clearDatabase() {
+        if(confirm('Veritabanını tamamen silmek istediğine emin misin?')) {
+            databaseText = "";
+            localStorage.removeItem('iddxta_secret_data');
+            addLog('ADMIN', 'Veritabanı silindi');
+            updateAdminStats();
+            document.getElementById('dbStatus').innerHTML = '⚠️ Veritabanı yok - Admin yüklemeli';
+            alert('✅ Veritabanı temizlendi!');
+            showAdminPanel();
+        }
+    }
+    
+    function clearLogs() {
+        if(confirm('Tüm logları silmek istediğine emin misin?')) {
+            logs = [];
+            localStorage.setItem('osint_logs_secret', JSON.stringify(logs));
+            addLog('ADMIN', 'Tüm loglar temizlendi');
+            showAdminPanel();
+        }
+    }
+    
+    function closeAdminPanel() {
+        isAdminMode = false;
+        showMain();
+    }
+    
+    function showMain() {
+        document.getElementById('pageContent').innerHTML = `
+            <input type="text" id="searchId" placeholder="Discord ID Girin (Örn: 123456789012345678)">
+            <button onclick="searchId()">🔎 SORGULA</button>
+            <div id="resultArea"></div>
+            <div id="infoArea" class="alert-info" style="margin-top:1rem; padding:0.5rem; text-align:center; font-size:0.7rem;">💾 Veritabanı durumu: <span id="dbStatus">${databaseText ? '✅ Yüklü (' + databaseText.split('\n').length + ' satır)' : '⚠️ Yüklenmedi'}</span></div>
+        `;
+        toggleSidebar();
+    }
+    
+    function showStats() {
+        const content = document.getElementById('pageContent');
+        const lineCount = databaseText ? databaseText.split('\n').length : 0;
+        const lastLog = logs[0];
+        content.innerHTML = `
+            <h3 style="color:#ff2a2a;">📊 İSTATİSTİKLER</h3>
+            <hr>
+            <div class="result-box">
+                <p>📄 Veritabanı Satır: ${lineCount}</p>
+                <p>📜 Toplam Sorgu Logu: ${logs.length}</p>
+                <p>🕵️ Son Sorgu: ${lastLog ? lastLog.detail : 'Henüz yok'}</p>
+                <p>👑 Admin Girişi: Gizli buton ile</p>
+            </div>
+            <button onclick="showMain()" style="margin-top:1rem;">⬅️ GERİ DÖN</button>
+        `;
+        toggleSidebar();
+    }
+    
+    function toggleSidebar() {
+        document.querySelector('.sidebar').classList.toggle('open');
+        document.querySelector('.overlay').classList.toggle('active');
+    }
+    
+    loadDatabase();
+    
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', e => {
+        if(e.ctrlKey && (e.key === 'u' || e.key === 'U')) e.preventDefault();
+        if(e.key === 'F12') e.preventDefault();
+    });
+</script>
+</body>
+</html>
