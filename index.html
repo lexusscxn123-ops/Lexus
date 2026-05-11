@@ -286,7 +286,7 @@
     const MAX_SATIR = 500000; // 500.000 SATIR
     
     function dbBaslat() {
-        let req = indexedDB.open("IstihbaratDB", 3);
+        let req = indexedDB.open("IstihbaratDB", 4);
         req.onerror = () => console.log("DB hatası");
         req.onsuccess = (e) => {
             db = e.target.result;
@@ -478,14 +478,14 @@
         let satirSayaci = 0;
         let offset = 0;
         let chunkSize = 3 * 1024 * 1024;
-        let processed = 0;
-        let tamamlandi = false;
         
+        // Eski verileri temizle
         let txClear = db.transaction(["data"], "readwrite");
         txClear.objectStore("data").clear();
         
-        function isle() {
-            if(tamamlandi || satirSayaci >= MAX_SATIR) {
+        function satirOku() {
+            if(satirSayaci >= MAX_SATIR) {
+                // Kaydet
                 let saveTx = db.transaction(["data"], "readwrite");
                 let kayit = { map: [...tempMap], yuklenenSatir: tempMap.size };
                 saveTx.objectStore("data").put(JSON.stringify(kayit), "idIndex");
@@ -493,7 +493,7 @@
                     idMap = tempMap;
                     toplamVeri = idMap.size;
                     document.getElementById("veriBadge").innerHTML = `📊 ${toplamVeri.toLocaleString()} / ${MAX_SATIR.toLocaleString()} VERİ`;
-                    durum.innerHTML = `<div class="alert alert-success">✅ TAMAM! ${toplamVeri.toLocaleString()} ID indekslendi. (İlk ${satirSayaci.toLocaleString()} satır)</div>`;
+                    durum.innerHTML = `<div class="alert alert-success">✅ TAMAM! ${toplamVeri.toLocaleString()} ID indekslendi. (${satirSayaci.toLocaleString()} satır okundu)</div>`;
                     progressBar.style.display = "none";
                     logEkle("VERİTABANI YÜKLENDİ", `${toplamVeri} ID (${satirSayaci} satır)`);
                     setTimeout(() => adminKapat(), 2000);
@@ -502,8 +502,19 @@
             }
             
             if(offset >= file.size) {
-                tamamlandi = true;
-                isle();
+                // Dosya bitti ama limit dolmadı
+                let saveTx = db.transaction(["data"], "readwrite");
+                let kayit = { map: [...tempMap], yuklenenSatir: tempMap.size };
+                saveTx.objectStore("data").put(JSON.stringify(kayit), "idIndex");
+                saveTx.oncomplete = () => {
+                    idMap = tempMap;
+                    toplamVeri = idMap.size;
+                    document.getElementById("veriBadge").innerHTML = `📊 ${toplamVeri.toLocaleString()} / ${MAX_SATIR.toLocaleString()} VERİ`;
+                    durum.innerHTML = `<div class="alert alert-success">✅ TAMAM! ${toplamVeri.toLocaleString()} ID indekslendi. (Dosya sonuna gelindi - ${satirSayaci.toLocaleString()} satır)</div>`;
+                    progressBar.style.display = "none";
+                    logEkle("VERİTABANI YÜKLENDİ", `${toplamVeri} ID (${satirSayaci} satır)`);
+                    setTimeout(() => adminKapat(), 2000);
+                };
                 return;
             }
             
@@ -526,16 +537,16 @@
                         }
                     }
                 }
-                processed += blob.size;
                 let yuzde = Math.min((satirSayaci / MAX_SATIR) * 100, 100);
                 progressFill.style.width = yuzde + "%";
-                durum.innerHTML = `<div class="alert alert-info">📥 %${Math.round(yuzde)} - ${satirSayaci.toLocaleString()}/${MAX_SATIR.toLocaleString()} satır - ${tempMap.size.toLocaleString()} ID</div>`;
+                durum.innerHTML = `<div class="alert alert-info">📥 %${Math.round(yuzde)} - ${satirSayaci.toLocaleString()}/${MAX_SATIR.toLocaleString()} satır - ${tempMap.size.toLocaleString()} benzersiz ID</div>`;
                 offset = end;
-                setTimeout(isle, 10);
+                setTimeout(satirOku, 5);
             };
             reader.readAsText(blob, "UTF-8");
         }
-        isle();
+        
+        satirOku();
     }
     
     function veriTemizle() {
