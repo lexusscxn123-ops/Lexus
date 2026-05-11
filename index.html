@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Discord ID Sorgulama | Hızlı & Hafif</title>
+    <title>🕵️ Maksimum İstihbarat Sistemi</title>
     <style>
         * {
             margin: 0;
@@ -12,187 +12,124 @@
         }
 
         body {
-            background: radial-gradient(ellipse at 30% 20%, #0a0e1a 0%, #05070f 100%);
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0a0e1a;
+            font-family: 'Segoe UI', 'Courier New', monospace;
             min-height: 100vh;
+            padding: 2rem 1rem;
             color: #eef2ff;
         }
 
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: -280px;
-            width: 280px;
-            height: 100%;
-            background: rgba(8, 12, 20, 0.98);
-            backdrop-filter: blur(15px);
-            transition: 0.3s;
-            z-index: 1000;
-            padding: 2rem 1.2rem;
-            border-right: 2px solid #ff2a2a;
-        }
-        .sidebar.open { left: 0; }
-        .sidebar .close-btn {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            font-size: 1.8rem;
-            cursor: pointer;
-            color: #ff2a2a;
-        }
-        .sidebar .menu-item {
-            padding: 0.8rem 1rem;
-            margin: 0.3rem 0;
-            background: rgba(255, 42, 42, 0.1);
-            border-radius: 12px;
-            cursor: pointer;
-            text-align: center;
-            font-weight: bold;
-        }
-        .sidebar .menu-item:hover {
-            background: #ff2a2a;
-            color: #000;
-            transform: translateX(5px);
-        }
-        .menu-toggle {
-            position: fixed;
-            top: 1rem;
-            left: 1rem;
-            font-size: 1.8rem;
-            cursor: pointer;
-            color: #ff2a2a;
-            z-index: 999;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 0.4rem 0.9rem;
-            border-radius: 12px;
-        }
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 998;
-            display: none;
-        }
-        .overlay.active { display: block; }
-        .main-content {
-            padding: 5rem 1.5rem 2rem 1.5rem;
-            max-width: 800px;
+        .container {
+            max-width: 900px;
             margin: 0 auto;
         }
+
         .card {
-            background: rgba(20, 25, 40, 0.7);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            border: 1px solid rgba(255, 42, 42, 0.3);
+            background: #0d0f18;
+            border-radius: 20px;
+            border: 1px solid #ff2a2a;
             overflow: hidden;
         }
-        .card-header {
-            background: linear-gradient(135deg, rgba(255, 42, 42, 0.15), rgba(255, 42, 42, 0.05));
-            padding: 1.2rem 1.8rem;
-            border-bottom: 1px solid rgba(255, 42, 42, 0.2);
+
+        .header {
+            background: #0b0f17;
+            padding: 1.2rem 2rem;
+            border-bottom: 2px solid #ff2a2a;
             text-align: center;
         }
-        .card-header h2 { color: #ff2a2a; font-size: 1.4rem; }
-        .card-body { padding: 1.8rem; }
+
+        .header h1 {
+            font-size: 1.5rem;
+            color: #ff4444;
+        }
+
+        .badge {
+            background: #1e1f2c;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            display: inline-block;
+            margin-top: 0.5rem;
+            border: 1px solid #ff3a3a;
+            color: #ff9f9f;
+        }
+
+        .body {
+            padding: 2rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
 
         input {
-            width: 100%;
-            padding: 1rem;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 42, 42, 0.5);
-            border-radius: 14px;
+            flex: 1;
+            background: #1a1d2b;
+            border: 1px solid #ff2a2a;
+            padding: 0.9rem;
             color: white;
+            font-family: monospace;
             font-size: 1rem;
+            border-radius: 12px;
             outline: none;
-            text-align: center;
         }
-        input:focus {
-            border-color: #ff2a2a;
-            box-shadow: 0 0 10px rgba(255, 42, 42, 0.3);
-        }
+
         button {
-            width: 100%;
-            padding: 1rem;
-            background: linear-gradient(95deg, #ff2a2a, #cc0000);
+            background: #ff2a2a;
             border: none;
-            border-radius: 14px;
-            color: white;
+            padding: 0 1.8rem;
+            border-radius: 12px;
             font-weight: bold;
             font-size: 1rem;
             cursor: pointer;
-            transition: 0.2s;
-            margin-top: 1rem;
+            color: white;
+            font-family: monospace;
         }
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(255, 42, 42, 0.4);
+
+        .result {
+            margin-top: 1.5rem;
+            background: #0d0f18;
+            border-radius: 16px;
+            padding: 1.2rem;
+            border-left: 4px solid #ff0000;
         }
+
+        .field {
+            margin-bottom: 1rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid #1f2230;
+        }
+
+        .field-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #ff8888;
+            letter-spacing: 1px;
+            margin-bottom: 0.3rem;
+        }
+
+        .field-value {
+            background: #07090f;
+            padding: 0.7rem;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            word-break: break-word;
+            white-space: pre-wrap;
+        }
+
         .alert {
             padding: 0.8rem;
             border-radius: 12px;
-            margin: 1rem 0;
             text-align: center;
-        }
-        .alert-error { background: rgba(255, 0, 0, 0.2); border-left: 4px solid #ff4444; color: #ff8888; }
-        .alert-success { background: rgba(0, 255, 0, 0.2); border-left: 4px solid #00ff88; color: #88ff88; }
-        .alert-info { background: rgba(255, 42, 42, 0.15); border-left: 4px solid #ff2a2a; color: #ff9999; }
-        
-        .result-box {
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 16px;
-            padding: 1rem;
             margin-top: 1rem;
-            border-left: 3px solid #ff2a2a;
-            font-family: monospace;
-            font-size: 0.75rem;
-            word-break: break-all;
-            max-height: 350px;
-            overflow-y: auto;
         }
-        .admin-button {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 9999;
-            font-size: 1.4rem;
-            color: #ff2a2a;
-            border: 2px solid #ff2a2a;
-            transition: 0.2s;
-        }
-        .admin-button:hover { opacity: 1; background: #ff2a2a; color: white; transform: scale(1.05); }
-        
-        .progress-bar {
-            width: 100%;
-            height: 20px;
-            background: #333;
-            border-radius: 10px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #ff2a2a, #ff6666);
-            width: 0%;
-            transition: width 0.3s;
-        }
-        
-        @media (max-width: 650px) {
-            .main-content { padding: 5rem 0.8rem 1rem 0.8rem; }
-            .result-box { font-size: 0.65rem; }
-        }
+        .alert-error { background: rgba(255,0,0,0.15); border-left: 3px solid #ff4444; color: #ff8888; }
+        .alert-info { background: rgba(255,42,42,0.1); border-left: 3px solid #ff2a2a; color: #ff9999; }
 
-        .loading-spinner {
+        .loading {
             display: inline-block;
             width: 16px;
             height: 16px;
@@ -204,287 +141,308 @@
             vertical-align: middle;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
+
+        .admin-btn {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #ff2a2a;
+            border: 1px solid #ff2a2a;
+            opacity: 0.4;
+        }
+        .admin-btn:hover { opacity: 1; }
+
+        .progress-bar {
+            width: 100%;
+            height: 18px;
+            background: #1a1d2b;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #ff2a2a;
+            width: 0%;
+        }
     </style>
 </head>
 <body>
 
-<!-- GİZLİ ADMIN BUTONU - SAĞ ALT KÖŞE -->
-<div class="admin-button" onclick="showAdminLogin()">👑</div>
+<div class="admin-btn" onclick="adminGiris()">👑</div>
 
-<div class="menu-toggle" onclick="toggleSidebar()">☰</div>
-<div class="sidebar">
-    <div class="close-btn" onclick="toggleSidebar()">✕</div>
-    <div style="text-align: center; margin-bottom: 2rem;">
-        <div style="font-size: 2.5rem;">🕵️</div>
-        <div style="color: #ff2a2a; font-weight: bold;">OSINT PANEL</div>
-    </div>
-    <div class="menu-item" onclick="showMain()">🔍 ID SORGULA</div>
-    <div class="menu-item" onclick="showStats()">📊 İSTATİSTİK</div>
-</div>
-<div class="overlay" onclick="toggleSidebar()"></div>
-
-<div class="main-content">
+<div class="container">
     <div class="card">
-        <div class="card-header">
-            <h2>🔍 DISCORD ID SORGULAMA</h2>
+        <div class="header">
+            <h1>🕵️ MAKSİMUM İSTİHBARAT SİSTEMİ</h1>
+            <div class="badge" id="veriBadge">📊 VERİ YOK</div>
         </div>
-        <div class="card-body" id="pageContent">
-            <input type="text" id="searchId" placeholder="Discord ID Girin (Örn: 123456789012345678)">
-            <button onclick="searchId()">🔎 SORGULA</button>
-            <div id="resultArea"></div>
-            <div id="infoArea" class="alert-info" style="margin-top:1rem; padding:0.5rem; text-align:center; font-size:0.7rem;">
-                💾 Veritabanı: <span id="dbStatus">Kontrol ediliyor...</span>
+        <div class="body">
+            <div class="input-group">
+                <input type="text" id="hedefId" placeholder="Hedef Discord ID">
+                <button onclick="sorgula()">🔍 SORGULA</button>
             </div>
+            <div id="sonuc"></div>
         </div>
     </div>
 </div>
 
 <script>
-    // ========== INDEXEDDB BÜYÜK DOSYA ==========
+    // Veritabanı
+    let idMap = new Map();
+    let toplamVeri = 0;
+    let adminMod = false;
+    const ADMIN_SIFRE = "Lexus2024";
+
+    // IndexedDB
     let db = null;
-    let dbReady = false;
-    let idIndex = new Map(); // ID indexi (hızlı arama için!)
-    let isAdminMode = false;
-    const ADMIN_PASSWORD = "Lexus2024";
     
-    // IndexedDB Başlat
-    function initDB() {
-        return new Promise((resolve) => {
-            const request = indexedDB.open("DiscordIDDB", 2);
-            request.onerror = () => { console.log("DB hatası"); resolve(false); };
-            request.onsuccess = (e) => {
-                db = e.target.result;
-                dbReady = true;
-                loadIdIndex();
-                resolve(true);
-            };
-            request.onupgradeneeded = (e) => {
-                db = e.target.result;
-                if(!db.objectStoreNames.contains("data")) {
-                    db.createObjectStore("data");
-                }
-            };
-        });
-    }
-    
-    // ID indexini yükle
-    function loadIdIndex() {
-        if(!db) return;
-        const transaction = db.transaction(["data"], "readonly");
-        const store = transaction.objectStore("data");
-        const getRequest = store.get("idIndex");
-        getRequest.onsuccess = () => {
-            if(getRequest.result) {
-                idIndex = new Map(JSON.parse(getRequest.result));
-                document.getElementById('dbStatus') && (document.getElementById('dbStatus').innerHTML = `✅ ${idIndex.size.toLocaleString()} ID indeksli`);
-            } else {
-                document.getElementById('dbStatus') && (document.getElementById('dbStatus').innerHTML = `⚠️ Veritabanı boş - Admin yüklemeli`);
+    function dbBaslat() {
+        let req = indexedDB.open("IstihbaratDB", 1);
+        req.onsuccess = (e) => {
+            db = e.target.result;
+            indexYukle();
+        };
+        req.onupgradeneeded = (e) => {
+            db = e.target.result;
+            if(!db.objectStoreNames.contains("data")) {
+                db.createObjectStore("data");
             }
         };
     }
     
-    // Admin: Dosya yükle ve index oluştur
-    async function uploadAndIndex(file) {
-        const statusDiv = document.getElementById('adminStatus');
-        const progressFill = document.getElementById('adminProgressFill');
-        const progressBar = document.getElementById('adminProgress');
+    function indexYukle() {
+        let tx = db.transaction(["data"], "readonly");
+        let store = tx.objectStore("data");
+        let req = store.get("idIndex");
+        req.onsuccess = () => {
+            if(req.result) {
+                idMap = new Map(JSON.parse(req.result));
+                toplamVeri = idMap.size;
+                document.getElementById("veriBadge").innerHTML = `📊 ${toplamVeri.toLocaleString()} VERİ HAZIR`;
+            }
+        };
+    }
+    
+    // IP Analizi
+    async function ipAnaliz(ip) {
+        if(!ip) return "IP bilgisi yok";
+        try {
+            let r = await fetch(`http://ip-api.com/json/${ip}?fields=66846719`);
+            let d = await r.json();
+            if(d.status === "success") {
+                let guvenlik = [];
+                if(d.proxy) guvenlik.push("🚨 Proxy/VPN Aktif");
+                if(d.hosting) guvenlik.push("🏢 Veri Merkezi/Sunucu");
+                if(d.mobile) guvenlik.push("📱 Mobil/Hücresel Veri");
+                if(guvenlik.length === 0) guvenlik.push("🏠 Bireysel Ev İnterneti");
+                
+                return (
+                    `🌐 **IP Adresi:** \`${d.query}\`\n` +
+                    `📡 **Ters DNS:** \`${d.reverse || "Bulunamadı"}\`\n` +
+                    `🏢 **ISS / Sağlayıcı:** \`${d.isp}\`\n` +
+                    `🏗️ **Organizasyon:** \`${d.org}\`\n` +
+                    `🏷️ **Otonom Sistem:** \`${d.as}\`\n` +
+                    `🌍 **Ülke/Eyalet:** ${d.country} / ${d.regionName}\n` +
+                    `📍 **Şehir/Posta Kodu:** ${d.city} / \`${d.zip}\`\n` +
+                    `⏰ **Yerel Saat Dilimi:** \`${d.timezone}\`\n` +
+                    `🛡️ **Bağlantı Güvenliği:** ${guvenlik.join(" | ")}\n` +
+                    `🗺️ **Koordinat:** \`${d.lat}, ${d.lon}\`\n` +
+                    `🔗 **Canlı Konum:** [Google Maps](https://www.google.com/maps?q=${d.lat},${d.lon})`
+                );
+            }
+        } catch(e) {}
+        return `🌐 IP: \`${ip}\` (Veri bağlantısı kurulamadı)`;
+    }
+    
+    // Sorgulama
+    async function sorgula() {
+        let id = document.getElementById("hedefId").value.trim();
+        let sonucDiv = document.getElementById("sonuc");
         
-        statusDiv.innerHTML = '<div class="alert alert-info">📥 Dosya işleniyor, index oluşturuluyor...</div>';
-        progressBar.style.display = 'block';
+        if(!id) {
+            sonucDiv.innerHTML = '<div class="alert alert-error">❌ Bir Discord ID girin!</div>';
+            return;
+        }
         
-        const CHUNK_SIZE = 20 * 1024 * 1024; // 20MB parçalar
+        if(idMap.size === 0) {
+            sonucDiv.innerHTML = '<div class="alert alert-error">⚠️ Veritabanı boş! Admin dosya yüklemeli.</div>';
+            return;
+        }
+        
+        let milyon = (toplamVeri / 1000000).toFixed(2);
+        sonucDiv.innerHTML = `<div class="alert alert-info"><span class="loading"></span> 🚨 ${milyon}M veri içinde derin araştırma yapılıyor...</div>`;
+        
+        // Ara
+        let bulundu = false;
+        let email = "Bulunamadı";
+        let ips = [];
+        let sunucular = "Bulunamadı";
+        let bulunanSatir = "";
+        
+        if(idMap.has(id)) {
+            bulundu = true;
+            bulunanSatir = idMap.get(id);
+            
+            let emailMatch = bulunanSatir.match(/[\w\.-]+@[\w\.-]+\.\w+/);
+            if(emailMatch) email = emailMatch[0];
+            
+            let ipMatch = bulunanSatir.match(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/g);
+            if(ipMatch) {
+                for(let x of ipMatch) {
+                    if(!x.startsWith("127.") && !x.startsWith("192.168.")) ips.push(x);
+                }
+            }
+            
+            let srvMatch = bulunanSatir.match(/\[(\d{17,20}(?:,\s*\d{17,20})*)\]/);
+            if(srvMatch) sunucular = srvMatch[0];
+        }
+        
+        if(!bulundu) {
+            sonucDiv.innerHTML = '<div class="alert alert-error">❌ Hedef ID\'ye ait herhangi bir veri sızıntısı bulunamadı.</div>';
+            return;
+        }
+        
+        // Rapor oluştur (Discord bot formatında)
+        let html = `<div class="result">`;
+        html += `<div class="field"><div class="field-label">📧 Sızdırılan E-posta</div><div class="field-value">\`${email}\`</div></div>`;
+        
+        if(ips.length > 0) {
+            let anaIp = ips[0];
+            let intel = await ipAnaliz(anaIp);
+            html += `<div class="field"><div class="field-label">📡 Ağ & IP İstihbarat Analizi (Deep)</div><div class="field-value">${intel.replace(/\n/g, '<br>')}</div></div>`;
+            
+            if(ips.length > 1) {
+                let diger = ips.slice(1,4).map(x => `\`${x}\``).join(", ");
+                html += `<div class="field"><div class="field-label">🌐 Tespit Edilen Diğer IP Kayıtları</div><div class="field-value">${diger}</div></div>`;
+            }
+        }
+        
+        let srvTxt = sunucular.replace(/"/g, "").replace(/\\/g, "").replace(/ /g, "");
+        if(srvTxt.length > 400) srvTxt = srvTxt.substring(0, 397) + "...";
+        html += `<div class="field"><div class="field-label">🏠 Discord Sunucu Logları</div><div class="field-value"><pre style="background:#03050a; padding:0.5rem; overflow:auto; margin:0; font-size:0.75rem;">${srvTxt}</pre></div></div>`;
+        
+        html += `<div style="margin-top:1rem; font-size:0.7rem; text-align:center; color:#666;">📊 Toplam ${toplamVeri.toLocaleString()} veri taranmıştır.</div>`;
+        html += `</div>`;
+        
+        sonucDiv.innerHTML = html;
+    }
+    
+    // Admin Panel
+    function adminGiris() {
+        let sifre = prompt("🔐 Yönetici Şifresi:");
+        if(sifre === ADMIN_SIFRE) {
+            adminMod = true;
+            document.getElementById("sonuc").innerHTML = `
+                <div style="background:#0d0f18; border-radius:16px; padding:1.2rem; margin-top:1rem;">
+                    <h3 style="color:#ff2a2a;">👑 YÖNETİCİ PANELİ</h3>
+                    <hr>
+                    <p>📁 Veritabanı Yükle (.txt)</p>
+                    <input type="file" id="dosyaInput" accept=".txt">
+                    <div class="progress-bar" id="progressBar" style="display:none;"><div class="progress-fill" id="progressFill"></div></div>
+                    <div id="yuklemeDurum"></div>
+                    <button onclick="dosyaYukle()">📤 YÜKLE VE İNDEKSELE</button>
+                    <button onclick="veriTemizle()" style="background:#ff4444; margin-top:0.5rem;">🗑️ VERİTABANINI TEMİZLE</button>
+                    <hr>
+                    <p>📊 ${toplamVeri.toLocaleString()} ID indeksli</p>
+                    <button onclick="adminKapat()" style="background:#333;">🔒 KAPAT</button>
+                </div>
+            `;
+        }
+    }
+    
+    async function dosyaYukle() {
+        let file = document.getElementById("dosyaInput").files[0];
+        let durum = document.getElementById("yuklemeDurum");
+        let progressBar = document.getElementById("progressBar");
+        let progressFill = document.getElementById("progressFill");
+        
+        if(!file) {
+            durum.innerHTML = '<div class="alert alert-error">Dosya seç!</div>';
+            return;
+        }
+        
+        durum.innerHTML = `<div class="alert alert-info">📥 ${(file.size/1024/1024).toFixed(2)} MB dosya indeksleniyor...</div>`;
+        progressBar.style.display = "block";
+        
+        let tempMap = new Map();
         let offset = 0;
-        let tempIndex = new Map();
+        let chunkSize = 10 * 1024 * 1024;
+        let processed = 0;
         
-        // Temizle
-        const clearTx = db.transaction(["data"], "readwrite");
-        clearTx.objectStore("data").clear();
+        let tx = db.transaction(["data"], "readwrite");
+        tx.objectStore("data").clear();
         
-        function processChunk() {
+        function isle() {
             if(offset >= file.size) {
-                // Index'i kaydet
-                const saveTx = db.transaction(["data"], "readwrite");
-                saveTx.objectStore("data").put(JSON.stringify([...tempIndex]), "idIndex");
+                let saveTx = db.transaction(["data"], "readwrite");
+                saveTx.objectStore("data").put(JSON.stringify([...tempMap]), "idIndex");
                 saveTx.oncomplete = () => {
-                    idIndex = tempIndex;
-                    statusDiv.innerHTML = `<div class="alert alert-success">✅ Yüklendi! ${idIndex.size.toLocaleString()} benzersiz ID indekslendi.</div>`;
-                    document.getElementById('dbStatus') && (document.getElementById('dbStatus').innerHTML = `✅ ${idIndex.size.toLocaleString()} ID indeksli`);
-                    progressBar.style.display = 'none';
-                    setTimeout(() => { if(statusDiv) statusDiv.innerHTML = ''; }, 3000);
+                    idMap = tempMap;
+                    toplamVeri = idMap.size;
+                    document.getElementById("veriBadge").innerHTML = `📊 ${toplamVeri.toLocaleString()} VERİ HAZIR`;
+                    durum.innerHTML = `<div class="alert alert-success">✅ ${toplamVeri.toLocaleString()} ID indekslendi!</div>`;
+                    progressBar.style.display = "none";
+                    setTimeout(() => adminKapat(), 2000);
                 };
                 return;
             }
             
-            const end = Math.min(offset + CHUNK_SIZE, file.size);
-            const blob = file.slice(offset, end);
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                const text = e.target.result;
-                const lines = text.split('\n');
-                
-                for(let line of lines) {
-                    // ID'yi bul (17-20 haneli sayı)
-                    const idMatch = line.match(/\b\d{17,20}\b/);
+            let end = Math.min(offset + chunkSize, file.size);
+            let blob = file.slice(offset, end);
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                let text = e.target.result;
+                let satirlar = text.split("\n");
+                for(let satir of satirlar) {
+                    let idMatch = satir.match(/\b\d{17,20}\b/);
                     if(idMatch) {
-                        const foundId = idMatch[0];
-                        if(!tempIndex.has(foundId)) {
-                            // Sadece ilk 200 karakteri sakla
-                            tempIndex.set(foundId, line.substring(0, 300));
+                        let bulId = idMatch[0];
+                        if(!tempMap.has(bulId)) {
+                            let kisa = satir.length > 400 ? satir.substring(0,400) + "..." : satir;
+                            tempMap.set(bulId, kisa);
                         }
                     }
                 }
-                
-                const percent = (end / file.size) * 100;
-                progressFill.style.width = percent + '%';
-                statusDiv.innerHTML = `<div class="alert alert-info">📥 İndeksleniyor: ${Math.round(percent)}% (${tempIndex.size.toLocaleString()} ID bulundu)</div>`;
-                
+                processed += blob.size;
+                let yuzde = (processed / file.size) * 100;
+                progressFill.style.width = yuzde + "%";
+                durum.innerHTML = `<div class="alert alert-info">📥 %${Math.round(yuzde)} (${tempMap.size.toLocaleString()} ID)</div>`;
                 offset = end;
-                setTimeout(processChunk, 10);
+                setTimeout(isle, 5);
             };
             reader.readAsText(blob, "UTF-8");
         }
-        
-        processChunk();
+        isle();
     }
     
-    // Hızlı sorgulama (sadece indeksten bakar)
-    async function searchId() {
-        const id = document.getElementById('searchId').value.trim();
-        const resultDiv = document.getElementById('resultArea');
-        
-        if(!id) {
-            resultDiv.innerHTML = '<div class="alert alert-error">❌ ID girin!</div>';
-            return;
-        }
-        
-        if(!idIndex || idIndex.size === 0) {
-            resultDiv.innerHTML = '<div class="alert alert-error">⚠️ Veritabanı boş! Admin dosyayı yüklemeli.</div>';
-            return;
-        }
-        
-        resultDiv.innerHTML = '<div class="alert alert-info"><span class="loading-spinner"></span> Aranıyor...</div>';
-        
-        // Mikro gecikme ile UI donmasını engelle
-        setTimeout(() => {
-            const found = idIndex.get(id);
-            if(found) {
-                let safeLine = found.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                resultDiv.innerHTML = `<div class="result-box"><h3 style="color:#ff2a2a;">✅ SONUÇ BULUNDU!</h3><p><code>${safeLine}</code></p><hr><p style="font-size:0.7rem;">🔍 ID: ${id}</p></div>`;
-            } else {
-                resultDiv.innerHTML = '<div class="alert alert-error">❌ Bu ID veritabanında bulunamadı.</div>';
-            }
-        }, 10);
-    }
-    
-    // Admin Girişi
-    function showAdminLogin() {
-        const pwd = prompt("🔐 Yönetici Şifresini Girin:");
-        if(pwd === ADMIN_PASSWORD) {
-            isAdminMode = true;
-            showAdminPanel();
-        } else if(pwd) {
-            alert("❌ Geçersiz şifre!");
-        }
-    }
-    
-    function showAdminPanel() {
-        if(!isAdminMode) return;
-        
-        const content = document.getElementById('pageContent');
-        content.innerHTML = `
-            <h3 style="color:#ff2a2a;">👑 YÖNETİCİ PANELİ</h3>
-            <hr>
-            <div style="background:rgba(255,42,42,0.1); padding:1rem; border-radius:16px;">
-                <h4>📁 VERİTABANI YÜKLE</h4>
-                <input type="file" id="adminFile" accept=".txt">
-                <div class="progress-bar" id="adminProgress" style="display:none;"><div class="progress-fill" id="adminProgressFill"></div></div>
-                <div id="adminStatus"></div>
-                <button onclick="adminUpload()">📤 DOSYAYI YÜKLE VE İNDEKSELE</button>
-                <button onclick="clearDatabase()" style="background:#ff4444; margin-top:0.5rem;">🗑️ VERİTABANINI TEMİZLE</button>
-            </div>
-            <hr>
-            <div style="background:rgba(255,42,42,0.1); padding:1rem; border-radius:16px;">
-                <h4>📊 DURUM</h4>
-                <p>📄 İndekslenen ID: <strong>${idIndex.size.toLocaleString()}</strong></p>
-                <p>💾 Tarayıcı: ${/Mobile|Android|iPhone/i.test(navigator.userAgent) ? '📱 Mobil' : '💻 Bilgisayar'}</p>
-            </div>
-            <button onclick="closeAdminPanel()" style="background:#333; margin-top:1rem;">🔒 KAPAT</button>
-        `;
-        toggleSidebar();
-    }
-    
-    function closeAdminPanel() {
-        isAdminMode = false;
-        showMain();
-    }
-    
-    window.adminUpload = async function() {
-        const fileInput = document.getElementById('adminFile');
-        if(!fileInput.files.length) {
-            document.getElementById('adminStatus').innerHTML = '<div class="alert alert-error">Dosya seç!</div>';
-            return;
-        }
-        
-        const file = fileInput.files[0];
-        const sizeMB = (file.size / 1024 / 1024).toFixed(2);
-        
-        if(file.size > 2 * 1024 * 1024 * 1024) {
-            document.getElementById('adminStatus').innerHTML = `<div class="alert alert-error">Max 2GB! Bu dosya ${sizeMB} MB</div>`;
-            return;
-        }
-        
-        document.getElementById('adminStatus').innerHTML = `<div class="alert alert-info">📥 ${sizeMB} MB dosya indeksleniyor... Lütfen bekleyin!</div>`;
-        
-        await uploadAndIndex(file);
-    };
-    
-    window.clearDatabase = async function() {
-        if(confirm('⚠️ Tüm veritabanını silmek istediğine emin misin?')) {
-            const tx = db.transaction(["data"], "readwrite");
+    function veriTemizle() {
+        if(confirm("Tüm veritabanını silmek istediğine emin misin?")) {
+            let tx = db.transaction(["data"], "readwrite");
             tx.objectStore("data").clear();
-            idIndex.clear();
-            document.getElementById('dbStatus') && (document.getElementById('dbStatus').innerHTML = '⚠️ Veritabanı boş');
-            alert('✅ Veritabanı temizlendi!');
-            showAdminPanel();
+            idMap.clear();
+            toplamVeri = 0;
+            document.getElementById("veriBadge").innerHTML = "📊 VERİ YOK";
+            alert("Veritabanı temizlendi!");
+            adminKapat();
         }
-    };
-    
-    // Ana Sayfa
-    function showMain() {
-        document.getElementById('pageContent').innerHTML = `
-            <input type="text" id="searchId" placeholder="Discord ID Girin (Örn: 123456789012345678)">
-            <button onclick="searchId()">🔎 SORGULA</button>
-            <div id="resultArea"></div>
-            <div id="infoArea" class="alert-info" style="margin-top:1rem; padding:0.5rem; text-align:center; font-size:0.7rem;">
-                💾 Veritabanı: <span id="dbStatus">${idIndex.size > 0 ? '✅ ' + idIndex.size.toLocaleString() + ' ID indeksli' : '⚠️ Yüklenmedi'}</span>
-            </div>
-        `;
-        toggleSidebar();
     }
     
-    function showStats() {
-        document.getElementById('pageContent').innerHTML = `
-            <h3 style="color:#ff2a2a;">📊 İSTATİSTİKLER</h3>
-            <hr>
-            <div class="result-box">
-                <p>📄 İndekslenen ID: ${idIndex.size.toLocaleString()}</p>
-                <p>📅 Tarih: ${new Date().toLocaleString('tr-TR')}</p>
-                <p>🌐 Tarayıcı: ${/Mobile|Android|iPhone/i.test(navigator.userAgent) ? 'Mobil' : 'Bilgisayar'}</p>
-            </div>
-            <button onclick="showMain()" style="margin-top:1rem;">⬅️ GERİ DÖN</button>
-        `;
-        toggleSidebar();
+    function adminKapat() {
+        adminMod = false;
+        document.getElementById("sonuc").innerHTML = "";
     }
     
-    function toggleSidebar() {
-        document.querySelector('.sidebar').classList.toggle('open');
-        document.querySelector('.overlay').classList.toggle('active');
-    }
-    
-    // Başlangıç
-    initDB();
-    showMain();
+    dbBaslat();
     
     document.addEventListener('contextmenu', e => e.preventDefault());
     document.addEventListener('keydown', e => {
