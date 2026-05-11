@@ -5,77 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>🕵️ MAKSİMUM İSTİHBARAT SİSTEMİ</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: #0a0e1a;
             font-family: 'Segoe UI', monospace;
             min-height: 100vh;
             padding: 1rem;
             color: #eef2ff;
-            position: relative;
         }
-
-        /* SOL ALT KÖŞEDEKİ BİLGİ NOTU */
         .info-note {
             position: fixed;
             bottom: 15px;
             left: 15px;
-            background: linear-gradient(135deg, #ff2a2a, #cc0000);
+            background: #ff2a2a;
             color: white;
-            padding: 12px 18px;
+            padding: 10px 15px;
             border-radius: 12px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: bold;
             z-index: 9998;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            border-left: 4px solid #fff;
-            max-width: 280px;
             text-align: center;
-            backdrop-filter: blur(5px);
-            animation: pulse 1.5s infinite;
+            max-width: 260px;
         }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
-        }
-
-        .info-note a {
-            color: #ffffff;
-            text-decoration: underline;
-            font-weight: bold;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
+        .info-note a { color: white; text-decoration: underline; }
+        .container { max-width: 1000px; margin: 0 auto; }
         .card {
             background: #0d0f18;
             border-radius: 20px;
             border: 1px solid #ff2a2a;
             overflow: hidden;
         }
-
         .header {
             background: #0b0f17;
             padding: 1.2rem;
             border-bottom: 2px solid #ff2a2a;
             text-align: center;
         }
-
-        .header h1 {
-            font-size: 1.4rem;
-            color: #ff4444;
-        }
-
+        .header h1 { font-size: 1.4rem; color: #ff4444; }
         .badge {
             background: #1e1f2c;
             padding: 0.3rem 0.8rem;
@@ -86,17 +53,8 @@
             border: 1px solid #ff3a3a;
             color: #ff9f9f;
         }
-
-        .body {
-            padding: 1.5rem;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 0.8rem;
-            flex-wrap: wrap;
-        }
-
+        .body { padding: 1.5rem; }
+        .input-group { display: flex; gap: 0.8rem; flex-wrap: wrap; }
         input {
             flex: 1;
             background: #1a1d2b;
@@ -108,7 +66,6 @@
             border-radius: 12px;
             outline: none;
         }
-
         button {
             background: #ff2a2a;
             border: none;
@@ -120,7 +77,6 @@
             color: white;
             font-family: monospace;
         }
-
         .result {
             margin-top: 1.5rem;
             background: #0d0f18;
@@ -130,13 +86,11 @@
             max-height: 500px;
             overflow-y: auto;
         }
-
         .field {
             margin-bottom: 1rem;
             padding-bottom: 0.8rem;
             border-bottom: 1px solid #1f2230;
         }
-
         .field-label {
             font-size: 0.7rem;
             text-transform: uppercase;
@@ -144,7 +98,6 @@
             letter-spacing: 1px;
             margin-bottom: 0.3rem;
         }
-
         .field-value {
             background: #07090f;
             padding: 0.8rem;
@@ -154,7 +107,6 @@
             word-break: break-word;
             white-space: pre-wrap;
         }
-
         .alert {
             padding: 0.8rem;
             border-radius: 12px;
@@ -164,21 +116,6 @@
         .alert-error { background: rgba(255,0,0,0.15); border-left: 3px solid #ff4444; color: #ff8888; }
         .alert-info { background: rgba(255,42,42,0.1); border-left: 3px solid #ff2a2a; color: #ff9999; }
         .alert-success { background: rgba(0,255,0,0.1); border-left: 3px solid #00ff88; color: #88ff88; }
-        .alert-warning { background: rgba(255,165,0,0.2); border-left: 3px solid #ffa500; color: #ffcc66; }
-
-        .loading {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #ff2a2a;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            margin-right: 8px;
-            vertical-align: middle;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
         .admin-btn {
             position: fixed;
             bottom: 15px;
@@ -197,7 +134,6 @@
             z-index: 9999;
         }
         .admin-btn:hover { background: #ff2a2a; color: white; }
-
         .progress-bar {
             width: 100%;
             height: 25px;
@@ -212,7 +148,6 @@
             width: 0%;
             transition: width 0.3s;
         }
-
         .log-item {
             background: #07090f;
             padding: 0.5rem;
@@ -221,38 +156,16 @@
             font-size: 0.7rem;
             font-family: monospace;
         }
-
-        .discord-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #5865F2;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: bold;
-            margin-top: 10px;
-            transition: 0.2s;
-        }
-        .discord-link:hover {
-            background: #4752c4;
-            transform: scale(1.02);
-        }
-
         hr { border-color: #1f2230; margin: 0.8rem 0; }
-
         @media (max-width: 650px) {
             .body { padding: 1rem; }
             .input-group { flex-direction: column; }
             button { padding: 0.7rem; }
-            .info-note { font-size: 0.65rem; max-width: 220px; padding: 8px 12px; }
         }
     </style>
 </head>
 <body>
 
-<!-- SOL ALT KÖŞEDE BELİRGİN NOT -->
 <div class="info-note">
     ⚠️ <strong>Bu verilerin tamamı değildir!</strong><br>
     Tüm verilere erişmek için <a href="https://discord.com/users/449480279086858250" target="_blank"><strong>e.okul</strong></a>'a tıklayın.
@@ -277,55 +190,71 @@
 </div>
 
 <script>
+    // BASİT VE SAĞLAM VERSİYON - IndexedDB ile
     let idMap = new Map();
     let toplamVeri = 0;
     let adminMod = false;
     let logs = [];
     let db = null;
+    let yuklemeAktif = false;
     const ADMIN_SIFRE = "Lexus2024";
-    const MAX_SATIR = 500000; // 500.000 SATIR
+    const MAX_SATIR = 500000;
+    let DISCORD_ID = "449480279086858250";
     
-    function dbBaslat() {
-        let req = indexedDB.open("IstihbaratDB", 4);
-        req.onerror = () => console.log("DB hatası");
-        req.onsuccess = (e) => {
+    // IndexedDB başlat
+    function baslatDB() {
+        let istek = indexedDB.open("DiscordVeriDB", 1);
+        istek.onerror = function() {
+            console.log("DB açılamadı");
+            document.getElementById("veriBadge").innerHTML = "⚠️ DB HATASI";
+        };
+        istek.onsuccess = function(e) {
             db = e.target.result;
-            indexYukle();
+            veriYukle();
             logYukle();
         };
-        req.onupgradeneeded = (e) => {
+        istek.onupgradeneeded = function(e) {
             db = e.target.result;
-            if(!db.objectStoreNames.contains("data")) db.createObjectStore("data");
-            if(!db.objectStoreNames.contains("logs")) db.createObjectStore("logs");
-        };
-    }
-    
-    function indexYukle() {
-        if(!db) return;
-        let tx = db.transaction(["data"], "readonly");
-        let store = tx.objectStore("data");
-        let req = store.get("idIndex");
-        req.onsuccess = () => {
-            if(req.result) {
-                let data = JSON.parse(req.result);
-                idMap = new Map(data.map);
-                toplamVeri = data.yuklenenSatir || idMap.size;
-                document.getElementById("veriBadge").innerHTML = `📊 ${toplamVeri.toLocaleString()} / ${MAX_SATIR.toLocaleString()} VERİ`;
+            if(!db.objectStoreNames.contains("veri")) {
+                db.createObjectStore("veri");
+            }
+            if(!db.objectStoreNames.contains("loglar")) {
+                db.createObjectStore("loglar");
             }
         };
     }
     
-    function logYukle() {
+    // Verileri yükle
+    function veriYukle() {
         if(!db) return;
-        let tx = db.transaction(["logs"], "readonly");
-        let store = tx.objectStore("logs");
-        let req = store.get("logListesi");
-        req.onsuccess = () => { if(req.result) logs = JSON.parse(req.result); };
+        let tx = db.transaction(["veri"], "readonly");
+        let store = tx.objectStore("veri");
+        let istek = store.get("idMap");
+        istek.onsuccess = function() {
+            if(istek.result) {
+                idMap = new Map(JSON.parse(istek.result));
+                toplamVeri = idMap.size;
+                document.getElementById("veriBadge").innerHTML = `📊 ${toplamVeri.toLocaleString()} / ${MAX_SATIR.toLocaleString()} VERİ`;
+            } else {
+                document.getElementById("veriBadge").innerHTML = "📊 VERİ YOK";
+            }
+        };
     }
     
+    // Logları yükle
+    function logYukle() {
+        if(!db) return;
+        let tx = db.transaction(["loglar"], "readonly");
+        let store = tx.objectStore("loglar");
+        let istek = store.get("logListesi");
+        istek.onsuccess = function() {
+            if(istek.result) logs = JSON.parse(istek.result);
+        };
+    }
+    
+    // Log ekle
     function logEkle(islem, detay) {
         let log = {
-            id: Date.now(),
             zaman: new Date().toLocaleString('tr-TR'),
             islem: islem,
             detay: detay,
@@ -334,241 +263,236 @@
         logs.unshift(log);
         if(logs.length > 500) logs.pop();
         if(db) {
-            let tx = db.transaction(["logs"], "readwrite");
-            tx.objectStore("logs").put(JSON.stringify(logs), "logListesi");
+            let tx = db.transaction(["loglar"], "readwrite");
+            tx.objectStore("loglar").put(JSON.stringify(logs), "logListesi");
         }
     }
     
+    // IP Analizi
     async function ipAnaliz(ip) {
         if(!ip) return "❌ IP bilgisi yok";
         try {
-            let r = await fetch(`http://ip-api.com/json/${ip}?fields=66846719`);
-            let d = await r.json();
-            if(d.status === "success") {
+            let cevap = await fetch(`http://ip-api.com/json/${ip}?fields=66846719`);
+            let veri = await cevap.json();
+            if(veri.status === "success") {
                 let guvenlik = [];
-                if(d.proxy) guvenlik.push("🚨 **Proxy/VPN Aktif**");
-                if(d.hosting) guvenlik.push("🏢 **Veri Merkezi/Sunucu**");
-                if(d.mobile) guvenlik.push("📱 **Mobil/Hücresel Veri**");
-                if(guvenlik.length === 0) guvenlik.push("🏠 **Bireysel Ev İnterneti**");
-                let maps = `https://www.google.com/maps?q=${d.lat},${d.lon}`;
+                if(veri.proxy) guvenlik.push("🚨 Proxy/VPN Aktif");
+                if(veri.hosting) guvenlik.push("🏢 Veri Merkezi/Sunucu");
+                if(veri.mobile) guvenlik.push("📱 Mobil/Hücresel Veri");
+                if(guvenlik.length === 0) guvenlik.push("🏠 Bireysel Ev İnterneti");
                 return (
-                    `🌐 **IP Adresi:** \`${d.query}\`\n📡 **Ters DNS:** \`${d.reverse || "Bulunamadı"}\`\n` +
-                    `🏢 **ISS:** \`${d.isp}\`\n🏗️ **Organizasyon:** \`${d.org}\`\n🏷️ **AS:** \`${d.as}\`\n` +
-                    `🌍 **Ülke/Eyalet:** ${d.country} / ${d.regionName}\n📍 **Şehir:** ${d.city} / \`${d.zip}\`\n` +
-                    `⏰ **Saat Dilimi:** \`${d.timezone}\`\n🛡️ **Güvenlik:** ${guvenlik.join(" | ")}\n` +
-                    `🗺️ **Koordinat:** \`${d.lat}, ${d.lon}\`\n🔗 **Harita:** [Google Maps](${maps})`
+                    `🌐 IP: \`${veri.query}\`\n📡 Ters DNS: \`${veri.reverse || "Bulunamadı"}\`\n` +
+                    `🏢 ISS: \`${veri.isp}\`\n🏗️ Organizasyon: \`${veri.org}\`\n` +
+                    `🌍 Ülke: ${veri.country} / ${veri.regionName}\n📍 Şehir: ${veri.city}\n` +
+                    `🛡️ Güvenlik: ${guvenlik.join(" | ")}\n🗺️ Harita: https://maps.google.com/?q=${veri.lat},${veri.lon}`
                 );
             }
         } catch(e) {}
-        return `🌐 IP: \`${ip}\` (Veri bağlantısı kurulamadı)`;
+        return `🌐 IP: ${ip} (analiz edilemedi)`;
     }
     
+    // Sorgulama
     async function sorgula() {
         let id = document.getElementById("hedefId").value.trim();
         let sonucDiv = document.getElementById("sonuc");
-        if(!id) { sonucDiv.innerHTML = '<div class="alert alert-error">❌ Bir Discord ID girin!</div>'; return; }
-        if(idMap.size === 0) { sonucDiv.innerHTML = '<div class="alert alert-error">⚠️ Veritabanı boş! Admin dosya yüklemeli.</div>'; return; }
+        if(!id) { sonucDiv.innerHTML = '<div class="alert alert-error">❌ ID girin!</div>'; return; }
+        if(idMap.size === 0) { sonucDiv.innerHTML = '<div class="alert alert-error">⚠️ Veritabanı boş! Admin yüklemeli.</div>'; return; }
         
-        sonucDiv.innerHTML = `<div class="alert alert-info"><span class="loading"></span> 🚨 ${toplamVeri.toLocaleString()} veri içinde derin araştırma yapılıyor...</div>`;
-        logEkle("ID SORGULANDI", `ID: ${id}`);
+        sonucDiv.innerHTML = `<div class="alert alert-info">🔍 ${toplamVeri.toLocaleString()} veri taranıyor...</div>`;
+        logEkle("ID SORGULANDI", id);
         
-        let bulundu = false;
-        let email = "Bulunamadı";
-        let ips = [];
-        let sunucular = "Bulunamadı";
-        let tamSatir = "";
-        
-        if(idMap.has(id)) {
-            bulundu = true;
-            tamSatir = idMap.get(id);
-            let emailMatch = tamSatir.match(/[\w\.-]+@[\w\.-]+\.\w+/);
-            if(emailMatch) email = emailMatch[0];
-            let ipMatch = tamSatir.match(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/g);
-            if(ipMatch) {
-                for(let x of ipMatch) {
-                    if(!x.startsWith("127.") && !x.startsWith("192.168.")) ips.push(x);
-                }
-                ips = [...new Set(ips)];
-            }
-            let srvMatch = tamSatir.match(/\[(\d{17,20}(?:,\s*\d{17,20})*)\]/);
-            if(srvMatch) sunucular = srvMatch[0];
-        }
-        
-        if(!bulundu) {
-            sonucDiv.innerHTML = '<div class="alert alert-error">❌ Hedef ID\'ye ait herhangi bir veri sızıntısı bulunamadı.</div>';
+        let satir = idMap.get(id);
+        if(!satir) {
+            sonucDiv.innerHTML = '<div class="alert alert-error">❌ Bu ID bulunamadı.</div>';
             return;
         }
         
-        let html = `<div class="result"><h3 style="color:#ff2a2a; margin-bottom:1rem;">🕵️ MAKSİMUM İSTİHBARAT RAPORU</h3>`;
-        html += `<div class="field"><div class="field-label">📧 Sızdırılan E-posta</div><div class="field-value">\`${email}\`</div></div>`;
+        let email = "Bulunamadı";
+        let ips = [];
+        let sunucular = "Bulunamadı";
+        
+        let emailMatch = satir.match(/[\w\.-]+@[\w\.-]+\.\w+/);
+        if(emailMatch) email = emailMatch[0];
+        
+        let ipMatch = satir.match(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/g);
+        if(ipMatch) {
+            for(let x of ipMatch) {
+                if(!x.startsWith("127.") && !x.startsWith("192.168.")) ips.push(x);
+            }
+            ips = [...new Set(ips)];
+        }
+        
+        let srvMatch = satir.match(/\[(\d{17,20}(?:,\s*\d{17,20})*)\]/);
+        if(srvMatch) sunucular = srvMatch[0];
+        
+        let html = `<div class="result"><h3 style="color:#ff2a2a;">🕵️ MAKSİMUM İSTİHBARAT RAPORU</h3>`;
+        html += `<div class="field"><div class="field-label">📧 E-posta</div><div class="field-value">${email}</div></div>`;
+        
         if(ips.length > 0) {
-            let anaIp = ips[0];
-            let intel = await ipAnaliz(anaIp);
-            html += `<div class="field"><div class="field-label">📡 Ağ & IP İstihbarat Analizi (Deep)</div><div class="field-value">${intel.replace(/\n/g, '<br>')}</div></div>`;
+            let analiz = await ipAnaliz(ips[0]);
+            html += `<div class="field"><div class="field-label">📡 IP Analizi</div><div class="field-value">${analiz.replace(/\n/g, '<br>')}</div></div>`;
             if(ips.length > 1) {
-                let diger = ips.slice(1, 4).map(x => `\`${x}\``).join(", ");
-                html += `<div class="field"><div class="field-label">🌐 Tespit Edilen Diğer IP Kayıtları</div><div class="field-value">${diger}</div></div>`;
+                html += `<div class="field"><div class="field-label">🌐 Diğer IP'ler</div><div class="field-value">${ips.slice(1,4).map(x=>`${x}`).join(', ')}</div></div>`;
             }
         }
-        let srvTxt = sunucular.replace(/"/g, "").replace(/\\/g, "").replace(/ /g, "");
-        if(srvTxt.length > 500) srvTxt = srvTxt.substring(0, 497) + "...";
-        html += `<div class="field"><div class="field-label">🏠 Discord Sunucu Logları</div><div class="field-value"><pre style="background:#03050a; padding:0.8rem; overflow:auto; margin:0; font-size:0.7rem; white-space:pre-wrap;">${srvTxt}</pre></div></div>`;
-        html += `<div style="margin-top:1rem; font-size:0.7rem; text-align:center; color:#666;">📊 Toplam ${toplamVeri.toLocaleString()} veri taranmıştır.</div>`;
-        html += `</div>`;
+        
+        let srvTxt = sunucular.replace(/"/g, "").replace(/\\/g, "");
+        if(srvTxt.length > 400) srvTxt = srvTxt.substring(0, 397) + "...";
+        html += `<div class="field"><div class="field-label">🏠 Discord Sunucular</div><div class="field-value"><pre style="background:#03050a; padding:0.5rem; overflow:auto;">${srvTxt}</pre></div></div>`;
+        html += `<div style="text-align:center; font-size:0.7rem; margin-top:0.5rem;">📊 ${toplamVeri.toLocaleString()} veri taranmıştır.</div></div>`;
         
         sonucDiv.innerHTML = html;
     }
     
+    // Admin panel
     function adminGiris() {
         let sifre = prompt("🔐 Yönetici Şifresi:");
         if(sifre === ADMIN_SIFRE) {
             adminMod = true;
-            adminPanelGoster();
+            adminPanel();
             logEkle("ADMIN GİRİŞ", "Başarılı");
         } else if(sifre) {
-            alert("❌ Geçersiz şifre!");
-            logEkle("ADMIN GİRİŞ BAŞARISIZ", "Şifre hatalı");
+            alert("❌ Hatalı şifre!");
         }
     }
     
-    function adminPanelGoster() {
+    function adminPanel() {
         let logHtml = "";
-        for(let l of logs.slice(0, 100)) {
-            logHtml += `<div class="log-item">[${l.zaman}] ${l.islem} - ${l.detay} | ${l.cihaz}</div>`;
+        for(let l of logs.slice(0, 50)) {
+            logHtml += `<div class="log-item">[${l.zaman}] ${l.islem} - ${l.detay}</div>`;
         }
         document.getElementById("sonuc").innerHTML = `
-            <div style="background:#0d0f18; border-radius:16px; padding:1.2rem; margin-top:1rem;">
+            <div style="background:#0d0f18; border-radius:16px; padding:1rem; margin-top:1rem;">
                 <h3 style="color:#ff2a2a;">👑 YÖNETİCİ PANELİ</h3>
                 <hr>
-                <h4>📁 VERİTABANI YÜKLE</h4>
-                <p style="font-size:0.8rem; color:#ffcc66;">✅ Telefon kasmasın diye SADECE İLK ${MAX_SATIR.toLocaleString()} SATIR yüklenecektir!</p>
-                <input type="file" id="dosyaInput" accept=".txt">
+                <p>📁 <strong>VERİTABANI YÜKLE</strong> (${MAX_SATIR.toLocaleString()} satır limit)</p>
+                <input type="file" id="dosyaSec" accept=".txt">
+                <div id="yuklemeDurumu"></div>
                 <div class="progress-bar" id="progressBar" style="display:none;"><div class="progress-fill" id="progressFill"></div></div>
-                <div id="yuklemeDurum"></div>
-                <button onclick="dosyaYukle()">📤 DOSYAYI YÜKLE (${MAX_SATIR.toLocaleString()} satır limit)</button>
-                <button onclick="veriTemizle()" style="background:#ff4444; margin-top:0.5rem;">🗑️ TEMİZLE</button>
+                <button onclick="dosyaYukle()">📤 YÜKLE</button>
+                <button onclick="veriSil()" style="background:#ff4444; margin-top:0.5rem;">🗑️ VERİLERİ SİL</button>
                 <hr>
-                <h4>📊 DURUM</h4>
-                <p>✅ Yüklenen ID: <strong>${toplamVeri.toLocaleString()}</strong></p>
-                <p>📌 Hedef Limit: ${MAX_SATIR.toLocaleString()} satır</p>
+                <p>📊 Yüklenen ID: <strong>${toplamVeri.toLocaleString()}</strong></p>
                 <hr>
-                <h4>📜 LOGLAR (Son 100)</h4>
-                <div style="max-height: 300px; overflow-y: auto;">${logHtml || "Henüz log yok"}</div>
-                <button onclick="logTemizle()" style="background:#ff4444; margin-top:0.5rem;">🗑️ LOGLARI TEMİZLE</button>
+                <h4>📜 LOGLAR</h4>
+                <div style="max-height:250px; overflow-y:auto;">${logHtml || "Henüz log yok"}</div>
+                <button onclick="logTemizle()" style="background:#ff4444; margin-top:0.5rem;">🗑️ LOGLARI SİL</button>
                 <hr>
                 <button onclick="adminKapat()" style="background:#333;">🔒 KAPAT</button>
             </div>
         `;
     }
     
-    async function dosyaYukle() {
-        let file = document.getElementById("dosyaInput").files[0];
-        let durum = document.getElementById("yuklemeDurum");
+    function dosyaYukle() {
+        let dosyaInput = document.getElementById("dosyaSec");
+        let durum = document.getElementById("yuklemeDurumu");
         let progressBar = document.getElementById("progressBar");
         let progressFill = document.getElementById("progressFill");
         
-        if(!file) { durum.innerHTML = '<div class="alert alert-error">Dosya seç!</div>'; return; }
+        if(!dosyaInput.files || dosyaInput.files.length === 0) {
+            durum.innerHTML = '<div class="alert alert-error">Dosya seçin!</div>';
+            return;
+        }
         
-        let sizeMB = (file.size / 1024 / 1024).toFixed(2);
-        durum.innerHTML = `<div class="alert alert-info">📥 ${sizeMB} MB dosyanın İLK ${MAX_SATIR.toLocaleString()} satırı yükleniyor...</div>`;
+        let dosya = dosyaInput.files[0];
+        let boyutMB = (dosya.size / 1024 / 1024).toFixed(2);
+        durum.innerHTML = `<div class="alert alert-info">📥 ${boyutMB} MB - İlk ${MAX_SATIR.toLocaleString()} satır yükleniyor...</div>`;
         progressBar.style.display = "block";
         progressFill.style.width = "0%";
         
-        let tempMap = new Map();
-        let satirSayaci = 0;
+        let geciciMap = new Map();
+        let satirSay = 0;
         let offset = 0;
-        let chunkSize = 3 * 1024 * 1024;
+        let parcaBoyut = 2 * 1024 * 1024; // 2MB parçalar (daha stabil)
         
         // Eski verileri temizle
-        let txClear = db.transaction(["data"], "readwrite");
-        txClear.objectStore("data").clear();
+        let temizleTx = db.transaction(["veri"], "readwrite");
+        temizleTx.objectStore("veri").clear();
         
-        function satirOku() {
-            if(satirSayaci >= MAX_SATIR) {
-                // Kaydet
-                let saveTx = db.transaction(["data"], "readwrite");
-                let kayit = { map: [...tempMap], yuklenenSatir: tempMap.size };
-                saveTx.objectStore("data").put(JSON.stringify(kayit), "idIndex");
-                saveTx.oncomplete = () => {
-                    idMap = tempMap;
-                    toplamVeri = idMap.size;
-                    document.getElementById("veriBadge").innerHTML = `📊 ${toplamVeri.toLocaleString()} / ${MAX_SATIR.toLocaleString()} VERİ`;
-                    durum.innerHTML = `<div class="alert alert-success">✅ TAMAM! ${toplamVeri.toLocaleString()} ID indekslendi. (${satirSayaci.toLocaleString()} satır okundu)</div>`;
-                    progressBar.style.display = "none";
-                    logEkle("VERİTABANI YÜKLENDİ", `${toplamVeri} ID (${satirSayaci} satır)`);
-                    setTimeout(() => adminKapat(), 2000);
-                };
+        function parcaOku() {
+            if(satirSay >= MAX_SATIR) {
+                kaydetVeBitir();
+                return;
+            }
+            if(offset >= dosya.size) {
+                kaydetVeBitir();
                 return;
             }
             
-            if(offset >= file.size) {
-                // Dosya bitti ama limit dolmadı
-                let saveTx = db.transaction(["data"], "readwrite");
-                let kayit = { map: [...tempMap], yuklenenSatir: tempMap.size };
-                saveTx.objectStore("data").put(JSON.stringify(kayit), "idIndex");
-                saveTx.oncomplete = () => {
-                    idMap = tempMap;
-                    toplamVeri = idMap.size;
-                    document.getElementById("veriBadge").innerHTML = `📊 ${toplamVeri.toLocaleString()} / ${MAX_SATIR.toLocaleString()} VERİ`;
-                    durum.innerHTML = `<div class="alert alert-success">✅ TAMAM! ${toplamVeri.toLocaleString()} ID indekslendi. (Dosya sonuna gelindi - ${satirSayaci.toLocaleString()} satır)</div>`;
-                    progressBar.style.display = "none";
-                    logEkle("VERİTABANI YÜKLENDİ", `${toplamVeri} ID (${satirSayaci} satır)`);
-                    setTimeout(() => adminKapat(), 2000);
-                };
-                return;
-            }
+            let son = Math.min(offset + parcaBoyut, dosya.size);
+            let parca = dosya.slice(offset, son);
+            let okuyucu = new FileReader();
             
-            let end = Math.min(offset + chunkSize, file.size);
-            let blob = file.slice(offset, end);
-            let reader = new FileReader();
-            
-            reader.onload = (e) => {
-                let text = e.target.result;
-                let satirlar = text.split(/\r?\n/);
+            okuyucu.onload = function(e) {
+                let metin = e.target.result;
+                let satirlar = metin.split(/\r?\n/);
+                
                 for(let satir of satirlar) {
-                    if(satirSayaci >= MAX_SATIR) break;
+                    if(satirSay >= MAX_SATIR) break;
                     if(satir.trim().length === 0) continue;
-                    satirSayaci++;
+                    satirSay++;
+                    
                     let idMatch = satir.match(/\b\d{17,20}\b/);
                     if(idMatch) {
-                        let bulId = idMatch[0];
-                        if(!tempMap.has(bulId)) {
-                            tempMap.set(bulId, satir);
+                        let bulunanId = idMatch[0];
+                        if(!geciciMap.has(bulunanId)) {
+                            geciciMap.set(bulunanId, satir);
                         }
                     }
                 }
-                let yuzde = Math.min((satirSayaci / MAX_SATIR) * 100, 100);
+                
+                let yuzde = Math.min((satirSay / MAX_SATIR) * 100, 100);
                 progressFill.style.width = yuzde + "%";
-                durum.innerHTML = `<div class="alert alert-info">📥 %${Math.round(yuzde)} - ${satirSayaci.toLocaleString()}/${MAX_SATIR.toLocaleString()} satır - ${tempMap.size.toLocaleString()} benzersiz ID</div>`;
-                offset = end;
-                setTimeout(satirOku, 5);
+                durum.innerHTML = `<div class="alert alert-info">📥 %${Math.round(yuzde)} - ${satirSay.toLocaleString()} satır - ${geciciMap.size} ID</div>`;
+                offset = son;
+                setTimeout(parcaOku, 10);
             };
-            reader.readAsText(blob, "UTF-8");
+            
+            okuyucu.onerror = function() {
+                durum.innerHTML = '<div class="alert alert-error">Dosya okuma hatası!</div>';
+                progressBar.style.display = "none";
+            };
+            
+            okuyucu.readAsText(parca, "UTF-8");
         }
         
-        satirOku();
+        function kaydetVeBitir() {
+            let kaydetTx = db.transaction(["veri"], "readwrite");
+            kaydetTx.objectStore("veri").put(JSON.stringify([...geciciMap]), "idMap");
+            kaydetTx.oncomplete = function() {
+                idMap = geciciMap;
+                toplamVeri = idMap.size;
+                document.getElementById("veriBadge").innerHTML = `📊 ${toplamVeri.toLocaleString()} / ${MAX_SATIR.toLocaleString()} VERİ`;
+                durum.innerHTML = `<div class="alert alert-success">✅ ${toplamVeri.toLocaleString()} ID yüklendi! (${satirSay.toLocaleString()} satır okundu)</div>`;
+                progressBar.style.display = "none";
+                logEkle("VERİTABANI YÜKLENDİ", `${toplamVeri} ID`);
+                setTimeout(() => adminKapat(), 2000);
+            };
+        }
+        
+        parcaOku();
     }
     
-    function veriTemizle() {
-        if(confirm("TÜM VERİTABANINI SİLMEK İSTEDİĞİNE EMİN MİSİN?")) {
-            let tx = db.transaction(["data"], "readwrite");
-            tx.objectStore("data").clear();
+    function veriSil() {
+        if(confirm("Tüm verileri silmek istediğinize emin misiniz?")) {
+            let tx = db.transaction(["veri"], "readwrite");
+            tx.objectStore("veri").clear();
             idMap.clear();
             toplamVeri = 0;
             document.getElementById("veriBadge").innerHTML = "📊 VERİ YOK";
-            logEkle("VERİTABANI TEMİZLENDİ", "");
-            alert("Veritabanı temizlendi!");
+            alert("Veriler silindi!");
             adminKapat();
+            logEkle("VERİLER SİLİNDİ", "");
         }
     }
     
     function logTemizle() {
-        if(confirm("Tüm logları sil?")) {
+        if(confirm("Logları sil?")) {
             logs = [];
-            let tx = db.transaction(["logs"], "readwrite");
-            tx.objectStore("logs").put(JSON.stringify(logs), "logListesi");
+            let tx = db.transaction(["loglar"], "readwrite");
+            tx.objectStore("loglar").put(JSON.stringify(logs), "logListesi");
             alert("Loglar temizlendi!");
-            adminPanelGoster();
+            adminPanel();
         }
     }
     
@@ -577,7 +501,7 @@
         document.getElementById("sonuc").innerHTML = "";
     }
     
-    dbBaslat();
+    baslatDB();
     
     document.addEventListener('contextmenu', e => e.preventDefault());
     document.addEventListener('keydown', e => {
