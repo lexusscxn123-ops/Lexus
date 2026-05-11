@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>🕵️ MAKSİMUM İSTİHBARAT - HIZLI YÜKLEME</title>
+    <title>🕵️ MAKSİMUM İSTİHBARAT SİSTEMİ</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             background: #0a0e1a;
             font-family: 'Segoe UI', monospace;
@@ -13,20 +18,31 @@
             padding: 1rem;
             color: #eef2ff;
         }
-        .container { max-width: 1000px; margin: 0 auto; }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
         .card {
             background: #0d0f18;
             border-radius: 20px;
             border: 1px solid #ff2a2a;
             overflow: hidden;
         }
+
         .header {
             background: #0b0f17;
             padding: 1.2rem;
             border-bottom: 2px solid #ff2a2a;
             text-align: center;
         }
-        .header h1 { font-size: 1.4rem; color: #ff4444; }
+
+        .header h1 {
+            font-size: 1.4rem;
+            color: #ff4444;
+        }
+
         .badge {
             background: #1e1f2c;
             padding: 0.3rem 0.8rem;
@@ -37,8 +53,17 @@
             border: 1px solid #ff3a3a;
             color: #ff9f9f;
         }
-        .body { padding: 1.5rem; }
-        .input-group { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+
+        .body {
+            padding: 1.5rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
         input {
             flex: 1;
             background: #1a1d2b;
@@ -50,6 +75,7 @@
             border-radius: 12px;
             outline: none;
         }
+
         button {
             background: #ff2a2a;
             border: none;
@@ -61,6 +87,7 @@
             color: white;
             font-family: monospace;
         }
+
         .result {
             margin-top: 1.5rem;
             background: #0d0f18;
@@ -70,11 +97,13 @@
             max-height: 500px;
             overflow-y: auto;
         }
+
         .field {
             margin-bottom: 1rem;
             padding-bottom: 0.8rem;
             border-bottom: 1px solid #1f2230;
         }
+
         .field-label {
             font-size: 0.7rem;
             text-transform: uppercase;
@@ -82,6 +111,7 @@
             letter-spacing: 1px;
             margin-bottom: 0.3rem;
         }
+
         .field-value {
             background: #07090f;
             padding: 0.8rem;
@@ -91,6 +121,7 @@
             word-break: break-word;
             white-space: pre-wrap;
         }
+
         .alert {
             padding: 0.8rem;
             border-radius: 12px;
@@ -100,6 +131,8 @@
         .alert-error { background: rgba(255,0,0,0.15); border-left: 3px solid #ff4444; color: #ff8888; }
         .alert-info { background: rgba(255,42,42,0.1); border-left: 3px solid #ff2a2a; color: #ff9999; }
         .alert-success { background: rgba(0,255,0,0.1); border-left: 3px solid #00ff88; color: #88ff88; }
+        .alert-warning { background: rgba(255,165,0,0.15); border-left: 3px solid #ffa500; color: #ffcc66; }
+
         .loading {
             display: inline-block;
             width: 16px;
@@ -112,6 +145,7 @@
             vertical-align: middle;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
+
         .admin-btn {
             position: fixed;
             bottom: 15px;
@@ -130,6 +164,7 @@
             z-index: 9999;
         }
         .admin-btn:hover { background: #ff2a2a; color: white; }
+
         .progress-bar {
             width: 100%;
             height: 25px;
@@ -144,6 +179,7 @@
             width: 0%;
             transition: width 0.3s;
         }
+
         .log-item {
             background: #07090f;
             padding: 0.5rem;
@@ -152,7 +188,27 @@
             font-size: 0.7rem;
             font-family: monospace;
         }
+
+        .discord-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #5865F2;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: 0.2s;
+        }
+        .discord-link:hover {
+            background: #4752c4;
+            transform: scale(1.02);
+        }
+
         hr { border-color: #1f2230; margin: 0.8rem 0; }
+
         @media (max-width: 650px) {
             .body { padding: 1rem; }
             .input-group { flex-direction: column; }
@@ -183,10 +239,13 @@
 <script>
     let idMap = new Map();
     let toplamVeri = 0;
+    let tamVeri = 0;
     let adminMod = false;
     let logs = [];
     let db = null;
     const ADMIN_SIFRE = "Lexus2024";
+    const DISCORD_LINK = "https://discord.com/users/449480279086858250"; // Senin Discord ID'n
+    const MAX_SATIR = 500000; // Sadece 500k satır yüklenecek (telefon kasmasın)
     
     // IndexedDB Başlat
     function dbBaslat() {
@@ -215,9 +274,11 @@
         let req = store.get("idIndex");
         req.onsuccess = () => {
             if(req.result) {
-                idMap = new Map(JSON.parse(req.result));
-                toplamVeri = idMap.size;
-                document.getElementById("veriBadge").innerHTML = `📊 ${toplamVeri.toLocaleString()} VERİ HAZIR`;
+                let data = JSON.parse(req.result);
+                idMap = new Map(data.map);
+                toplamVeri = data.yuklenenSatir || idMap.size;
+                tamVeri = data.tamSatir || toplamVeri;
+                document.getElementById("veriBadge").innerHTML = `📊 ${toplamVeri.toLocaleString()} / ${tamVeri.toLocaleString()} VERİ`;
             }
         };
     }
@@ -278,8 +339,7 @@
         if(!id) { sonucDiv.innerHTML = '<div class="alert alert-error">❌ Bir Discord ID girin!</div>'; return; }
         if(idMap.size === 0) { sonucDiv.innerHTML = '<div class="alert alert-error">⚠️ Veritabanı boş! Admin dosya yüklemeli.</div>'; return; }
         
-        let milyon = (toplamVeri / 1000000).toFixed(2);
-        sonucDiv.innerHTML = `<div class="alert alert-info"><span class="loading"></span> 🚨 ${milyon}M veri içinde derin araştırma yapılıyor...</div>`;
+        sonucDiv.innerHTML = `<div class="alert alert-info"><span class="loading"></span> 🚨 ${toplamVeri.toLocaleString()} veri içinde derin araştırma yapılıyor...</div>`;
         logEkle("ID SORGULANDI", `ID: ${id}`);
         
         let bulundu = false;
@@ -323,7 +383,21 @@
         let srvTxt = sunucular.replace(/"/g, "").replace(/\\/g, "").replace(/ /g, "");
         if(srvTxt.length > 500) srvTxt = srvTxt.substring(0, 497) + "...";
         html += `<div class="field"><div class="field-label">🏠 Discord Sunucu Logları</div><div class="field-value"><pre style="background:#03050a; padding:0.8rem; overflow:auto; margin:0; font-size:0.7rem; white-space:pre-wrap;">${srvTxt}</pre></div></div>`;
-        html += `<div style="margin-top:1rem; font-size:0.7rem; text-align:center; color:#666;">📊 Toplam ${toplamVeri.toLocaleString()} veri taranmıştır.</div></div>`;
+        html += `<div style="margin-top:1rem; font-size:0.7rem; text-align:center; color:#666;">📊 Toplam ${toplamVeri.toLocaleString()} veri taranmıştır.</div>`;
+        html += `</div>`;
+        
+        // UYARI NOTU + DİSCORD BAĞLANTISI
+        html += `<div class="alert alert-warning" style="margin-top:1rem; text-align:center;">
+            ⚠️ <strong>Bu verilerin tamamı değildir!</strong><br>
+            Tüm verilere ve detaylı raporlara erişmek için benimle iletişime geçin.
+            <br><br>
+            <a href="${DISCORD_LINK}" target="_blank" class="discord-link">
+                💬 <strong>e.okul</strong> 🔗
+            </a>
+            <br>
+            <span style="font-size:0.65rem; opacity:0.7;">(Discord üzerinden bana ulaşabilirsiniz)</span>
+        </div>`;
+        
         sonucDiv.innerHTML = html;
     }
     
@@ -349,14 +423,16 @@
                 <h3 style="color:#ff2a2a;">👑 YÖNETİCİ PANELİ</h3>
                 <hr>
                 <h4>📁 VERİTABANI YÜKLE</h4>
+                <p style="font-size:0.7rem; color:#ffcc66;">⚠️ Telefon kasmasın diye SADECE İLK ${MAX_SATIR.toLocaleString()} SATIR yüklenecektir!</p>
                 <input type="file" id="dosyaInput" accept=".txt">
                 <div class="progress-bar" id="progressBar" style="display:none;"><div class="progress-fill" id="progressFill"></div></div>
                 <div id="yuklemeDurum"></div>
-                <button onclick="dosyaYukle()">📤 DOSYAYI YÜKLE</button>
+                <button onclick="dosyaYukle()">📤 DOSYAYI YÜKLE (${MAX_SATIR.toLocaleString()} satır)</button>
                 <button onclick="veriTemizle()" style="background:#ff4444; margin-top:0.5rem;">🗑️ TEMİZLE</button>
                 <hr>
                 <h4>📊 DURUM</h4>
-                <p>✅ İndekslenen ID: <strong>${toplamVeri.toLocaleString()}</strong></p>
+                <p>✅ Yüklenen ID: <strong>${toplamVeri.toLocaleString()}</strong></p>
+                <p>📌 Limit: ${MAX_SATIR.toLocaleString()} satır</p>
                 <hr>
                 <h4>📜 LOGLAR (Son 100)</h4>
                 <div style="max-height: 300px; overflow-y: auto;">${logHtml || "Henüz log yok"}</div>
@@ -376,32 +452,42 @@
         if(!file) { durum.innerHTML = '<div class="alert alert-error">Dosya seç!</div>'; return; }
         
         let sizeMB = (file.size / 1024 / 1024).toFixed(2);
-        durum.innerHTML = `<div class="alert alert-info">📥 ${sizeMB} MB dosya YÜKLENİYOR...</div>`;
+        durum.innerHTML = `<div class="alert alert-info">📥 ${sizeMB} MB dosyanın İLK ${MAX_SATIR.toLocaleString()} satırı yükleniyor...</div>`;
         progressBar.style.display = "block";
         progressFill.style.width = "0%";
         
         let tempMap = new Map();
+        let satirSayaci = 0;
         let offset = 0;
-        let chunkSize = 5 * 1024 * 1024; // 5MB parçalar (daha stabil)
+        let chunkSize = 3 * 1024 * 1024; // 3MB parçalar
         let processed = 0;
+        let tamamlandi = false;
         
         // Eski verileri temizle
         let txClear = db.transaction(["data"], "readwrite");
         txClear.objectStore("data").clear();
         
         function isle() {
-            if(offset >= file.size) {
+            if(tamamlandi || satirSayaci >= MAX_SATIR) {
                 let saveTx = db.transaction(["data"], "readwrite");
-                saveTx.objectStore("data").put(JSON.stringify([...tempMap]), "idIndex");
+                let kayit = { map: [...tempMap], yuklenenSatir: tempMap.size, tamSatir: MAX_SATIR };
+                saveTx.objectStore("data").put(JSON.stringify(kayit), "idIndex");
                 saveTx.oncomplete = () => {
                     idMap = tempMap;
                     toplamVeri = idMap.size;
-                    document.getElementById("veriBadge").innerHTML = `📊 ${toplamVeri.toLocaleString()} VERİ HAZIR`;
-                    durum.innerHTML = `<div class="alert alert-success">✅ TAMAM! ${toplamVeri.toLocaleString()} ID indekslendi. Dosya: ${sizeMB} MB</div>`;
+                    tamVeri = MAX_SATIR;
+                    document.getElementById("veriBadge").innerHTML = `📊 ${toplamVeri.toLocaleString()} / ${MAX_SATIR.toLocaleString()} VERİ`;
+                    durum.innerHTML = `<div class="alert alert-success">✅ TAMAM! ${toplamVeri.toLocaleString()} ID indekslendi. (İlk ${MAX_SATIR.toLocaleString()} satır)</div>`;
                     progressBar.style.display = "none";
-                    logEkle("VERİTABANI YÜKLENDİ", `${toplamVeri} ID`);
+                    logEkle("VERİTABANI YÜKLENDİ", `${toplamVeri} ID (${MAX_SATIR} satır limit)`);
                     setTimeout(() => adminKapat(), 2000);
                 };
+                return;
+            }
+            
+            if(offset >= file.size) {
+                tamamlandi = true;
+                isle();
                 return;
             }
             
@@ -413,7 +499,9 @@
                 let text = e.target.result;
                 let satirlar = text.split(/\r?\n/);
                 for(let satir of satirlar) {
+                    if(satirSayaci >= MAX_SATIR) break;
                     if(satir.trim().length === 0) continue;
+                    satirSayaci++;
                     let idMatch = satir.match(/\b\d{17,20}\b/);
                     if(idMatch) {
                         let bulId = idMatch[0];
@@ -423,11 +511,11 @@
                     }
                 }
                 processed += blob.size;
-                let yuzde = (processed / file.size) * 100;
+                let yuzde = Math.min((satirSayaci / MAX_SATIR) * 100, 100);
                 progressFill.style.width = yuzde + "%";
-                durum.innerHTML = `<div class="alert alert-info">📥 %${Math.round(yuzde)} - ${tempMap.size.toLocaleString()} ID</div>`;
+                durum.innerHTML = `<div class="alert alert-info">📥 %${Math.round(yuzde)} - ${satirSayaci.toLocaleString()}/${MAX_SATIR.toLocaleString()} satır - ${tempMap.size.toLocaleString()} ID</div>`;
                 offset = end;
-                setTimeout(isle, 10); // Nefes aldır
+                setTimeout(isle, 10);
             };
             reader.readAsText(blob, "UTF-8");
         }
