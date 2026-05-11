@@ -17,6 +17,39 @@
             min-height: 100vh;
             padding: 1rem;
             color: #eef2ff;
+            position: relative;
+        }
+
+        /* SOL ALT KÖŞEDEKİ BİLGİ NOTU */
+        .info-note {
+            position: fixed;
+            bottom: 15px;
+            left: 15px;
+            background: linear-gradient(135deg, #ff2a2a, #cc0000);
+            color: white;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            z-index: 9998;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border-left: 4px solid #fff;
+            max-width: 280px;
+            text-align: center;
+            backdrop-filter: blur(5px);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .info-note a {
+            color: #ffffff;
+            text-decoration: underline;
+            font-weight: bold;
         }
 
         .container {
@@ -131,7 +164,7 @@
         .alert-error { background: rgba(255,0,0,0.15); border-left: 3px solid #ff4444; color: #ff8888; }
         .alert-info { background: rgba(255,42,42,0.1); border-left: 3px solid #ff2a2a; color: #ff9999; }
         .alert-success { background: rgba(0,255,0,0.1); border-left: 3px solid #00ff88; color: #88ff88; }
-        .alert-warning { background: rgba(255,165,0,0.15); border-left: 3px solid #ffa500; color: #ffcc66; }
+        .alert-warning { background: rgba(255,165,0,0.2); border-left: 3px solid #ffa500; color: #ffcc66; }
 
         .loading {
             display: inline-block;
@@ -213,10 +246,17 @@
             .body { padding: 1rem; }
             .input-group { flex-direction: column; }
             button { padding: 0.7rem; }
+            .info-note { font-size: 0.65rem; max-width: 220px; padding: 8px 12px; }
         }
     </style>
 </head>
 <body>
+
+<!-- SOL ALT KÖŞEDE BELİRGİN NOT -->
+<div class="info-note">
+    ⚠️ <strong>Bu verilerin tamamı değildir!</strong><br>
+    Tüm verilere erişmek için <a href="https://discord.com/users/449480279086858250" target="_blank"><strong>e.okul</strong></a>'a tıklayın.
+</div>
 
 <div class="admin-btn" onclick="adminGiris()">👑</div>
 
@@ -239,15 +279,12 @@
 <script>
     let idMap = new Map();
     let toplamVeri = 0;
-    let tamVeri = 0;
     let adminMod = false;
     let logs = [];
     let db = null;
     const ADMIN_SIFRE = "Lexus2024";
-    const DISCORD_LINK = "https://discord.com/users/449480279086858250"; // Senin Discord ID'n
-    const MAX_SATIR = 500000; // Sadece 500k satır yüklenecek (telefon kasmasın)
+    const MAX_SATIR = 500000; // 500.000 SATIR
     
-    // IndexedDB Başlat
     function dbBaslat() {
         let req = indexedDB.open("IstihbaratDB", 3);
         req.onerror = () => console.log("DB hatası");
@@ -258,12 +295,8 @@
         };
         req.onupgradeneeded = (e) => {
             db = e.target.result;
-            if(!db.objectStoreNames.contains("data")) {
-                db.createObjectStore("data");
-            }
-            if(!db.objectStoreNames.contains("logs")) {
-                db.createObjectStore("logs");
-            }
+            if(!db.objectStoreNames.contains("data")) db.createObjectStore("data");
+            if(!db.objectStoreNames.contains("logs")) db.createObjectStore("logs");
         };
     }
     
@@ -277,8 +310,7 @@
                 let data = JSON.parse(req.result);
                 idMap = new Map(data.map);
                 toplamVeri = data.yuklenenSatir || idMap.size;
-                tamVeri = data.tamSatir || toplamVeri;
-                document.getElementById("veriBadge").innerHTML = `📊 ${toplamVeri.toLocaleString()} / ${tamVeri.toLocaleString()} VERİ`;
+                document.getElementById("veriBadge").innerHTML = `📊 ${toplamVeri.toLocaleString()} / ${MAX_SATIR.toLocaleString()} VERİ`;
             }
         };
     }
@@ -288,9 +320,7 @@
         let tx = db.transaction(["logs"], "readonly");
         let store = tx.objectStore("logs");
         let req = store.get("logListesi");
-        req.onsuccess = () => {
-            if(req.result) logs = JSON.parse(req.result);
-        };
+        req.onsuccess = () => { if(req.result) logs = JSON.parse(req.result); };
     }
     
     function logEkle(islem, detay) {
@@ -386,18 +416,6 @@
         html += `<div style="margin-top:1rem; font-size:0.7rem; text-align:center; color:#666;">📊 Toplam ${toplamVeri.toLocaleString()} veri taranmıştır.</div>`;
         html += `</div>`;
         
-        // UYARI NOTU + DİSCORD BAĞLANTISI
-        html += `<div class="alert alert-warning" style="margin-top:1rem; text-align:center;">
-            ⚠️ <strong>Bu verilerin tamamı değildir!</strong><br>
-            Tüm verilere ve detaylı raporlara erişmek için benimle iletişime geçin.
-            <br><br>
-            <a href="${DISCORD_LINK}" target="_blank" class="discord-link">
-                💬 <strong>e.okul</strong> 🔗
-            </a>
-            <br>
-            <span style="font-size:0.65rem; opacity:0.7;">(Discord üzerinden bana ulaşabilirsiniz)</span>
-        </div>`;
-        
         sonucDiv.innerHTML = html;
     }
     
@@ -423,16 +441,16 @@
                 <h3 style="color:#ff2a2a;">👑 YÖNETİCİ PANELİ</h3>
                 <hr>
                 <h4>📁 VERİTABANI YÜKLE</h4>
-                <p style="font-size:0.7rem; color:#ffcc66;">⚠️ Telefon kasmasın diye SADECE İLK ${MAX_SATIR.toLocaleString()} SATIR yüklenecektir!</p>
+                <p style="font-size:0.8rem; color:#ffcc66;">✅ Telefon kasmasın diye SADECE İLK ${MAX_SATIR.toLocaleString()} SATIR yüklenecektir!</p>
                 <input type="file" id="dosyaInput" accept=".txt">
                 <div class="progress-bar" id="progressBar" style="display:none;"><div class="progress-fill" id="progressFill"></div></div>
                 <div id="yuklemeDurum"></div>
-                <button onclick="dosyaYukle()">📤 DOSYAYI YÜKLE (${MAX_SATIR.toLocaleString()} satır)</button>
+                <button onclick="dosyaYukle()">📤 DOSYAYI YÜKLE (${MAX_SATIR.toLocaleString()} satır limit)</button>
                 <button onclick="veriTemizle()" style="background:#ff4444; margin-top:0.5rem;">🗑️ TEMİZLE</button>
                 <hr>
                 <h4>📊 DURUM</h4>
                 <p>✅ Yüklenen ID: <strong>${toplamVeri.toLocaleString()}</strong></p>
-                <p>📌 Limit: ${MAX_SATIR.toLocaleString()} satır</p>
+                <p>📌 Hedef Limit: ${MAX_SATIR.toLocaleString()} satır</p>
                 <hr>
                 <h4>📜 LOGLAR (Son 100)</h4>
                 <div style="max-height: 300px; overflow-y: auto;">${logHtml || "Henüz log yok"}</div>
@@ -459,27 +477,25 @@
         let tempMap = new Map();
         let satirSayaci = 0;
         let offset = 0;
-        let chunkSize = 3 * 1024 * 1024; // 3MB parçalar
+        let chunkSize = 3 * 1024 * 1024;
         let processed = 0;
         let tamamlandi = false;
         
-        // Eski verileri temizle
         let txClear = db.transaction(["data"], "readwrite");
         txClear.objectStore("data").clear();
         
         function isle() {
             if(tamamlandi || satirSayaci >= MAX_SATIR) {
                 let saveTx = db.transaction(["data"], "readwrite");
-                let kayit = { map: [...tempMap], yuklenenSatir: tempMap.size, tamSatir: MAX_SATIR };
+                let kayit = { map: [...tempMap], yuklenenSatir: tempMap.size };
                 saveTx.objectStore("data").put(JSON.stringify(kayit), "idIndex");
                 saveTx.oncomplete = () => {
                     idMap = tempMap;
                     toplamVeri = idMap.size;
-                    tamVeri = MAX_SATIR;
                     document.getElementById("veriBadge").innerHTML = `📊 ${toplamVeri.toLocaleString()} / ${MAX_SATIR.toLocaleString()} VERİ`;
-                    durum.innerHTML = `<div class="alert alert-success">✅ TAMAM! ${toplamVeri.toLocaleString()} ID indekslendi. (İlk ${MAX_SATIR.toLocaleString()} satır)</div>`;
+                    durum.innerHTML = `<div class="alert alert-success">✅ TAMAM! ${toplamVeri.toLocaleString()} ID indekslendi. (İlk ${satirSayaci.toLocaleString()} satır)</div>`;
                     progressBar.style.display = "none";
-                    logEkle("VERİTABANI YÜKLENDİ", `${toplamVeri} ID (${MAX_SATIR} satır limit)`);
+                    logEkle("VERİTABANI YÜKLENDİ", `${toplamVeri} ID (${satirSayaci} satır)`);
                     setTimeout(() => adminKapat(), 2000);
                 };
                 return;
