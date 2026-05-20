@@ -1,1 +1,233 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ana Sorgu Paneli</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --panel-bg: #1e293b;
+            --modal-bg: #334155;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary-color: #22c55e;
+            --danger-color: #ef4444;
+            --button-bg: #475569;
+            --button-hover: #64748b;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .panel { background-color: var(--panel-bg); width: 100%; max-width: 600px; border-radius: 12px; border-left: 8px solid var(--primary-color); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); padding: 25px; margin-bottom: 20px; }
+        .panel.inactive { border-left-color: var(--danger-color); }
+        .panel-header { margin-bottom: 20px; border-bottom: 1px solid #475569; padding-bottom: 15px; }
+        .panel-title { font-size: 1.5rem; display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .status-badge { display: inline-flex; align-items: center; gap: 6px; font-weight: bold; font-size: 0.9rem; background-color: rgba(34, 197, 94, 0.2); color: var(--primary-color); padding: 4px 10px; border-radius: 20px; margin-bottom: 8px; }
+        .panel.inactive .status-badge { background-color: rgba(239, 68, 68, 0.2); color: var(--danger-color); }
+        .grid-buttons { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 20px; }
+        .btn { background-color: var(--button-bg); color: var(--text-color); border: none; padding: 12px; border-radius: 6px; font-size: 0.95rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s; }
+        .btn:hover { background-color: var(--button-hover); }
+        .btn-admin { grid-column: span 2; background-color: #3b82f6; }
+        .result-panel { background-color: var(--panel-bg); width: 100%; max-width: 600px; border-radius: 12px; padding: 25px; display: none; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); margin-top: 20px; }
+        .result-box { background: #0f172a; padding: 15px; border-radius: 6px; max-height: 500px; overflow-y: auto; font-family: monospace; font-size: 0.9rem; color: #34d399; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 100; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal { background-color: var(--modal-bg); width: 100%; max-width: 450px; border-radius: 10px; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 0.85rem; margin-bottom: 5px; color: var(--text-muted); }
+        .form-group input { width: 100%; padding: 10px; background-color: var(--panel-bg); border: 1px solid var(--button-bg); border-radius: 5px; color: var(--text-color); }
+        .modal-buttons { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+    </style>
+</head>
+<body>
 
+    <div class="panel" id="mainPanel">
+        <div class="panel-header">
+            <h1 class="panel-title"><i class="fa-solid fa-magnifying-glass"></i> ANA SORGU PANELİ</h1>
+            <div class="status-badge" id="statusBadge"><span id="statusText">🟢 Bot Durumu: AKTİF</span></div>
+            <div><i class="fa-solid fa-stopwatch"></i> Çalışma Süresi: <span id="uptime">00:00:00</span></div>
+        </div>
+        <div class="grid-buttons">
+            <button class="btn" onclick="openModal('adSoyadModal')">Ad Soyad Sorgu</button>
+            <button class="btn" onclick="openModal('tcModal')">TC Sorgu</button>
+            <button class="btn" onclick="openModal('sulaleModal')">Sülale Sorgu</button>
+            <button class="btn" onclick="openModal('ipModal')">IP Sorgu</button>
+            <button class="btn" onclick="openModal('gsmTcModal')">GSM ➔ TC</button>
+            <button class="btn" onclick="openModal('tcGsmModal')">TC ➔ GSM</button>
+            <button class="btn btn-admin" onclick="toggleStatus()">Durumu Değiştir (!aktif / !kapali)</button>
+        </div>
+    </div>
+
+    <div class="result-panel" id="resultPanel">
+        <h3>Sorgu Sonuçları</h3><br>
+        <div class="result-box" id="resultBox"></div>
+    </div>
+
+    <div class="modal-overlay" id="adSoyadModal">
+        <div class="modal">
+            <h3>Ad Soyad Sorgu</h3><br>
+            <div class="form-group"><label>Ad *</label><input type="text" id="ad_input"></div>
+            <div class="form-group"><label>Soyad *</label><input type="text" id="soyad_input"></div>
+            <div class="form-group"><label>İl (Opsiyonel)</label><input type="text" id="il_input"></div>
+            <div class="form-group"><label>İlçe (Opsiyonel)</label><input type="text" id="ilce_input"></div>
+            <div class="modal-buttons">
+                <button class="btn" onclick="closeModal('adSoyadModal')">İptal</button>
+                <button class="btn" style="background:var(--primary-color)" onclick="apiAdSoyad()">Sorgula</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="tcModal">
+        <div class="modal">
+            <h3>TC Sorgu</h3><br>
+            <div class="form-group"><label>TC Kimlik No</label><input type="text" id="tc_input" maxlength="11"></div>
+            <div class="modal-buttons">
+                <button class="btn" onclick="closeModal('tcModal')">İptal</button>
+                <button class="btn" style="background:var(--primary-color)" onclick="apiTc()">Sorgula</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="sulaleModal">
+        <div class="modal">
+            <h3>Sülale Sorgu</h3><br>
+            <div class="form-group"><label>TC Kimlik No</label><input type="text" id="sulale_input" maxlength="11"></div>
+            <div class="modal-buttons">
+                <button class="btn" onclick="closeModal('sulaleModal')">İptal</button>
+                <button class="btn" style="background:var(--primary-color)" onclick="apiSulale()">Sorgula</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="ipModal">
+        <div class="modal">
+            <h3>IP Sorgu</h3><br>
+            <div class="form-group"><label>IP Adresi (Boş bırakılırsa kendi IP'niz)</label><input type="text" id="ip_input"></div>
+            <div class="modal-buttons">
+                <button class="btn" onclick="closeModal('ipModal')">İptal</button>
+                <button class="btn" style="background:var(--primary-color)" onclick="apiIp()">Sorgula</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="gsmTcModal">
+        <div class="modal">
+            <h3>GSM ➔ TC Sorgu</h3><br>
+            <div class="form-group"><label>GSM Numarası (5xxxxxxxxx)</label><input type="text" id="gsm_input" maxlength="10"></div>
+            <div class="modal-buttons">
+                <button class="btn" onclick="closeModal('gsmTcModal')">İptal</button>
+                <button class="btn" style="background:var(--primary-color)" onclick="apiGsmToTc()">Sorgula</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="tcGsmModal">
+        <div class="modal">
+            <h3>TC ➔ GSM Sorgu</h3><br>
+            <div class="form-group"><label>TC Kimlik No</label><input type="text" id="tcgsm_input" maxlength="11"></div>
+            <div class="modal-buttons">
+                <button class="btn" onclick="closeModal('tcGsmModal')">İptal</button>
+                <button class="btn" style="background:var(--primary-color)" onclick="apiTcToGsm()">Sorgula</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let botStatus = "active";
+        let startTime = Date.now();
+
+        function openModal(id) {
+            if (botStatus === "inactive") { alert("❌ Bot şu anda KAPALI durumda."); return; }
+            document.getElementById(id).classList.add('active');
+        }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        // Python algoritmasıyla birebir TC Doğrulama (validate_tc)
+        function validateTc(tc) {
+            if (!/^\d{11}$/.test(tc)) return false;
+            let digits = tc.split('').map(Number);
+            let totalOdd = digits[0] + digits[2] + digits[4] + digits[6] + digits[8];
+            let totalEven = digits[1] + digits[3] + digits[5] + digits[7];
+            let check1 = (totalOdd * 7 - totalEven) % 10;
+            if (check1 !== digits[9]) return false;
+            let totalFirst10 = digits.slice(0, 10).reduce((a, b) => a + b, 0);
+            return (totalFirst10 % 10) === digits[10];
+        }
+
+        // Python algoritmasıyla birebir GSM Doğrulama (validate_gsm)
+        function validateGsm(gsm) {
+            let clean = gsm.replace(/\D/g, '');
+            return clean.length === 10 && clean.startsWith('5');
+        }
+
+        function renderResult(data) {
+            document.getElementById('resultPanel').style.display = 'block';
+            document.getElementById('resultBox').innerHTML = "<pre>" + JSON.stringify(data, null, 4) + "</pre>";
+            document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+        }
+
+        // API BAĞLANTILARI
+        async function apiAdSoyad() {
+            let ad = document.getElementById('ad_input').value.trim().toUpperCase();
+            let soyad = document.getElementById('soyad_input').value.trim().toUpperCase();
+            let il = document.getElementById('il_input').value.trim().toUpperCase();
+            let ilce = document.getElementById('ilce_input').value.trim().toUpperCase();
+            let url = `https://arastir.sbs/api/adsoyad.php?adi=${ad}&soyadi=${soyad}`;
+            if(il) url += `&il=${il}`;
+            if(ilce) url += `&ilce=${ilce}`;
+            try { let r = await fetch(url); renderResult(await r.json()); } catch { alert("İstek hatası!"); }
+        }
+
+        async function apiTc() {
+            let tc = document.getElementById('tc_input').value.trim();
+            if(!validateTc(tc)) { alert("❌ Geçersiz TC Kimlik Numarası!"); return; }
+            try { let r = await fetch(`https://arastir.sbs/api/tc.php?tc=${tc}`); renderResult(await r.json()); } catch { alert("İstek hatası!"); }
+        }
+
+        async function apiSulale() {
+            let tc = document.getElementById('sulale_input').value.trim();
+            if(!validateTc(tc)) { alert("❌ Geçersiz TC Kimlik Numarası!"); return; }
+            try { let r = await fetch(`https://arastir.sbs/api/sulale.php?tc=${tc}`); renderResult(await r.json()); } catch { alert("İstek hatası!"); }
+        }
+
+        async function apiIp() {
+            let ip = document.getElementById('ip_input').value.trim();
+            let url = ip ? `http://ip-api.com/json/${ip}?fields=66846719` : `http://ip-api.com/json/?fields=66846719`;
+            try { let r = await fetch(url); renderResult(await r.json()); } catch { alert("İstek hatası!"); }
+        }
+
+        async function apiGsmToTc() {
+            let gsm = document.getElementById('gsm_input').value.trim();
+            if(!validateGsm(gsm)) { alert("❌ Geçersiz GSM Numarası! (Başında 0 olmadan 10 hane olmalı)"); return; }
+            try { let r = await fetch(`https://arastir.sbs/api/gsmtc.php?gsm=${gsm}`); renderResult(await r.json()); } catch { alert("İstek hatası!"); }
+        }
+
+        async function apiTcToGsm() {
+            let tc = document.getElementById('tcgsm_input').value.trim();
+            if(!validateTc(tc)) { alert("❌ Geçersiz TC Kimlik Numarası!"); return; }
+            try { let r = await fetch(`https://arastir.sbs/api/tcgsm.php?tc=${tc}`); renderResult(await r.json()); } catch { alert("İstek hatası!"); }
+        }
+
+        function toggleStatus() {
+            botStatus = botStatus === "active" ? "inactive" : "active";
+            let panel = document.getElementById('mainPanel');
+            if (botStatus === "inactive") {
+                panel.classList.add('inactive');
+                document.getElementById('statusText').innerText = "🔴 Bot Durumu: KAPALI";
+            } else {
+                panel.classList.remove('inactive');
+                document.getElementById('statusText').innerText = "🟢 Bot Durumu: AKTİF";
+            }
+        }
+
+        setInterval(() => {
+            let diff = Math.floor((Date.now() - startTime) / 1000);
+            let h = Math.floor(diff / 3600).toString().padStart(2, '0');
+            let m = Math.floor((diff % 3600) / 60).toString().padStart(2, '0');
+            let s = (diff % 60).toString().padStart(2, '0');
+            document.getElementById('uptime').innerText = `${h}:${m}:${s}`;
+        }, 1000);
+    </script>
+</body>
+</html>
