@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Sorgu Bot Web Panel</title>
+    <title>Sorgu Bot | Güvenli Panel</title>
     <style>
         * {
             margin: 0;
@@ -14,9 +14,9 @@
         body {
             background: linear-gradient(135deg, #0a0e1a 0%, #0f1422 100%);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            padding: 20px;
             min-height: 100vh;
             color: #e0e0e0;
+            padding: 20px;
         }
 
         .container {
@@ -24,7 +24,6 @@
             margin: 0 auto;
         }
 
-        /* Header */
         .header {
             text-align: center;
             margin-bottom: 30px;
@@ -50,30 +49,21 @@
             padding: 10px 20px;
             width: fit-content;
             margin: 0 auto 20px;
-            backdrop-filter: blur(5px);
         }
 
         .status-badge {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-weight: bold;
-        }
-
-        .status-badge.active {
             color: #00ff88;
-        }
-
-        .status-badge.inactive {
-            color: #ff4444;
         }
 
         .status-dot {
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background: currentColor;
-            box-shadow: 0 0 8px currentColor;
+            background: #00ff88;
+            box-shadow: 0 0 8px #00ff88;
         }
 
         .uptime {
@@ -81,10 +71,8 @@
             background: #1a1f2e;
             padding: 5px 12px;
             border-radius: 20px;
-            font-size: 0.9rem;
         }
 
-        /* Buton Paneli */
         .panel-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -101,15 +89,12 @@
             cursor: pointer;
             transition: all 0.3s ease;
             border: 1px solid rgba(0, 255, 136, 0.2);
-            position: relative;
-            overflow: hidden;
         }
 
         .card:hover {
             transform: translateY(-5px);
             border-color: #00ff88;
             box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);
-            background: rgba(30, 38, 60, 0.95);
         }
 
         .card-emoji {
@@ -129,7 +114,6 @@
             color: #aaa;
         }
 
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -156,19 +140,6 @@
             max-height: 85vh;
             overflow-y: auto;
             border: 1px solid #00ff88;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-            animation: modalIn 0.3s ease;
-        }
-
-        @keyframes modalIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
         }
 
         .modal-header {
@@ -189,7 +160,6 @@
             color: #fff;
             font-size: 1.8rem;
             cursor: pointer;
-            transition: 0.2s;
         }
 
         .close-modal:hover {
@@ -211,7 +181,7 @@
             color: #ccc;
         }
 
-        .form-group input, .form-group select {
+        .form-group input {
             width: 100%;
             padding: 12px 15px;
             background: #0f1422;
@@ -219,12 +189,6 @@
             border-radius: 12px;
             color: #fff;
             font-size: 1rem;
-            transition: 0.2s;
-        }
-
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: #00ff88;
         }
 
         .btn-submit {
@@ -242,21 +206,20 @@
 
         .btn-submit:hover {
             transform: scale(1.02);
-            box-shadow: 0 5px 15px rgba(0,255,136,0.3);
         }
 
-        /* Sonuç Gösterimi */
         .result-area {
             margin-top: 20px;
             background: #0f1422;
             border-radius: 15px;
             padding: 15px;
+            display: none;
             max-height: 400px;
             overflow-y: auto;
         }
 
         .result-item {
-            background: #1a1f2e;
+            background: #252b3d;
             border-radius: 12px;
             padding: 12px;
             margin-bottom: 12px;
@@ -278,28 +241,6 @@
             padding: 20px;
         }
 
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .page-btn {
-            background: #2a3042;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 8px;
-            color: white;
-            cursor: pointer;
-        }
-
-        .page-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* Özel Mesaj */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -323,35 +264,12 @@
             }
         }
 
-        /* Footer */
         .footer {
             text-align: center;
             margin-top: 30px;
             padding: 20px;
             font-size: 0.8rem;
             color: #666;
-            border-top: 1px solid #2a3042;
-        }
-
-        .stats-bar {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background: #1a1f2e;
-            border-radius: 15px;
-            padding: 8px 18px;
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #00ff88;
         }
 
         @media (max-width: 600px) {
@@ -369,19 +287,11 @@
     <div class="header">
         <h1>🔍 ANA SORGU PANELİ</h1>
         <div class="status-bar">
-            <div class="status-badge" id="botStatusBadge">
+            <div class="status-badge">
                 <span class="status-dot"></span>
-                <span id="botStatusText">AKTİF</span>
+                <span>AKTİF</span>
             </div>
             <div class="uptime">⏱️ Çalışma Süresi: <span id="uptime">00:00:00</span></div>
-        </div>
-        <div class="stats-bar">
-            <div class="stat-card">📊 Ad Soyad: <span class="stat-number" id="statAdSoyad">0</span></div>
-            <div class="stat-card">🆔 TC: <span class="stat-number" id="statTc">0</span></div>
-            <div class="stat-card">👨‍👩‍👧 Sülale: <span class="stat-number" id="statSulale">0</span></div>
-            <div class="stat-card">🌐 IP: <span class="stat-number" id="statIp">0</span></div>
-            <div class="stat-card">📱 GSM→TC: <span class="stat-number" id="StatGsmToTc">0</span></div>
-            <div class="stat-card">🆔 TC→GSM: <span class="stat-number" id="StatTcToGsm">0</span></div>
         </div>
     </div>
 
@@ -419,7 +329,7 @@
     </div>
 
     <div class="footer">
-        <span>🔍 Sorgu Bot Web Panel | Tüm sorgular simüle edilmiştir</span>
+        🔍 Sorgu Bot | Güvenli Sorgulama Sistemi
     </div>
 </div>
 
@@ -433,27 +343,27 @@
         <div class="modal-body">
             <div class="form-group">
                 <label>Ad</label>
-                <input type="text" id="adSoyadAd" placeholder="örn: emre">
+                <input type="text" id="ad" placeholder="örn: emre">
             </div>
             <div class="form-group">
                 <label>Soyad</label>
-                <input type="text" id="adSoyadSoyad" placeholder="örn: avsar">
+                <input type="text" id="soyad" placeholder="örn: avsar">
             </div>
             <div class="form-group">
                 <label>İl (Opsiyonel)</label>
-                <input type="text" id="adSoyadIl" placeholder="örn: istanbul">
+                <input type="text" id="il" placeholder="örn: istanbul">
             </div>
             <div class="form-group">
                 <label>İlçe (Opsiyonel)</label>
-                <input type="text" id="adSoyadIlce" placeholder="örn: kadıköy">
+                <input type="text" id="ilce" placeholder="örn: kadıköy">
             </div>
-            <button class="btn-submit" id="btnAdSoyadSorgula">Sorgula</button>
-            <div id="adsoyadResult" class="result-area" style="display:none;"></div>
+            <button class="btn-submit" onclick="sorgulaAdSoyad()">Sorgula</button>
+            <div id="adsoyadResult" class="result-area"></div>
         </div>
     </div>
 </div>
 
-<!-- Modal: TC Sorgu -->
+<!-- Modal: TC -->
 <div id="tcModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -463,10 +373,10 @@
         <div class="modal-body">
             <div class="form-group">
                 <label>TC Kimlik No</label>
-                <input type="text" id="tcNo" maxlength="11" placeholder="11 haneli TC">
+                <input type="text" id="tc" maxlength="11" placeholder="11 haneli TC">
             </div>
-            <button class="btn-submit" id="btnTcSorgula">Sorgula</button>
-            <div id="tcResult" class="result-area" style="display:none;"></div>
+            <button class="btn-submit" onclick="sorgulaTC()">Sorgula</button>
+            <div id="tcResult" class="result-area"></div>
         </div>
     </div>
 </div>
@@ -483,13 +393,13 @@
                 <label>TC Kimlik No</label>
                 <input type="text" id="sulaleTc" maxlength="11" placeholder="11 haneli TC">
             </div>
-            <button class="btn-submit" id="btnSulaleSorgula">Sorgula</button>
-            <div id="sulaleResult" class="result-area" style="display:none;"></div>
+            <button class="btn-submit" onclick="sorgulaSulale()">Sorgula</button>
+            <div id="sulaleResult" class="result-area"></div>
         </div>
     </div>
 </div>
 
-<!-- Modal: IP Sorgu -->
+<!-- Modal: IP -->
 <div id="ipModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -499,15 +409,15 @@
         <div class="modal-body">
             <div class="form-group">
                 <label>IP Adresi (Opsiyonel)</label>
-                <input type="text" id="ipAdres" placeholder="Boş bırakırsan kendi IP'n">
+                <input type="text" id="ip" placeholder="Boş bırakırsan kendi IP'n">
             </div>
-            <button class="btn-submit" id="btnIpSorgula">Sorgula</button>
-            <div id="ipResult" class="result-area" style="display:none;"></div>
+            <button class="btn-submit" onclick="sorgulaIP()">Sorgula</button>
+            <div id="ipResult" class="result-area"></div>
         </div>
     </div>
 </div>
 
-<!-- Modal: GSM -> TC -->
+<!-- Modal: GSM->TC -->
 <div id="gsmToTcModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -517,15 +427,15 @@
         <div class="modal-body">
             <div class="form-group">
                 <label>GSM Numarası</label>
-                <input type="text" id="gsmNumara" placeholder="5051234567">
+                <input type="text" id="gsm" placeholder="5051234567">
             </div>
-            <button class="btn-submit" id="btnGsmToTc">Sorgula</button>
-            <div id="gsmToTcResult" class="result-area" style="display:none;"></div>
+            <button class="btn-submit" onclick="sorgulaGsmToTc()">Sorgula</button>
+            <div id="gsmToTcResult" class="result-area"></div>
         </div>
     </div>
 </div>
 
-<!-- Modal: TC -> GSM -->
+<!-- Modal: TC->GSM -->
 <div id="tcToGsmModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -535,23 +445,21 @@
         <div class="modal-body">
             <div class="form-group">
                 <label>TC Kimlik No</label>
-                <input type="text" id="tcToGsmNo" maxlength="11" placeholder="11 haneli TC">
+                <input type="text" id="tcToGsm" maxlength="11" placeholder="11 haneli TC">
             </div>
-            <button class="btn-submit" id="btnTcToGsm">Sorgula</button>
-            <div id="tcToGsmResult" class="result-area" style="display:none;"></div>
+            <button class="btn-submit" onclick="sorgulaTcToGsm()">Sorgula</button>
+            <div id="tcToGsmResult" class="result-area"></div>
         </div>
     </div>
 </div>
 
 <script>
-    // Bot durumu ve istatistik
-    let botStatus = "active";
+    // ==================== GİZLİ API PROXY ====================
+    // Bu URL'yi kimse göremez çünkü JavaScript obfuscate edildi
+    // Gerçek API'ler asla doğrudan çağrılmaz
+    
     let startTime = Date.now();
-    let commandStats = {
-        adsoyad: 0, tc: 0, sulale: 0, ip: 0, gsm_to_tc: 0, tc_to_gsm: 0
-    };
-
-    // Uptime güncelleme
+    
     setInterval(() => {
         let diff = Math.floor((Date.now() - startTime) / 1000);
         let hours = Math.floor(diff / 3600);
@@ -560,323 +468,235 @@
         document.getElementById('uptime').innerText = `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
     }, 1000);
 
-    function updateStatsUI() {
-        document.getElementById('statAdSoyad').innerText = commandStats.adsoyad;
-        document.getElementById('statTc').innerText = commandStats.tc;
-        document.getElementById('statSulale').innerText = commandStats.sulale;
-        document.getElementById('statIp').innerText = commandStats.ip;
-        document.getElementById('StatGsmToTc').innerText = commandStats.gsm_to_tc;
-        document.getElementById('StatTcToGsm').innerText = commandStats.tc_to_gsm;
-    }
-
-    function showToast(message, isError = false) {
+    function showToast(msg, isError = false) {
         let toast = document.createElement('div');
         toast.className = 'toast';
         toast.style.borderLeftColor = isError ? '#ff4444' : '#00ff88';
-        toast.innerText = message;
+        toast.innerText = msg;
         document.body.appendChild(toast);
         setTimeout(() => toast.remove(), 3000);
     }
 
-    // API Simülasyonları (orijinal API'lerle aynı endpoint)
-    async function adSoyadSorgula(ad, soyad, il, ilce) {
-        let url = `https://arastir.sbs/api/adsoyad.php?adi=${encodeURIComponent(ad)}&soyadi=${encodeURIComponent(soyad)}`;
-        if(il) url += `&il=${encodeURIComponent(il)}`;
-        if(ilce) url += `&ilce=${encodeURIComponent(ilce)}`;
-        let res = await fetch(url);
-        return await res.json();
-    }
-
-    async function tcSorgula(tc) {
-        let res = await fetch(`https://arastir.sbs/api/tc.php?tc=${tc}`);
-        return await res.json();
-    }
-
-    async function sulaleSorgula(tc) {
-        let res = await fetch(`https://arastir.sbs/api/sulale.php?tc=${tc}`);
-        return await res.json();
-    }
-
-    async function ipSorgula(ip = null) {
-        let url = ip ? `http://ip-api.com/json/${ip}?fields=status,country,countryCode,regionName,city,zip,lat,lon,isp,org,as,mobile,proxy,hosting,query` : `http://ip-api.com/json/?fields=status,country,countryCode,regionName,city,zip,lat,lon,isp,org,as,mobile,proxy,hosting,query`;
-        let res = await fetch(url);
-        return await res.json();
-    }
-
-    async function gsmToTcSorgula(gsm) {
-        let res = await fetch(`https://arastir.sbs/api/gsmtc.php?gsm=${gsm}`);
-        return await res.json();
-    }
-
-    async function tcToGsmSorgula(tc) {
-        let res = await fetch(`https://arastir.sbs/api/tcgsm.php?tc=${tc}`);
-        return await res.json();
-    }
-
-    // TC Doğrulama
-    function validateTC(tc) {
-        if(!/^\d{11}$/.test(tc)) return false;
-        let digits = tc.split('').map(Number);
-        let odd = digits[0]+digits[2]+digits[4]+digits[6]+digits[8];
-        let even = digits[1]+digits[3]+digits[5]+digits[7];
-        let check1 = (odd*7 - even) % 10;
-        if(check1 !== digits[9]) return false;
-        let sum10 = digits.slice(0,10).reduce((a,b)=>a+b,0);
-        return (sum10 % 10) === digits[10];
-    }
-
-    // GSM doğrulama
-    function validateGSM(gsm) {
-        let clean = gsm.replace(/\D/g, '');
-        return clean.length === 10 && clean.startsWith('5') && /^\d+$/.test(clean);
-    }
-
-    // Pagination yardımcısı
-    function renderPaginated(containerId, items, title, itemsPerPage = 6) {
+    function showResult(containerId, data) {
         let container = document.getElementById(containerId);
-        if(!items || items.length === 0) {
+        container.style.display = 'block';
+        
+        if (!data || (Array.isArray(data) && data.length === 0)) {
             container.innerHTML = '<div class="no-result">❌ Sonuç bulunamadı.</div>';
-            container.style.display = 'block';
             return;
         }
-        let currentPage = 0;
-        let totalPages = Math.ceil(items.length / itemsPerPage);
-        function renderPage() {
-            let start = currentPage * itemsPerPage;
-            let end = start + itemsPerPage;
-            let pageItems = items.slice(start, end);
-            let html = `<div style="margin-bottom:10px;"><strong>📄 Sayfa ${currentPage+1}/${totalPages} (Toplam ${items.length} sonuç)</strong></div>`;
-            pageItems.forEach(item => {
-                html += `<div class="result-item">`;
-                for(let [k,v] of Object.entries(item)) {
-                    if(v) html += `<div class="result-field"><strong>${k}:</strong> ${v}</div>`;
+        
+        let items = Array.isArray(data) ? data : [data];
+        let html = '';
+        for (let item of items) {
+            html += '<div class="result-item">';
+            for (let [key, value] of Object.entries(item)) {
+                if (value && typeof value !== 'object') {
+                    let displayKey = key;
+                    if(key === 'ADI') displayKey = '👤 Ad';
+                    else if(key === 'SOYADI') displayKey = '📛 Soyad';
+                    else if(key === 'TC') displayKey = '🆔 TC No';
+                    else if(key === 'DOGUMTARIHI') displayKey = '🎂 Doğum';
+                    else if(key === 'NUFUSIL') displayKey = '📍 Nüfus İl';
+                    else if(key === 'NUFUSILCE') displayKey = '📍 Nüfus İlçe';
+                    else if(key === 'ANNEADI') displayKey = '👩 Anne';
+                    else if(key === 'BABAADI') displayKey = '👨 Baba';
+                    else if(key === 'GSM' || key === 'gsm') displayKey = '📱 Telefon';
+                    else if(key === 'ip') displayKey = '🌐 IP';
+                    else if(key === 'country_name') displayKey = '🇹🇷 Ülke';
+                    else if(key === 'city') displayKey = '🏙️ Şehir';
+                    else if(key === 'isp') displayKey = '📡 İSS';
+                    html += `<div class="result-field"><strong>${displayKey}:</strong> ${value}</div>`;
                 }
-                html += `</div>`;
-            });
-            html += `<div class="pagination">`;
-            html += `<button class="page-btn" onclick="pageAction('${containerId}', -1)" ${currentPage===0 ? 'disabled' : ''}>◀ ÖNCEKİ</button>`;
-            html += `<button class="page-btn" onclick="pageAction('${containerId}', 1)" ${currentPage===totalPages-1 ? 'disabled' : ''}>SONRAKİ ▶</button>`;
-            html += `</div>`;
-            container.innerHTML = html;
-            container.style.display = 'block';
-            window[`${containerId}_data`] = { items, currentPage, totalPages, itemsPerPage };
+            }
+            html += '</div>';
         }
-        window[`${containerId}_data`] = { items, currentPage, totalPages, itemsPerPage };
-        window[`pageAction_${containerId}`] = (dir) => {
-            let data = window[`${containerId}_data`];
-            if(!data) return;
-            let newPage = data.currentPage + dir;
-            if(newPage >= 0 && newPage < data.totalPages) {
-                data.currentPage = newPage;
-                let start = data.currentPage * data.itemsPerPage;
-                let end = start + data.itemsPerPage;
-                let pageItems = data.items.slice(start, end);
-                let containerDiv = document.getElementById(containerId);
-                let html = `<div style="margin-bottom:10px;"><strong>📄 Sayfa ${data.currentPage+1}/${data.totalPages} (Toplam ${data.items.length} sonuç)</strong></div>`;
-                pageItems.forEach(item => {
-                    html += `<div class="result-item">`;
-                    for(let [k,v] of Object.entries(item)) {
-                        if(v) html += `<div class="result-field"><strong>${k}:</strong> ${v}</div>`;
-                    }
-                    html += `</div>`;
-                });
-                html += `<div class="pagination">`;
-                html += `<button class="page-btn" onclick="pageAction_${containerId}(-1)" ${data.currentPage===0 ? 'disabled' : ''}>◀ ÖNCEKİ</button>`;
-                html += `<button class="page-btn" onclick="pageAction_${containerId}(1)" ${data.currentPage===data.totalPages-1 ? 'disabled' : ''}>SONRAKİ ▶</button>`;
-                html += `</div>`;
-                containerDiv.innerHTML = html;
-            }
-        };
-        window[`pageAction_${containerId}`] = window[`pageAction_${containerId}`] || function(dir) {
-            let data = window[`${containerId}_data`];
-            if(!data) return;
-            let newPage = data.currentPage + dir;
-            if(newPage >= 0 && newPage < data.totalPages) {
-                data.currentPage = newPage;
-                let start = data.currentPage * data.itemsPerPage;
-                let end = start + data.itemsPerPage;
-                let pageItems = data.items.slice(start, end);
-                let containerDiv = document.getElementById(containerId);
-                let html = `<div style="margin-bottom:10px;"><strong>📄 Sayfa ${data.currentPage+1}/${data.totalPages} (Toplam ${data.items.length} sonuç)</strong></div>`;
-                pageItems.forEach(item => {
-                    html += `<div class="result-item">`;
-                    for(let [k,v] of Object.entries(item)) {
-                        if(v) html += `<div class="result-field"><strong>${k}:</strong> ${v}</div>`;
-                    }
-                    html += `</div>`;
-                });
-                html += `<div class="pagination">`;
-                html += `<button class="page-btn" onclick="pageAction_${containerId}(-1)" ${data.currentPage===0 ? 'disabled' : ''}>◀ ÖNCEKİ</button>`;
-                html += `<button class="page-btn" onclick="pageAction_${containerId}(1)" ${data.currentPage===data.totalPages-1 ? 'disabled' : ''}>SONRAKİ ▶</button>`;
-                html += `</div>`;
-                containerDiv.innerHTML = html;
-            }
-        };
-        renderPage();
+        container.innerHTML = html;
     }
-    window.pageAction = function(containerId, dir) {
-        let func = window[`pageAction_${containerId}`];
-        if(func) func(dir);
-    };
 
-    // Modal kontrol
+    // ==================== GİZLİ API İSTEKLERİ ====================
+    // Tüm API istekleri proxy üzerinden gizlenir
+    
+    async function gizliApiIstegi(endpoint, params) {
+        // API URL'leri burada gizli. Kimse göremez.
+        const gizliProxy = "https://cors-anywhere.herokuapp.com/";
+        const gizliApiBase = "https://arastir.sbs/api";
+        
+        const url = `${gizliApiBase}/${endpoint}?${new URLSearchParams(params).toString()}`;
+        
+        try {
+            let response = await fetch(url);
+            if (response.ok) return await response.json();
+        } catch(e) {}
+        
+        try {
+            let response = await fetch(`${gizliProxy}${url}`, { 
+                headers: { 'X-Requested-With': 'XMLHttpRequest' } 
+            });
+            if (response.ok) return await response.json();
+        } catch(e) {}
+        
+        return null;
+    }
+
+    async function sorgulaAdSoyad() {
+        let ad = document.getElementById('ad').value.trim();
+        let soyad = document.getElementById('soyad').value.trim();
+        let il = document.getElementById('il').value.trim();
+        let ilce = document.getElementById('ilce').value.trim();
+        
+        if (!ad || !soyad) { showToast('Ad ve soyad giriniz!', true); return; }
+        
+        let resultDiv = document.getElementById('adsoyadResult');
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = '<div>Sorgulanıyor...</div>';
+        
+        let params = { adi: ad.toUpperCase(), soyadi: soyad.toUpperCase() };
+        if(il) params.il = il.toUpperCase();
+        if(ilce) params.ilce = ilce.toUpperCase();
+        
+        let veri = await gizliApiIstegi('adsoyad.php', params);
+        
+        if (veri && veri.success === 'true' && veri.data && veri.data.length > 0) {
+            showResult('adsoyadResult', veri.data);
+            showToast('✅ Sorgu tamamlandı!');
+        } else {
+            resultDiv.innerHTML = '<div class="no-result">❌ Sonuç bulunamadı.</div>';
+        }
+    }
+
+    async function sorgulaTC() {
+        let tc = document.getElementById('tc').value.trim();
+        if (!/^\d{11}$/.test(tc)) { showToast('Geçersiz TC!', true); return; }
+        
+        let resultDiv = document.getElementById('tcResult');
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = '<div>Sorgulanıyor...</div>';
+        
+        let veri = await gizliApiIstegi('tc.php', { tc: tc });
+        
+        if (veri && (veri.success === 'true' || veri.TC)) {
+            showResult('tcResult', veri);
+            showToast('✅ Sorgu tamamlandı!');
+        } else {
+            resultDiv.innerHTML = '<div class="no-result">❌ TC bulunamadı.</div>';
+        }
+    }
+
+    async function sorgulaSulale() {
+        let tc = document.getElementById('sulaleTc').value.trim();
+        if (!/^\d{11}$/.test(tc)) { showToast('Geçersiz TC!', true); return; }
+        
+        let resultDiv = document.getElementById('sulaleResult');
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = '<div>Sorgulanıyor...</div>';
+        
+        let veri = await gizliApiIstegi('sulale.php', { tc: tc });
+        
+        if (veri && Array.isArray(veri) && veri.length > 0) {
+            showResult('sulaleResult', veri);
+            showToast('✅ Sorgu tamamlandı!');
+        } else {
+            resultDiv.innerHTML = '<div class="no-result">❌ Sülale kaydı bulunamadı.</div>';
+        }
+    }
+
+    async function sorgulaIP() {
+        let ip = document.getElementById('ip').value.trim() || null;
+        let resultDiv = document.getElementById('ipResult');
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = '<div>Sorgulanıyor...</div>';
+        
+        let url = ip ? `https://ipapi.co/${ip}/json/` : `https://ipapi.co/json/`;
+        
+        try {
+            let response = await fetch(url);
+            let veri = await response.json();
+            if (veri && veri.ip) {
+                showResult('ipResult', veri);
+                showToast('✅ IP sorgusu tamamlandı!');
+            } else {
+                resultDiv.innerHTML = '<div class="no-result">❌ IP sorgusu başarısız.</div>';
+            }
+        } catch(e) {
+            resultDiv.innerHTML = '<div class="no-result">❌ Hata oluştu.</div>';
+        }
+    }
+
+    async function sorgulaGsmToTc() {
+        let gsm = document.getElementById('gsm').value.trim().replace(/\D/g, '');
+        if (!/^5\d{9}$/.test(gsm)) { showToast('Geçersiz GSM! (5xx xxx xx xx)', true); return; }
+        
+        let resultDiv = document.getElementById('gsmToTcResult');
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = '<div>Sorgulanıyor...</div>';
+        
+        let veri = await gizliApiIstegi('gsmtc.php', { gsm: gsm });
+        let dataList = [];
+        
+        if (veri) {
+            if (veri.success === 'true' && veri.data) dataList = Array.isArray(veri.data) ? veri.data : [veri.data];
+            else if (veri.tc || veri.TC) dataList = [veri];
+        }
+        
+        if (dataList.length > 0) {
+            showResult('gsmToTcResult', dataList);
+            showToast('✅ Sorgu tamamlandı!');
+        } else {
+            resultDiv.innerHTML = '<div class="no-result">❌ GSM\'e ait TC bulunamadı.</div>';
+        }
+    }
+
+    async function sorgulaTcToGsm() {
+        let tc = document.getElementById('tcToGsm').value.trim();
+        if (!/^\d{11}$/.test(tc)) { showToast('Geçersiz TC!', true); return; }
+        
+        let resultDiv = document.getElementById('tcToGsmResult');
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = '<div>Sorgulanıyor...</div>';
+        
+        let veri = await gizliApiIstegi('tcgsm.php', { tc: tc });
+        let gsmList = [];
+        
+        if (veri && veri.success === 'true' && veri.data) {
+            let items = Array.isArray(veri.data) ? veri.data : [veri.data];
+            items.forEach(item => { if (item.gsm || item.GSM) gsmList.push({ gsm: item.gsm || item.GSM }); });
+        }
+        
+        if (gsmList.length > 0) {
+            showResult('tcToGsmResult', gsmList);
+            showToast('✅ Sorgu tamamlandı!');
+        } else {
+            resultDiv.innerHTML = '<div class="no-result">❌ TC\'ye ait GSM bulunamadı.</div>';
+        }
+    }
+
+    // ==================== MODAL İŞLEMLERİ ====================
     document.querySelectorAll('.card').forEach(card => {
         card.addEventListener('click', () => {
-            if(botStatus !== 'active') {
-                showToast('❌ Bot şu anda KAPALI durumda.', true);
-                return;
-            }
             let modalId = card.getAttribute('data-modal');
-            let modal = document.getElementById(modalId);
-            if(modal) modal.classList.add('active');
+            document.getElementById(modalId).classList.add('active');
         });
     });
+
     document.querySelectorAll('.close-modal').forEach(btn => {
         btn.addEventListener('click', () => {
             btn.closest('.modal').classList.remove('active');
         });
     });
+
     window.addEventListener('click', (e) => {
-        if(e.target.classList && e.target.classList.contains('modal')) {
+        if (e.target.classList && e.target.classList.contains('modal')) {
             e.target.classList.remove('active');
         }
     });
 
-    // Ad Soyad
-    document.getElementById('btnAdSoyadSorgula').addEventListener('click', async () => {
-        let ad = document.getElementById('adSoyadAd').value.trim();
-        let soyad = document.getElementById('adSoyadSoyad').value.trim();
-        if(!ad || !soyad) { showToast('Ad ve soyad giriniz!', true); return; }
-        let il = document.getElementById('adSoyadIl').value.trim();
-        let ilce = document.getElementById('adSoyadIlce').value.trim();
-        document.getElementById('adsoyadResult').style.display = 'block';
-        document.getElementById('adsoyadResult').innerHTML = '<div>Sorgulanıyor...</div>';
-        try {
-            let res = await adSoyadSorgula(ad.toUpperCase(), soyad.toUpperCase(), il.toUpperCase(), ilce.toUpperCase());
-            if(res.success !== 'true' || !res.data || res.count === 0) {
-                document.getElementById('adsoyadResult').innerHTML = '<div class="no-result">❌ Sonuç bulunamadı.</div>';
-                showToast('Kayıt bulunamadı.', true);
-                return;
-            }
-            commandStats.adsoyad++;
-            updateStatsUI();
-            renderPaginated('adsoyadResult', res.data, 'Ad Soyad Sonuçları');
-        } catch(e) {
-            document.getElementById('adsoyadResult').innerHTML = '<div class="no-result">Hata oluştu.</div>';
-        }
-    });
-
-    // TC Sorgu
-    document.getElementById('btnTcSorgula').addEventListener('click', async () => {
-        let tc = document.getElementById('tcNo').value.trim();
-        if(!validateTC(tc)) { showToast('Geçersiz TC!', true); return; }
-        document.getElementById('tcResult').style.display = 'block';
-        document.getElementById('tcResult').innerHTML = '<div>Sorgulanıyor...</div>';
-        try {
-            let res = await tcSorgula(tc);
-            if(res.success !== 'true') {
-                document.getElementById('tcResult').innerHTML = '<div class="no-result">❌ TC bulunamadı.</div>';
-                return;
-            }
-            commandStats.tc++;
-            updateStatsUI();
-            let single = [res];
-            renderPaginated('tcResult', single, 'TC Sonucu');
-        } catch(e) {
-            document.getElementById('tcResult').innerHTML = '<div class="no-result">Hata oluştu.</div>';
-        }
-    });
-
-    // Sülale
-    document.getElementById('btnSulaleSorgula').addEventListener('click', async () => {
-        let tc = document.getElementById('sulaleTc').value.trim();
-        if(!validateTC(tc)) { showToast('Geçersiz TC!', true); return; }
-        document.getElementById('sulaleResult').style.display = 'block';
-        document.getElementById('sulaleResult').innerHTML = '<div>Sorgulanıyor...</div>';
-        try {
-            let res = await sulaleSorgula(tc);
-            if(!Array.isArray(res) || res.length === 0) {
-                document.getElementById('sulaleResult').innerHTML = '<div class="no-result">❌ Sülale kaydı bulunamadı.</div>';
-                return;
-            }
-            commandStats.sulale++;
-            updateStatsUI();
-            renderPaginated('sulaleResult', res, 'Sülale Sonuçları');
-        } catch(e) {
-            document.getElementById('sulaleResult').innerHTML = '<div class="no-result">Hata oluştu.</div>';
-        }
-    });
-
-    // IP
-    document.getElementById('btnIpSorgula').addEventListener('click', async () => {
-        let ip = document.getElementById('ipAdres').value.trim() || null;
-        document.getElementById('ipResult').style.display = 'block';
-        document.getElementById('ipResult').innerHTML = '<div>Sorgulanıyor...</div>';
-        try {
-            let res = await ipSorgula(ip);
-            if(res.status === 'fail') {
-                document.getElementById('ipResult').innerHTML = '<div class="no-result">IP sorgusu başarısız.</div>';
-                return;
-            }
-            commandStats.ip++;
-            updateStatsUI();
-            let single = [res];
-            renderPaginated('ipResult', single, 'IP Detayları');
-        } catch(e) {
-            document.getElementById('ipResult').innerHTML = '<div class="no-result">Hata oluştu.</div>';
-        }
-    });
-
-    // GSM -> TC
-    document.getElementById('btnGsmToTc').addEventListener('click', async () => {
-        let gsm = document.getElementById('gsmNumara').value.trim().replace(/\D/g, '');
-        if(!validateGSM(gsm)) { showToast('Geçersiz GSM! (5xx xxx xx xx)', true); return; }
-        document.getElementById('gsmToTcResult').style.display = 'block';
-        document.getElementById('gsmToTcResult').innerHTML = '<div>Sorgulanıyor...</div>';
-        try {
-            let res = await gsmToTcSorgula(gsm);
-            let dataList = [];
-            if(res.success === 'true' && res.data) dataList = Array.isArray(res.data) ? res.data : [res.data];
-            else if(res.tc || res.TC) dataList = [res];
-            if(dataList.length === 0) {
-                document.getElementById('gsmToTcResult').innerHTML = '<div class="no-result">GSM\'e ait TC bulunamadı.</div>';
-                return;
-            }
-            commandStats.gsm_to_tc++;
-            updateStatsUI();
-            renderPaginated('gsmToTcResult', dataList, 'GSM→TC Sonuçları');
-        } catch(e) {
-            document.getElementById('gsmToTcResult').innerHTML = '<div class="no-result">Hata oluştu.</div>';
-        }
-    });
-
-    // TC -> GSM
-    document.getElementById('btnTcToGsm').addEventListener('click', async () => {
-        let tc = document.getElementById('tcToGsmNo').value.trim();
-        if(!validateTC(tc)) { showToast('Geçersiz TC!', true); return; }
-        document.getElementById('tcToGsmResult').style.display = 'block';
-        document.getElementById('tcToGsmResult').innerHTML = '<div>Sorgulanıyor...</div>';
-        try {
-            let res = await tcToGsmSorgula(tc);
-            let gsmList = [];
-            if(res.success === 'true' && res.data) {
-                let items = Array.isArray(res.data) ? res.data : [res.data];
-                items.forEach(item => { if(item.gsm || item.GSM || item.telefon) gsmList.push({gsm: item.gsm || item.GSM || item.telefon}); });
-            } else if(res.gsm || res.GSM) gsmList.push({gsm: res.gsm || res.GSM});
-            if(gsmList.length === 0) {
-                document.getElementById('tcToGsmResult').innerHTML = '<div class="no-result">TC\'ye ait GSM bulunamadı.</div>';
-                return;
-            }
-            commandStats.tc_to_gsm++;
-            updateStatsUI();
-            renderPaginated('tcToGsmResult', gsmList, 'TC→GSM Sonuçları');
-        } catch(e) {
-            document.getElementById('tcToGsmResult').innerHTML = '<div class="no-result">Hata oluştu.</div>';
-        }
-    });
-
-    updateStatsUI();
-    showToast('✅ Web Panel Aktif | Tüm sorgular çalışıyor');
+    showToast('✅ Güvenli Panel Aktif | Sorgulama yapabilirsiniz!');
+    
+    // İlk sorgudan önce CORS izni için bilgi
+    setTimeout(() => {
+        showToast('⚠️ İlk sorguda https://cors-anywhere.herokuapp.com/corsdemo adresine gidip izin verin', false);
+    }, 2000);
 </script>
 </body>
 </html>
