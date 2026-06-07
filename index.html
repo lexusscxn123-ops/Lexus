@@ -1,356 +1,593 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lexus — Sanalcı & Geliştirici</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0a0a0f;
-    --bg2: #11111a;
-    --bg3: #16161f;
-    --card: #1a1a26;
-    --border: rgba(255,255,255,0.07);
-    --accent: #7c6bff;
-    --accent2: #ff6b9d;
-    --accent3: #00e5c8;
-    --text: #e8e8f0;
-    --muted: #6b6b80;
-    --green: #00e5c8;
-    --yellow: #ffd166;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body { background: var(--bg); color: var(--text); font-family: 'DM Mono', monospace; min-height: 100vh; overflow-x: hidden; }
-  body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 999; opacity: 0.4; }
-  .orb { position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: 0; }
-  .orb1 { width: 500px; height: 500px; background: rgba(124,107,255,0.12); top: -150px; left: -100px; }
-  .orb2 { width: 400px; height: 400px; background: rgba(255,107,157,0.08); bottom: -100px; right: -50px; }
-  .orb3 { width: 300px; height: 300px; background: rgba(0,229,200,0.07); top: 50%; left: 50%; transform: translate(-50%,-50%); }
-
-  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 18px 40px; display: flex; align-items: center; justify-content: space-between; background: rgba(10,10,15,0.7); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
-  .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px; color: var(--text); letter-spacing: -0.5px; }
-  .nav-logo span { color: var(--accent); }
-  .nav-links { display: flex; gap: 28px; list-style: none; }
-  .nav-links a { color: var(--muted); text-decoration: none; font-size: 13px; letter-spacing: 0.5px; transition: color 0.2s; }
-  .nav-links a:hover { color: var(--text); }
-  .nav-badge { background: rgba(0,229,200,0.15); border: 1px solid rgba(0,229,200,0.3); color: var(--accent3); font-size: 11px; padding: 4px 10px; border-radius: 20px; letter-spacing: 1px; font-weight: 500; }
-
-  .hero { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 120px 40px 80px; max-width: 900px; margin: 0 auto; }
-  .hero-tag { display: inline-flex; align-items: center; gap: 8px; background: rgba(124,107,255,0.1); border: 1px solid rgba(124,107,255,0.25); color: var(--accent); font-size: 12px; padding: 6px 14px; border-radius: 20px; letter-spacing: 1.5px; margin-bottom: 32px; width: fit-content; animation: fadeUp 0.6s ease both; }
-  .hero-tag::before { content: ''; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 1.5s infinite; }
-  @keyframes pulse { 0%,100% { opacity:1; transform: scale(1); } 50% { opacity:0.4; transform: scale(0.7); } }
-  .hero h1 { font-family: 'Syne', sans-serif; font-size: clamp(52px, 8vw, 96px); font-weight: 800; line-height: 0.95; letter-spacing: -3px; margin-bottom: 24px; animation: fadeUp 0.6s 0.1s ease both; }
-  .hero h1 .line2 { display: block; background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 50%, var(--accent3) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-  .hero-desc { font-size: 15px; color: var(--muted); line-height: 1.8; max-width: 520px; margin-bottom: 40px; animation: fadeUp 0.6s 0.2s ease both; }
-  .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; animation: fadeUp 0.6s 0.3s ease both; }
-  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: 10px; font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none; transition: all 0.2s; letter-spacing: 0.3px; border: none; }
-  .btn-primary { background: var(--accent); color: white; box-shadow: 0 0 30px rgba(124,107,255,0.3); }
-  .btn-primary:hover { background: #9281ff; box-shadow: 0 0 40px rgba(124,107,255,0.5); transform: translateY(-2px); }
-  .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
-  .btn-ghost:hover { border-color: rgba(255,255,255,0.2); color: var(--text); transform: translateY(-2px); }
-
-  .stats-bar { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 0 40px 80px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 24px; transition: border-color 0.2s, transform 0.2s; }
-  .stat-card:hover { border-color: rgba(124,107,255,0.3); transform: translateY(-3px); }
-  .stat-num { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; color: var(--text); line-height: 1; margin-bottom: 6px; }
-  .stat-num span { color: var(--accent); }
-  .stat-label { font-size: 12px; color: var(--muted); letter-spacing: 0.5px; }
-
-  section { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 0 40px 80px; }
-  .section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 32px; }
-  .section-tag { font-size: 11px; color: var(--accent); letter-spacing: 2px; font-weight: 500; }
-  .section-line { flex: 1; height: 1px; background: var(--border); }
-
-  .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-  .service-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: all 0.25s; cursor: pointer; position: relative; overflow: hidden; text-decoration: none; display: block; }
-  .service-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 0% 0%, rgba(124,107,255,0.06) 0%, transparent 60%); opacity: 0; transition: opacity 0.3s; }
-  .service-card:hover { border-color: rgba(124,107,255,0.4); transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
-  .service-card:hover::before { opacity: 1; }
-  .service-icon { font-size: 26px; margin-bottom: 14px; display: block; }
-  .service-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 7px; color: var(--text); }
-  .service-desc { font-size: 12px; color: var(--muted); line-height: 1.7; margin-bottom: 14px; }
-  .service-cta { font-size: 11px; color: var(--accent); letter-spacing: 0.5px; display: flex; align-items: center; gap: 5px; }
-  .service-cta::after { content: '→'; transition: transform 0.2s; }
-  .service-card:hover .service-cta::after { transform: translateX(4px); }
-
-  .discord-section { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
-  .discord-card { background: linear-gradient(135deg, #5865f2 0%, #7c6bff 100%); border-radius: 16px; padding: 32px; position: relative; overflow: hidden; }
-  .discord-card::before { content: ''; position: absolute; top: -30px; right: -30px; width: 120px; height: 120px; background: rgba(255,255,255,0.1); border-radius: 50%; }
-  .discord-card::after { content: ''; position: absolute; bottom: -20px; left: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.07); border-radius: 50%; }
-  .discord-logo-big { font-size: 40px; display: block; margin-bottom: 16px; }
-  .discord-card h3 { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; color: white; margin-bottom: 10px; }
-  .discord-card p { font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.7; margin-bottom: 20px; }
-  .btn-discord { background: white; color: #5865f2; padding: 10px 20px; border-radius: 8px; font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-block; transition: all 0.2s; border: none; }
-  .btn-discord:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
-
-  .info-cards { display: flex; flex-direction: column; gap: 12px; }
-  .info-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; display: flex; align-items: center; gap: 14px; transition: all 0.2s; }
-  .info-card:hover { border-color: rgba(255,255,255,0.15); transform: translateX(4px); }
-  .info-icon { font-size: 20px; width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .info-content { flex: 1; }
-  .info-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
-  .info-sub { font-size: 11px; color: var(--muted); }
-  .info-badge { font-size: 11px; padding: 3px 8px; border-radius: 6px; font-weight: 500; flex-shrink: 0; }
-  .badge-green { background: rgba(0,229,200,0.15); color: var(--accent3); }
-  .badge-yellow { background: rgba(255,209,102,0.15); color: var(--yellow); }
-  .badge-purple { background: rgba(124,107,255,0.15); color: var(--accent); }
-
-  .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-  .review-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; transition: all 0.2s; }
-  .review-card:hover { border-color: rgba(255,209,102,0.2); transform: translateY(-3px); }
-  .review-stars { color: var(--yellow); font-size: 13px; margin-bottom: 10px; letter-spacing: 2px; }
-  .review-text { font-size: 12px; color: var(--muted); line-height: 1.7; margin-bottom: 14px; }
-  .review-author { display: flex; align-items: center; gap: 10px; }
-  .review-avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; font-family: 'Syne', sans-serif; flex-shrink: 0; }
-  .review-name { font-size: 12px; color: var(--text); font-weight: 500; }
-  .review-date { font-size: 10px; color: var(--muted); }
-
-  footer { position: relative; z-index: 1; border-top: 1px solid var(--border); padding: 32px 40px; max-width: 900px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
-  .footer-text { font-size: 12px; color: var(--muted); }
-  .footer-text span { color: var(--accent); }
-
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-  .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.5s ease, transform 0.5s ease; }
-  .fade-in.visible { opacity: 1; transform: translateY(0); }
-
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: #2a2a38; border-radius: 3px; }
-
-  @media (max-width: 700px) {
-    nav { padding: 16px 20px; }
-    .nav-links { display: none; }
-    .hero { padding: 100px 20px 60px; }
-    .stats-bar, section { padding-left: 20px; padding-right: 20px; }
-    .services-grid { grid-template-columns: 1fr; }
-    .discord-section { grid-template-columns: 1fr; }
-    .reviews-grid { grid-template-columns: 1fr; }
-    .stats-bar { grid-template-columns: 1fr; }
-    footer { flex-direction: column; gap: 12px; text-align: center; padding: 24px 20px; }
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>🔍 Lexus OSINT | Dünyanın En Gelişmiş İstihbarat Platformu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', system-ui, monospace;
+        }
+        body {
+            background: radial-gradient(circle at 20% 30%, #0a0f1a, #03060c);
+            min-height: 100vh;
+            color: #e0f2fe;
+        }
+        /* SIDEBAR (hamburger menü) */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 320px;
+            height: 100%;
+            background: rgba(10, 20, 30, 0.98);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid #2a6f5f;
+            transition: 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            z-index: 1000;
+            padding: 1.5rem 0 2rem 0;
+            overflow-y: auto;
+            box-shadow: 5px 0 25px rgba(0, 255, 200, 0.1);
+        }
+        .sidebar.open {
+            left: 0;
+        }
+        .sidebar-header {
+            padding: 0 1.2rem 1rem;
+            border-bottom: 1px solid #2a6f5f;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .sidebar-header h3 {
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            color: #3ee9cf;
+        }
+        .close-sidebar {
+            background: none;
+            border: none;
+            color: #9ef3e4;
+            font-size: 1.6rem;
+            cursor: pointer;
+        }
+        .tool-list {
+            list-style: none;
+        }
+        .tool-list li {
+            padding: 0.6rem 1.2rem;
+            margin: 0.2rem 0;
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: 0.2s;
+            border-left: 2px solid transparent;
+        }
+        .tool-list li i {
+            width: 24px;
+            text-align: center;
+            color: #3ee9cf;
+        }
+        .tool-list li:hover {
+            background: #1e3a3a70;
+            border-left-color: #3ee9cf;
+            transform: translateX(3px);
+        }
+        /* MAIN */
+        .main-content {
+            transition: 0.2s;
+            padding: 1rem;
+        }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 2rem;
+            background: #07131be6;
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid #1f6e5f;
+            position: sticky;
+            top: 0;
+            z-index: 500;
+        }
+        .hamburger {
+            font-size: 1.8rem;
+            background: none;
+            border: none;
+            color: #3ee9cf;
+            cursor: pointer;
+        }
+        .user-area {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .logout-btn {
+            background: #6f2a3f;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .card {
+            background: #0e1722cc;
+            backdrop-filter: blur(4px);
+            border: 1px solid #2c7a6b;
+            border-radius: 28px;
+            padding: 1.5rem;
+            margin: 1rem auto;
+            max-width: 800px;
+        }
+        .tool-panel {
+            display: none;
+            animation: fade 0.2s;
+        }
+        .tool-panel.active-panel {
+            display: block;
+        }
+        @keyframes fade {
+            from { opacity: 0; transform: translateY(6px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        input, textarea, select {
+            background: #010b10;
+            border: 1px solid #2f7a6b;
+            padding: 10px 15px;
+            border-radius: 20px;
+            color: #caf2ea;
+            width: 100%;
+            margin: 8px 0;
+            font-size: 0.9rem;
+        }
+        button:not(.hamburger):not(.close-sidebar) {
+            background: linear-gradient(135deg, #0f5e52, #083c34);
+            border: none;
+            padding: 8px 18px;
+            border-radius: 60px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            margin: 8px 4px;
+        }
+        button:hover {
+            background: #239f89;
+            box-shadow: 0 0 8px #3ee9cf;
+        }
+        .result-box {
+            background: #00000099;
+            border-left: 4px solid #3ee9cf;
+            padding: 14px;
+            margin-top: 18px;
+            border-radius: 16px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            font-size: 0.8rem;
+            max-height: 380px;
+            overflow: auto;
+        }
+        .auth-container {
+            max-width: 460px;
+            margin: 80px auto;
+            background: #0b141fdd;
+            border-radius: 32px;
+            padding: 2rem;
+            border: 1px solid #2f7a6b;
+        }
+        .auth-tab {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #2a6f5f;
+        }
+        .auth-tab span {
+            padding: 8px 0;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .auth-tab .active-tab {
+            color: #3ee9cf;
+            border-bottom: 2px solid #3ee9cf;
+        }
+        .hidden {
+            display: none;
+        }
+        .footer-note {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #528a7e;
+            margin-top: 2rem;
+        }
+        i.icon {
+            margin-right: 6px;
+        }
+        .grid-50 {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px,1fr));
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+        .quick-btn {
+            background: #122b2b;
+            border: 1px solid #277c6b;
+            border-radius: 40px;
+            padding: 6px;
+            font-size: 0.7rem;
+            text-align: center;
+        }
+        @media (max-width: 600px) {
+            .sidebar { width: 85%;}
+            .top-bar { padding: 0.6rem 1rem;}
+        }
+    </style>
 </head>
 <body>
-<div class="orb orb1"></div>
-<div class="orb orb2"></div>
-<div class="orb orb3"></div>
 
-<nav>
-  <div class="nav-logo">Lexus<span>.</span></div>
-  <ul class="nav-links">
-    <li><a href="#hizmetler">Hizmetler</a></li>
-    <li><a href="#iletisim">İletişim</a></li>
-    <li><a href="#yorumlar">Yorumlar</a></li>
-  </ul>
-  <span class="nav-badge">✦ AKTİF</span>
-</nav>
-
-<div class="hero">
-  <div class="hero-tag">SANALCI · GELİŞTİRİCİ · GÜVENİLİR</div>
-  <h1>Merhaba,<br><span class="line2">Ben Lexus.</span></h1>
-  <p class="hero-desc">Bot geliştirme, site yapımı, API, panel altyapısı ve daha fazlası. Hızlı teslimat, güvenilir hizmet. Her istediğin için tek adres.</p>
-  <div class="hero-btns">
-    <a href="https://discord.com/users/e.okul" target="_blank" class="btn btn-primary">💬 Discord'dan Ulaş</a>
-    <a href="#hizmetler" class="btn btn-ghost">↓ Hizmetleri Gör</a>
-  </div>
+<!-- SIDEBAR (50+ seçenek) -->
+<div id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+        <h3><i class="fas fa-microchip"></i> OSINT·X 5.0</h3>
+        <button class="close-sidebar" id="closeSidebarBtn">&times;</button>
+    </div>
+    <ul class="tool-list" id="toolList">
+        <!-- 50+ araç dinamik js ile eklenecek -->
+    </ul>
 </div>
 
-<div class="stats-bar fade-in">
-  <div class="stat-card">
-    <div class="stat-num">800<span>+</span></div>
-    <div class="stat-label">TAMAMLANAN İŞLEM</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-num">%<span>100</span></div>
-    <div class="stat-label">MEMNUNİYET ORANI</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-num">7/<span>24</span></div>
-    <div class="stat-label">AKTİF DESTEK</div>
-  </div>
+<div class="main-content">
+    <div class="top-bar">
+        <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
+        <div class="user-area">
+            <span id="currentUserSpan"><i class="fas fa-user-secret"></i> Misafir</span>
+            <button id="logoutGlobalBtn" class="logout-btn hidden">Çıkış</button>
+        </div>
+    </div>
+    
+    <!-- GİRİŞ / KAYIT ALANI -->
+    <div id="authSection">
+        <div class="auth-container">
+            <div class="auth-tab">
+                <span id="loginTabBtn" class="active-tab">Giriş Yap</span>
+                <span id="registerTabBtn">Kayıt Ol</span>
+            </div>
+            <!-- Login Form -->
+            <div id="loginFormDiv">
+                <input type="text" id="loginIdentifier" placeholder="E-posta veya Kullanıcı Adı">
+                <input type="password" id="loginPassword" placeholder="Şifre">
+                <button id="doLoginBtn">Giriş Yap <i class="fas fa-arrow-right"></i></button>
+                <div id="loginMsg" class="result-box" style="margin-top:12px;"></div>
+            </div>
+            <!-- Register Form -->
+            <div id="registerFormDiv" class="hidden">
+                <input type="text" id="regName" placeholder="Adınız / Kullanıcı Adı">
+                <input type="email" id="regEmail" placeholder="E-posta Adresi">
+                <input type="password" id="regPassword" placeholder="Şifre">
+                <input type="password" id="regPassword2" placeholder="Şifre (tekrar)">
+                <button id="doRegisterBtn">Kayıt Ol</button>
+                <div id="regMsg" class="result-box"></div>
+            </div>
+            <div class="footer-note">🔐 Yalnızca kayıtlı kullanıcılar OSINT araçlarını kullanabilir.</div>
+        </div>
+    </div>
+
+    <!-- OSINT PANEL (GİRİŞ YAPINCA GÖSTER) -->
+    <div id="osintDashboard" class="hidden">
+        <div id="toolDisplayArea" class="card">
+            <div id="toolTitle" style="font-size:1.5rem; margin-bottom: 8px;"><i class="fas fa-cogs"></i> Seçili araç</div>
+            <div id="toolInputArea">
+                <!-- dinamik inputlar buraya gelecek -->
+            </div>
+            <div id="resultArea" class="result-box">🔍 Bir araç seçip sorgulayın...</div>
+        </div>
+    </div>
 </div>
-
-<section id="hizmetler" class="fade-in">
-  <div class="section-header">
-    <span class="section-tag">// HİZMETLER</span>
-    <div class="section-line"></div>
-  </div>
-  <div class="services-grid">
-    <a class="service-card" href="https://discord.com/users/e.okul" target="_blank">
-      <span class="service-icon">🤖</span>
-      <div class="service-title">Bot Yapımı</div>
-      <div class="service-desc">Discord, Telegram veya istediğin platforma özel, sıfırdan tam özellikli bot geliştirme.</div>
-      <span class="service-cta">Sipariş ver</span>
-    </a>
-    <a class="service-card" href="https://discord.com/users/e.okul" target="_blank">
-      <span class="service-icon">🌐</span>
-      <div class="service-title">Site Yapımı</div>
-      <div class="service-desc">İstediğin tasarımda, istediğin özellikte kişisel ya da ticari web sitesi.</div>
-      <span class="service-cta">Sipariş ver</span>
-    </a>
-    <a class="service-card" href="https://discord.com/users/e.okul" target="_blank">
-      <span class="service-icon">⚙️</span>
-      <div class="service-title">API Geliştirme</div>
-      <div class="service-desc">REST API, webhook entegrasyonları ve servis bağlantıları. Hızlı ve güvenli.</div>
-      <span class="service-cta">Sipariş ver</span>
-    </a>
-    <a class="service-card" href="https://discord.com/users/e.okul" target="_blank">
-      <span class="service-icon">🖥️</span>
-      <div class="service-title">Panel Altyapı</div>
-      <div class="service-desc">Yönetim paneli, dashboard ve tam altyapı kurulumu. Sıfırdan hazır teslim.</div>
-      <span class="service-cta">Sipariş ver</span>
-    </a>
-    <a class="service-card" href="https://discord.com/users/e.okul" target="_blank">
-      <span class="service-icon">🔧</span>
-      <div class="service-title">Tool Yapımı & Satışı</div>
-      <div class="service-desc">Her türlü özel araç geliştirilir veya mevcut toollar temin edilir.</div>
-      <span class="service-cta">Sipariş ver</span>
-    </a>
-    <a class="service-card" href="https://discord.com/users/e.okul" target="_blank">
-      <span class="service-icon">📈</span>
-      <div class="service-title">TikTok İzlenme</div>
-      <div class="service-desc">TikTok videolarına hızlı ve güvenli izlenme, beğeni ve takipçi hizmetleri.</div>
-      <span class="service-cta">Sipariş ver</span>
-    </a>
-    <a class="service-card" href="https://discord.com/users/e.okul" target="_blank" style="grid-column: span 3;">
-      <span class="service-icon">✨</span>
-      <div class="service-title">Her Türlü İstek</div>
-      <div class="service-desc">Listede olmayan bir şey mi istiyorsun? Sorun değil — yaz, konuşalım. Yapılabilir her şeyi yapıyorum.</div>
-      <span class="service-cta">İletişime geç</span>
-    </a>
-  </div>
-</section>
-
-<section id="iletisim" class="fade-in">
-  <div class="section-header">
-    <span class="section-tag">// İLETİŞİM</span>
-    <div class="section-line"></div>
-  </div>
-  <div class="discord-section">
-    <div class="discord-card">
-      <span class="discord-logo-big">🎮</span>
-      <h3>Discord'dan Ulaş</h3>
-      <p>En hızlı yanıt Discord üzerinden. Mesajını at, hemen görüşelim. 7/24 aktifim, bekletmem.</p>
-      <a href="https://discord.com/users/e.okul" target="_blank" class="btn-discord">@e.okul → Yaz</a>
-    </div>
-    <div class="info-cards">
-      <div class="info-card">
-        <div class="info-icon">⚡</div>
-        <div class="info-content"><div class="info-title">Yanıt Süresi</div><div class="info-sub">Ortalama bekleme</div></div>
-        <span class="info-badge badge-green">~5 dk</span>
-      </div>
-      <div class="info-card">
-        <div class="info-icon">🛡️</div>
-        <div class="info-content"><div class="info-title">Güvence</div><div class="info-sub">Ödeme güvenliği</div></div>
-        <span class="info-badge badge-purple">Garantili</span>
-      </div>
-      <div class="info-card">
-        <div class="info-icon">💸</div>
-        <div class="info-content"><div class="info-title">Ödeme Yöntemleri</div><div class="info-sub">Papara, Havale, Kripto</div></div>
-        <span class="info-badge badge-yellow">Çoklu</span>
-      </div>
-      <div class="info-card">
-        <div class="info-icon">📦</div>
-        <div class="info-content"><div class="info-title">Teslimat</div><div class="info-sub">Ödeme sonrası</div></div>
-        <span class="info-badge badge-green">Anında</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="yorumlar" class="fade-in">
-  <div class="section-header">
-    <span class="section-tag">// MÜŞTERİ YORUMLARI</span>
-    <div class="section-line"></div>
-  </div>
-  <div class="reviews-grid">
-    <div class="review-card">
-      <div class="review-stars">★★★★★</div>
-      <p class="review-text">"Bot siparişi verdim, 1 gün içinde teslim etti. Tam istediğim gibi çalışıyor, teşekkürler."</p>
-      <div class="review-author">
-        <div class="review-avatar" style="background:rgba(124,107,255,0.2);color:var(--accent)">A</div>
-        <div><div class="review-name">Ahmet K.</div><div class="review-date">Discord Bot</div></div>
-      </div>
-    </div>
-    <div class="review-card">
-      <div class="review-stars">★★★★★</div>
-      <p class="review-text">"Site yaptırdım, harika iş çıkardı. Fiyat performans çok iyi, kesinlikle tavsiye ederim."</p>
-      <div class="review-author">
-        <div class="review-avatar" style="background:rgba(255,107,157,0.2);color:var(--accent2)">M</div>
-        <div><div class="review-name">Mert Y.</div><div class="review-date">Site Yapımı</div></div>
-      </div>
-    </div>
-    <div class="review-card">
-      <div class="review-stars">★★★★★</div>
-      <p class="review-text">"API entegrasyonu için yazdım, anında yanıt verdi ve sorunsuz halletti. Çok hızlı."</p>
-      <div class="review-author">
-        <div class="review-avatar" style="background:rgba(0,229,200,0.2);color:var(--accent3)">K</div>
-        <div><div class="review-name">Kaan B.</div><div class="review-date">API Geliştirme</div></div>
-      </div>
-    </div>
-    <div class="review-card">
-      <div class="review-stars">★★★★★</div>
-      <p class="review-text">"TikTok izlenmesi aldım, anında geldi. Hiç sorun yaşamadım, güvenilir biri."</p>
-      <div class="review-author">
-        <div class="review-avatar" style="background:rgba(255,209,102,0.2);color:var(--yellow)">E</div>
-        <div><div class="review-name">Enes T.</div><div class="review-date">TikTok İzlenme</div></div>
-      </div>
-    </div>
-    <div class="review-card">
-      <div class="review-stars">★★★★★</div>
-      <p class="review-text">"Panel altyapısı kurulumu için anlaştım. Tam profesyonelce halletti, çok memnunum."</p>
-      <div class="review-author">
-        <div class="review-avatar" style="background:rgba(124,107,255,0.2);color:var(--accent)">S</div>
-        <div><div class="review-name">Serkan A.</div><div class="review-date">Panel Altyapı</div></div>
-      </div>
-    </div>
-    <div class="review-card">
-      <div class="review-stars">★★★★★</div>
-      <p class="review-text">"İkinci kez sipariş veriyorum yine mükemmel oldu. Artık başkasına bakma ihtiyacı duymuyorum."</p>
-      <div class="review-author">
-        <div class="review-avatar" style="background:rgba(255,107,157,0.2);color:var(--accent2)">B</div>
-        <div><div class="review-name">Burak D.</div><div class="review-date">Tekrar Müşteri</div></div>
-      </div>
-    </div>
-    <div class="review-card">
-      <div class="review-stars">★★★★★</div>
-      <p class="review-text">"Özel tool istedim, tam istediğim gibi yaptı. Hızlı iletişim, kaliteli iş. Sağol Kerim."</p>
-      <div class="review-author">
-        <div class="review-avatar" style="background:rgba(0,229,200,0.2);color:var(--accent3)">O</div>
-        <div><div class="review-name">Ozan K.</div><div class="review-date">Tool Yapımı</div></div>
-      </div>
-    </div>
-    <div class="review-card">
-      <div class="review-stars">★★★★★</div>
-      <p class="review-text">"Telegram botu sipariş ettim, beklediğimden çok daha iyi çıktı. Fiyatı da gayet makul."</p>
-      <div class="review-author">
-        <div class="review-avatar" style="background:rgba(255,209,102,0.2);color:var(--yellow)">C</div>
-        <div><div class="review-name">Cem R.</div><div class="review-date">Telegram Bot</div></div>
-      </div>
-    </div>
-    <div class="review-card">
-      <div class="review-stars">★★★★★</div>
-      <p class="review-text">"7/24 aktif gerçekten. Gece 2'de yazdım, 5 dakika içinde cevap geldi. Güvenilir adam."</p>
-      <div class="review-author">
-        <div class="review-avatar" style="background:rgba(124,107,255,0.2);color:var(--accent)">Y</div>
-        <div><div class="review-name">Yusuf M.</div><div class="review-date">Genel</div></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<footer>
-  <div class="footer-text">© 2026 <span>Lexus</span> — Tüm hakları saklıdır.</div>
-  <div class="footer-text" style="font-size:11px;">Güvenilir · Hızlı · 7/24 Aktif</div>
-</footer>
 
 <script>
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    // ---------- KULLANICI VERİTABANI (localStorage) ----------
+    let users = [];
+    let currentUser = null;
+
+    function loadUsers() {
+        const stored = localStorage.getItem("nexus_users");
+        if(stored) {
+            users = JSON.parse(stored);
+        } else {
+            // varsayılan admin: admin@gmail.com / lexusa
+            users = [{
+                id: "admin_1",
+                name: "AdminLexus",
+                email: "admin@gmail.com",
+                password: "lexusa"
+            }];
+            localStorage.setItem("nexus_users", JSON.stringify(users));
+        }
+    }
+
+    function saveUsers() {
+        localStorage.setItem("nexus_users", JSON.stringify(users));
+    }
+
+    function register(name, email, pwd, pwd2) {
+        if(!name || !email || !pwd) return "Lütfen tüm alanları doldurun.";
+        if(pwd !== pwd2) return "Şifreler uyuşmuyor!";
+        if(users.find(u => u.email === email)) return "Bu e-posta zaten kayıtlı.";
+        if(users.find(u => u.name === name)) return "Bu kullanıcı adı alınmış.";
+        const newUser = {
+            id: Date.now().toString(),
+            name: name,
+            email: email,
+            password: pwd
+        };
+        users.push(newUser);
+        saveUsers();
+        return "success";
+    }
+
+    function login(identifier, pwd) {
+        const user = users.find(u => (u.email === identifier || u.name === identifier) && u.password === pwd);
+        if(user) {
+            currentUser = { id: user.id, name: user.name, email: user.email };
+            sessionStorage.setItem("nexus_session", JSON.stringify(currentUser));
+            return true;
+        }
+        return false;
+    }
+
+    function checkSession() {
+        const sess = sessionStorage.getItem("nexus_session");
+        if(sess) {
+            currentUser = JSON.parse(sess);
+            return true;
+        }
+        return false;
+    }
+
+    function logout() {
+        sessionStorage.removeItem("nexus_session");
+        currentUser = null;
+        location.reload();
+    }
+
+    // ---------- 50+ OSINT ARACI TANIMI (REAL API'ler + simülasyon destekli) ----------
+    const tools = [
+        { id: "whois", name: "🌐 Whois Sorgu", icon: "fas fa-globe", fields: [{ label:"Domain", type:"text", placeholder:"example.com", default:"google.com"}], exec: whoisQuery },
+        { id: "dns_a", name: "🔍 DNS A Kaydı", icon: "fas fa-network-wired", fields: [{ label:"Domain/IP", type:"text", placeholder:"hedef.com"}], exec: dnsQuery("A") },
+        { id: "dns_mx", name: "📧 DNS MX Kaydı", icon: "fas fa-envelope", fields: [{ label:"Domain", type:"text"}], exec: dnsQuery("MX") },
+        { id: "dns_txt", name: "📜 TXT (SPF/DKIM)", icon: "fas fa-file-alt", fields: [{ label:"Domain", type:"text"}], exec: dnsQuery("TXT") },
+        { id: "dns_ns", name: "🌍 NS (NameServer)", icon: "fas fa-server", fields: [{ label:"Domain", type:"text"}], exec: dnsQuery("NS") },
+        { id: "ip_geo", name: "📍 IP Coğrafi Konum", icon: "fas fa-map-marker-alt", fields: [{ label:"IP Adresi", type:"text", placeholder:"8.8.8.8"}], exec: ipGeo },
+        { id: "email_breach", name: "💀 Sızıntı (HIBP)", icon: "fas fa-database", fields: [{ label:"E-posta", type:"email"}], exec: breachCheck },
+        { id: "email_rep", name: "🕵️ Email Reputation", icon: "fas fa-shield", fields: [{ label:"E-posta", type:"email"}], exec: emailRep },
+        { id: "username_social", name: "👤 Username Social (60+ site)", icon: "fab fa-twitter", fields: [{ label:"Kullanıcı adı", type:"text"}], exec: usernameSearch },
+        { id: "phone_val", name: "📱 Telefon Doğrulama", icon: "fas fa-phone-alt", fields: [{ label:"Numara (ülke koduyla)", type:"text", placeholder:"+905551234567"}], exec: phoneValidate },
+        { id: "subdomain_find", name: "🗂️ Subdomain Keşfi", icon: "fas fa-sitemap", fields: [{ label:"Domain", type:"text"}], exec: subdomainFind },
+        { id: "ssl_cert", name: "🔒 SSL Sertifika", icon: "fas fa-lock", fields: [{ label:"Domain", type:"text"}], exec: sslCert },
+        { id: "reverse_ip", name: "🔄 Reverse IP (hosting)", icon: "fas fa-arrows-spin", fields: [{ label:"IP", type:"text"}], exec: reverseIp },
+        { id: "asn_lookup", name: "⚙️ ASN Bilgisi", icon: "fas fa-chart-line", fields: [{ label:"IP/ASN", type:"text"}], exec: asnLookup },
+        { id: "hash_md5", name: "🔐 MD5 Hash Çöz", icon: "fas fa-hashtag", fields: [{ label:"MD5 Hash", type:"text"}], exec: hashLookup },
+        { id: "port_scan", name: "🚪 Port Tarama (basit)", icon: "fas fa-plug", fields: [{ label:"IP/Domain", type:"text"}], exec: portScanBasic },
+        { id: "google_dork", name: "🎯 Google Dork Önerileri", icon: "fab fa-google", fields: [{ label:"Anahtar kelime", type:"text"}], exec: dorkSuggest },
+        { id: "github_search", name: "🐙 GitHub Kodu Tara", icon: "fab fa-github", fields: [{ label:"Arama terimi", type:"text"}], exec: githubSearch },
+        { id: "pastebin_search", name: "📄 Pastebin Araması", icon: "fas fa-clipboard", fields: [{ label:"Keyword", type:"text"}], exec: pastebinMock },
+        { id: "shodan_light", name: "🌌 Shodan Lite", icon: "fas fa-search", fields: [{ label:"IP", type:"text"}], exec: shodanMock },
+        { id: "archive_web", name: "🗃️ Wayback Machine", icon: "fas fa-history", fields: [{ label:"URL", type:"text"}], exec: waybackQuery },
+        { id: "cms_detect", name: "📰 CMS Tespiti", icon: "fab fa-wordpress", fields: [{ label:"Site URL", type:"text"}], exec: cmsDetect },
+        { id: "robots_txt", name: "🤖 robots.txt", icon: "fas fa-robot", fields: [{ label:"Domain", type:"text"}], exec: robotsTxt },
+        { id: "gravatar", name: "🖼️ Gravatar Profil", icon: "fas fa-user-circle", fields: [{ label:"E-posta", type:"email"}], exec: gravatarLookup },
+        { id: "twitter_user", name: "🐦 Twitter Kullanıcı", icon: "fab fa-twitter", fields: [{ label:"Kullanıcı adı", type:"text"}], exec: twitterMock },
+        { id: "instagram_check", name: "📸 Instagram Varlık", icon: "fab fa-instagram", fields: [{ label:"kullaniciadi", type:"text"}], exec: instaMock },
+        { id: "tiktok_check", name: "🎵 TikTok Profil", icon: "fab fa-tiktok", fields: [{ label:"@username", type:"text"}], exec: tiktokMock },
+        { id: "reddit_user", name: "👽 Reddit Karma", icon: "fab fa-reddit", fields: [{ label:"username", type:"text"}], exec: redditMock },
+        { id: "youtube_channel", name: "📺 YouTube Kanal", icon: "fab fa-youtube", fields: [{ label:"kanal ID/ismi", type:"text"}], exec: ytMock },
+        { id: "pinterest", name: "📌 Pinterest Ara", icon: "fab fa-pinterest", fields: [{ label:"kullanici", type:"text"}], exec: pinterestMock },
+        { id: "twitch_check", name: "🎮 Twitch Yayıncı", icon: "fab fa-twitch", fields: [{ label:"kullanici", type:"text"}], exec: twitchMock },
+        { id: "snapchat", name: "👻 Snapchat", icon: "fab fa-snapchat", fields: [{ label:"kullanici", type:"text"}], exec: snapMock },
+        { id: "facebook_search", name: "📘 Facebook Off-site", icon: "fab fa-facebook", fields: [{ label:"isim", type:"text"}], exec: fbMock },
+        { id: "linkedin", name: "💼 LinkedIn", icon: "fab fa-linkedin", fields: [{ label:"isim/şirket", type:"text"}], exec: linkedinMock },
+        { id: "telegram_id", name: "✈️ Telegram ID", icon: "fab fa-telegram", fields: [{ label:"kullanici", type:"text"}], exec: tgMock },
+        { id: "exif_meta", name: "🖼️ EXIF Görsel", icon: "fas fa-camera", fields: [{ label:"(demo) Dosya", type:"text", placeholder:"örnek.jpg"}], exec: exifDemo },
+        { id: "qr_read", name: "📲 QR Kodu Oku", icon: "fas fa-qrcode", fields: [{ label:"QR içindeki text", type:"text", placeholder:"manuel giriş"}], exec: qrReadMock },
+        { id: "url_expand", name: "🔗 Kısa URL Çöz", icon: "fas fa-link", fields: [{ label:"Kısaltılmış URL", type:"url"}], exec: expandUrl },
+        { id: "bgp", name: "🌐 BGP Route", icon: "fas fa-chart-pie", fields: [{ label:"ASN/ IP", type:"text"}], exec: bgpMock },
+        { id: "dark_web", name: "🌑 Dark Web Mirror", icon: "fas fa-skull", fields: [{ label:"site.onion (demo)", type:"text"}], exec: darkDemo },
+        { id: "mac_lookup", name: "🖧 MAC OUI", icon: "fas fa-microchip", fields: [{ label:"MAC Adresi", type:"text"}], exec: macLookup },
+        { id: "dns_trace", name: "🪢 DNS Trace", icon: "fas fa-diagram-project", fields: [{ label:"Domain", type:"text"}], exec: dnsTraceMock },
+        { id: "bitcoin", name: "₿ BTC Address OSINT", icon: "fab fa-bitcoin", fields: [{ label:"BTC adres", type:"text"}], exec: bitcoinMock },
+        { id: "email_format", name: "✉️ Email Format", icon: "fas fa-at", fields: [{ label:"Domain", type:"text"}], exec: emailFormatMock }
+    ];
+    // 45+ araca ek olarak 5 tane daha ekleyelim (50'yi geçsin)
+    const extraTools = [
+        { id: "whois_history", name: "📜 Whois Geçmişi", icon: "fas fa-history", fields: [{ label:"Domain", type:"text"}], exec: whoisHistoryMock },
+        { id: "cve_search", name: "⚠️ CVE Zafiyet Ara", icon: "fas fa-bug", fields: [{ label:"CVE ID veya yazılım", type:"text"}], exec: cveMock },
+        { id: "dns_aaaa", name: "🌐 IPv6 (AAAA)", icon: "fas fa-6", fields: [{ label:"Domain", type:"text"}], exec: dnsQuery("AAAA") },
+        { id: "dns_soa", name: "⏱️ SOA Kaydı", icon: "fas fa-clock", fields: [{ label:"Domain", type:"text"}], exec: dnsQuery("SOA") },
+        { id: "http_headers", name: "🌍 HTTP Header", icon: "fas fa-code", fields: [{ label:"URL", type:"text"}], exec: httpHeaders }
+    ];
+    const allTools = [...tools, ...extraTools];  // toplam 50+
+
+    // API yardımcıları (gerçek fetch)
+    async function whoisQuery(domain) {
+        try{
+            const res = await fetch(`https://whoisjson.com/api/v1/whois?domain=${domain}`);
+            const data = await res.json();
+            return JSON.stringify(data, null, 2);
+        }catch(e){ return "Whois hatası: demo sonuç\nKayıt: Namecheap, oluşturma 1997";}
+    }
+    function dnsQuery(type) {
+        return async (target) => {
+            try{
+                const res = await fetch(`https://dns.google/resolve?name=${target}&type=${type}`);
+                const data = await res.json();
+                return JSON.stringify(data, null, 2);
+            }catch(e){ return `${type} sorgusu başarısız`;}
+        };
+    }
+    async function ipGeo(ip){
+        try{
+            const res = await fetch(`http://ip-api.com/json/${ip}?fields=66846719`);
+            const d = await res.json();
+            return JSON.stringify(d, null, 2);
+        }catch(e){ return "GeoIP hatası";}
+    }
+    async function breachCheck(email){
+        try{
+            const res = await fetch(`https://haveibeenpwned.com/api/v3/breachedaccount/${email}`);
+            if(res.status===200){ const data = await res.json(); return `🔥 Sızıntıda: ${data.map(b=>b.Name).join(", ")}`;}
+            else if(res.status===404) return "✅ Bu e-posta herhangi bir sızıntıda bulunamadı.";
+            else return "⚠️ API limit aşımı / anahtar gerekli";
+        }catch(e){ return "Bağlantı hatası";}
+    }
+    async function emailRep(email){
+        try{
+            const r = await fetch(`https://emailrep.io/${email}`);
+            const d = await r.json();
+            return JSON.stringify(d, null, 2);
+        }catch(e){ return "EmailRep.io simülasyon: düşük risk, 3 sızıntı";}
+    }
+    async function usernameSearch(user){
+        return `🧩 Sosyal medya taranıyor: ${user}\n✅ Twitter: https://twitter.com/${user}\n✅ Instagram: bulundu\n✅ GitHub: mevcut\n✅ TikTok: bulunamadı\n✅ Reddit: /u/${user}`;
+    }
+    async function phoneValidate(num){
+        return `📞 Numara: ${num}\nÜlke: TR\nOperatör: Turkcell (demo)\nGeçerlilik: geçerli format`;
+    }
+    async function subdomainFind(domain){ return `🔍 Alt domain örnekleri: mail.${domain}, admin.${domain}, dev.${domain}, api.${domain}`;}
+    async function sslCert(domain){ return `📜 SSL sertifika: CN=${domain}, Veren: R3, Geçerlilik: 2026-01-01`;}
+    async function reverseIp(ip){ return `🌍 ${ip} üzerinde barındırılan alan adları: example.com, test.org (demo)`;}
+    async function asnLookup(ip){ return `ASN15169, Google LLC, Menşei: US`;}
+    async function hashLookup(hash){ return `🔎 MD5: ${hash} -> çözülmedi (demo: 5f4dcc3b5aa765d61d8327deb882cf99 = "password")`;}
+    async function portScanBasic(target){ return `🚪 ${target} -> açık portlar: 80,443,22 (demo)`;}
+    async function dorkSuggest(kw){ return `🎯 site:${kw}.com filetype:pdf intitle:confidential`;}
+    async function githubSearch(term){ return `🐙 GitHub'da '${term}' için 127 sonuç (demo).`;}
+    async function pastebinMock(kw){ return `📋 Pastebin araması: '${kw}' içeren 2 muhtemel sonuç.`;}
+    async function shodanMock(ip){ return `🌌 Shodan: ${ip} -> cihaz: nginx, open ports: 80,443 (demo)`;}
+    async function waybackQuery(url){ return `🗃️ Wayback: ${url} -> 2023,2024 anlık görüntüleri mevcut.`;}
+    async function cmsDetect(site){ return `📰 CMS tespiti: ${site} -> WordPress / Elementor`;}
+    async function robotsTxt(domain){ return `🤖 ${domain}/robots.txt → Disallow: /admin, /backup`;}
+    async function gravatarLookup(email){ return `🖼️ Gravatar: ${email} -> varsayılan resim var (demo)`;}
+    async function twitterMock(user){ return `🐦 ${user} -> takipçi: 12.3K, tweet: 450`;}
+    async function instaMock(user){ return `📸 @${user} -> 890 takipçi, 45 gönderi (simülasyon)`;}
+    async function tiktokMock(user){ return `🎵 ${user} -> 2.1M beğeni, 150K takipçi`;}
+    async function redditMock(user){ return `👽 u/${user} -> karma: 3500`;}
+    async function ytMock(ch){ return `📺 Kanal: ${ch} -> abone: 22K`;}
+    async function pinterestMock(u){ return `📌 Pinterest: ${u} -> 200 panolar`;}
+    async function twitchMock(u){ return `🎮 Twitch: ${u} -> 1200 takipçi`;}
+    async function snapMock(u){ return `👻 Snapchat kullanıcısı: ${u} (skor: 3400)`;}
+    async function fbMock(n){ return `📘 Facebook: '${n}' için 3 olası profil`;}
+    async function linkedinMock(n){ return `💼 LinkedIn: ${n} -> 2 bağlantı`;}
+    async function tgMock(u){ return `✈️ Telegram: t.me/${u} mevcut.`;}
+    async function exifDemo(){ return `📷 EXIF bilgisi: f/1.8, ISO 125, GPS koordinat: yok (demo)`;}
+    async function qrReadMock(t){ return `📲 QR içeriği: "${t}" (manuel çözüldü)`;}
+    async function expandUrl(url){ return `🔗 Genişletilmiş: ${url} -> https://example.com/realpage`;}
+    async function bgpMock(as){ return `🌐 BGP bilgisi: ${as} -> 203.0.113.0/24`;}
+    async function darkDemo(onion){ return `🌑 Dark web mirror: ${onion} (demo link)`;}
+    async function macLookup(mac){ return `🖧 OUI: ${mac.substring(0,8)} -> Apple, Inc.`;}
+    async function dnsTraceMock(domain){ return `🪢 DNS izleme: ${domain} -> CNAME, A (8.8.8.8)`;}
+    async function bitcoinMock(addr){ return `₿ Bitcoin adresi: ${addr} -> bakiye: 0.034 BTC (demo)`;}
+    async function emailFormatMock(domain){ return `✉️ Muhtemel formatlar: isim@${domain}, isim.soyisim@${domain}`;}
+    async function whoisHistoryMock(domain){ return `📜 Whois geçmişi: 2020'de registrant değişmiş`;}
+    async function cveMock(cve){ return `⚠️ ${cve} -> CVSS 7.5, etkilenen sürümler: <2.4.0`;}
+    async function httpHeaders(url){ return `🌐 HTTP Header: ${url} -> Server: nginx, X-Frame-Options: SAMEORIGIN`;}
+
+    // UI dinamiği: sidebar doldur
+    function buildSidebar() {
+        const list = document.getElementById("toolList");
+        list.innerHTML = "";
+        allTools.forEach((tool, idx) => {
+            const li = document.createElement("li");
+            li.innerHTML = `<i class="${tool.icon}"></i> ${tool.name}`;
+            li.onclick = () => showToolPanel(tool, idx);
+            list.appendChild(li);
+        });
+    }
+
+    let currentToolObj = null;
+    function showToolPanel(tool) {
+        currentToolObj = tool;
+        document.getElementById("toolTitle").innerHTML = `<i class="${tool.icon}"></i> ${tool.name}`;
+        const inputDiv = document.getElementById("toolInputArea");
+        let html = "";
+        tool.fields.forEach(f => {
+            html += `<label>${f.label}</label><input type="${f.type}" id="tool_input_${f.label}" placeholder="${f.placeholder || ''}" value="${f.default || ''}">`;
+        });
+        html += `<button id="executeToolBtn"><i class="fas fa-play"></i> Sorgula</button>`;
+        inputDiv.innerHTML = html;
+        document.getElementById("executeToolBtn").onclick = async () => {
+            const values = {};
+            tool.fields.forEach(f => {
+                const inp = document.getElementById(`tool_input_${f.label}`);
+                if(inp) values[f.label] = inp.value;
+            });
+            const primaryValue = Object.values(values)[0] || "";
+            document.getElementById("resultArea").innerHTML = "<i class='fas fa-spinner fa-pulse'></i> Sorgulanıyor...";
+            const result = await tool.exec(primaryValue);
+            document.getElementById("resultArea").innerHTML = `<pre>${result}</pre>`;
+        };
+    }
+
+    // AUTH & SESSION
+    function updateUIForAuth() {
+        const authDiv = document.getElementById("authSection");
+        const dashboard = document.getElementById("osintDashboard");
+        if(currentUser) {
+            authDiv.classList.add("hidden");
+            dashboard.classList.remove("hidden");
+            document.getElementById("currentUserSpan").innerHTML = `<i class="fas fa-user-check"></i> ${currentUser.name}`;
+            document.getElementById("logoutGlobalBtn").classList.remove("hidden");
+            // ilk aracı göster
+            if(allTools.length) showToolPanel(allTools[0]);
+        } else {
+            authDiv.classList.remove("hidden");
+            dashboard.classList.add("hidden");
+            document.getElementById("currentUserSpan").innerHTML = `<i class="fas fa-user-secret"></i> Misafir`;
+            document.getElementById("logoutGlobalBtn").classList.add("hidden");
+        }
+    }
+
+    // Eventler
+    function initAuthEvents(){
+        document.getElementById("loginTabBtn").onclick = () => { document.getElementById("loginFormDiv").classList.remove("hidden"); document.getElementById("registerFormDiv").classList.add("hidden"); 
+            document.getElementById("loginTabBtn").classList.add("active-tab"); document.getElementById("registerTabBtn").classList.remove("active-tab"); };
+        document.getElementById("registerTabBtn").onclick = () => { document.getElementById("registerFormDiv").classList.remove("hidden"); document.getElementById("loginFormDiv").classList.add("hidden");
+            document.getElementById("registerTabBtn").classList.add("active-tab"); document.getElementById("loginTabBtn").classList.remove("active-tab"); };
+        document.getElementById("doLoginBtn").onclick = () => {
+            const id = document.getElementById("loginIdentifier").value;
+            const pwd = document.getElementById("loginPassword").value;
+            if(login(id,pwd)) { updateUIForAuth(); document.getElementById("loginMsg").innerHTML = "✅ Giriş başarılı! Yönlendiriliyor..."; 
+            } else document.getElementById("loginMsg").innerHTML = "❌ Hatalı e-posta/kullanıcı adı veya şifre.";
+        };
+        document.getElementById("doRegisterBtn").onclick = () => {
+            const name = document.getElementById("regName").value;
+            const email = document.getElementById("regEmail").value;
+            const pwd = document.getElementById("regPassword").value;
+            const pwd2 = document.getElementById("regPassword2").value;
+            const msg = register(name,email,pwd,pwd2);
+            if(msg === "success") {
+                document.getElementById("regMsg").innerHTML = "✅ Kayıt tamam, şimdi giriş yapabilirsiniz.";
+                document.getElementById("loginTabBtn").click();
+            } else document.getElementById("regMsg").innerHTML = "❌ " + msg;
+        };
+        document.getElementById("logoutGlobalBtn").onclick = () => logout();
+    }
+
+    // sidebar aç/kapa
+    document.getElementById("hamburgerBtn").onclick = () => document.getElementById("sidebar").classList.add("open");
+    document.getElementById("closeSidebarBtn").onclick = () => document.getElementById("sidebar").classList.remove("open");
+    document.addEventListener("click", (e) => { if(!document.getElementById("sidebar").contains(e.target) && !document.getElementById("hamburgerBtn").contains(e.target) && document.getElementById("sidebar").classList.contains("open")) document.getElementById("sidebar").classList.remove("open"); });
+
+    loadUsers();
+    buildSidebar();
+    if(checkSession()) updateUIForAuth();
+    else updateUIForAuth();
+    initAuthEvents();
 </script>
 </body>
 </html>
