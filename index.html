@@ -1,1 +1,278 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sherlock Yüz OSINT | Gerçek Analiz + EXIF + Google Görsel Arama</title>
+    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/dist/face-api.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        *{box-sizing:border-box;}
+        body{background:#0a0f1a;font-family:'Inter',sans-serif;color:#e2e8f0;padding:1rem;}
+        .container{max-width:1200px;margin:auto;}
+        .card{background:#111827dd;border:1px solid #2dd4bf;border-radius:32px;padding:1.5rem;margin-bottom:1.5rem;}
+        h1{background:linear-gradient(135deg,#a5f3fc,#2dd4bf);-webkit-background-clip:text;background-clip:text;color:transparent;}
+        .upload-area{border:2px dashed #2dd4bf;border-radius:28px;padding:2rem;text-align:center;cursor:pointer;transition:0.2s;}
+        .upload-area:hover{background:#0f1a2e;}
+        .preview-area{display:flex;gap:1.5rem;flex-wrap:wrap;justify-content:center;margin-top:1.5rem;}
+        .image-box{background:#030712aa;border-radius:24px;padding:1rem;text-align:center;flex:1;}
+        img,canvas{max-width:100%;border-radius:20px;box-shadow:0 0 0 2px #2dd4bf40;}
+        .result-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;}
+        .result-item{background:#03071299;padding:0.8rem;border-radius:20px;}
+        .result-label{font-size:0.7rem;color:#7aa2f7;}
+        .result-value{font-size:1.1rem;font-weight:bold;}
+        button{background:#1e2a44;border:none;padding:0.5rem 1rem;border-radius:40px;color:white;cursor:pointer;margin-top:0.5rem;}
+        button:hover{background:#2dd4bf;color:#0a0f1a;}
+        .footer{text-align:center;font-size:0.7rem;margin-top:2rem;}
+        .spinner{display:inline-block;width:16px;height:16px;border:2px solid #2dd4bf80;border-top-color:#2dd4bf;border-radius:50%;animation:spin 0.6s linear infinite;}
+        @keyframes spin{to{transform:rotate(360deg);}}
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1><i class="fas fa-user-secret"></i> SHERLOCK YÜZ OSINT</h1>
+    <p>Yüz analizi (yaş, cinsiyet, duygu, gözlük, sakal) + EXIF verileri + Google Görsel Arama</p>
 
+    <div class="card">
+        <div class="upload-area" id="uploadArea">
+            <i class="fas fa-cloud-upload-alt fa-3x"></i>
+            <div>Fotoğraf yüklemek için tıklayın veya sürükleyin (JPG/PNG)</div>
+            <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" style="display:none;">
+        </div>
+
+        <div id="previewArea" style="display:none;">
+            <div class="preview-area">
+                <div class="image-box">
+                    <h4>📸 Yüklenen Fotoğraf</h4>
+                    <img id="uploadedImg" alt="yüklenen görsel">
+                    <button id="googleSearchBtn"><i class="fab fa-google"></i> Google Görsel Arama</button>
+                </div>
+                <div class="image-box">
+                    <h4>🧠 Yüz Tespiti (AI)</h4>
+                    <canvas id="faceCanvas" width="400" height="400"></canvas>
+                </div>
+            </div>
+            <div id="analysisPanel">
+                <div class="result-grid" id="analysisResults"></div>
+            </div>
+            <div id="exifPanel" class="card" style="margin-top:1rem;">
+                <h4><i class="fas fa-camera"></i> EXIF / Metadata (Gerçek)</h4>
+                <div id="exifData">Fotoğraf yüklendiğinde EXIF verileri okunacak.</div>
+            </div>
+            <div class="card">
+                <h4><i class="fas fa-search"></i> Ek OSINT (Manuel)</h4>
+                <input type="text" id="manualUsername" placeholder="Kullanıcı adı girin" style="width:100%;padding:8px;margin-bottom:8px;">
+                <button id="searchUsernameBtn">🔍 Kullanıcı Adı Ara (WhatsMyName)</button>
+                <input type="email" id="manualEmail" placeholder="E-posta girin" style="width:100%;margin-top:12px;padding:8px;">
+                <button id="searchEmailBtn">📧 E-posta Sızıntı Kontrolü (HIBP)</button>
+                <div id="osintResult" class="result-item" style="margin-top:12px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        ⚡ Gerçek yüz analizi: Face-api.js (TinyFaceDetector + Age/Gender/Expression)<br>
+        📷 EXIF: exifr kütüphanesi | 🌐 OSINT: Whatsmyname API, HaveIBeenPwned API
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/exifr@7.1.3/dist/lite.umd.js"></script>
+<script>
+    // ---------- FACE-API MODELLERİNİ YÜKLE (GERÇEK) ----------
+    let modelsLoaded = false;
+    const loadingMsg = document.createElement('div');
+    loadingMsg.className = 'result-item';
+    loadingMsg.innerHTML = '<div class="spinner"></div> Yüz analiz modelleri indiriliyor (ilk seferde 10-15 saniye sürebilir)...';
+    document.querySelector('.card').prepend(loadingMsg);
+
+    async function loadModels() {
+        const MODEL_URL = 'https://raw.githubusercontent.com/vladmandic/face-api/master/model';
+        try {
+            await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+            await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
+            await faceapi.nets.ageGenderNet.loadFromUri(MODEL_URL);
+            await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
+            modelsLoaded = true;
+            loadingMsg.remove();
+            console.log('✅ Yüz modelleri yüklendi');
+        } catch(e) {
+            loadingMsg.innerHTML = '❌ Model yükleme hatası. İnternet bağlantınızı kontrol edin.';
+            console.error(e);
+        }
+    }
+    loadModels();
+
+    // ---------- DOM ELEMANLARI ----------
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const previewDiv = document.getElementById('previewArea');
+    const uploadedImg = document.getElementById('uploadedImg');
+    const faceCanvas = document.getElementById('faceCanvas');
+    const analysisResults = document.getElementById('analysisResults');
+    const exifDiv = document.getElementById('exifData');
+    const googleBtn = document.getElementById('googleSearchBtn');
+    const searchUsernameBtn = document.getElementById('searchUsernameBtn');
+    const searchEmailBtn = document.getElementById('searchEmailBtn');
+    const manualUsername = document.getElementById('manualUsername');
+    const manualEmail = document.getElementById('manualEmail');
+    const osintResult = document.getElementById('osintResult');
+
+    // ---------- EXIF OKUMA (GERÇEK) ----------
+    async function readExif(file) {
+        try {
+            const exif = await exifr.parse(file);
+            if (!exif || Object.keys(exif).length === 0) return "⚠️ EXIF verisi bulunamadı (silinmiş veya yok).";
+            let output = "";
+            if (exif.Make) output += `📱 Cihaz: ${exif.Make} ${exif.Model || ''}\n`;
+            if (exif.DateTimeOriginal) output += `📅 Tarih: ${exif.DateTimeOriginal}\n`;
+            if (exif.GPSLatitude && exif.GPSLongitude) output += `📍 GPS: ${exif.GPSLatitude}, ${exif.GPSLongitude}\n`;
+            if (exif.FocalLength) output += `🔍 Odak: ${exif.FocalLength}mm\n`;
+            if (exif.ISO) output += `🎞️ ISO: ${exif.ISO}\n`;
+            if (exif.Software) output += `💻 Yazılım: ${exif.Software}\n`;
+            return output || "Genel EXIF mevcut fakat ilgili alanlar boş.";
+        } catch(e) {
+            return `EXIF okunamadı: ${e.message}`;
+        }
+    }
+
+    // ---------- YÜZ ANALİZİ (GERÇEK AI) ----------
+    async function analyzeFace(imageElement) {
+        if (!modelsLoaded) return "Modeller yükleniyor, biraz bekleyin...";
+        const canvas = faceCanvas;
+        const ctx = canvas.getContext('2d');
+        const displaySize = { width: 400, height: 400 };
+        canvas.width = displaySize.width;
+        canvas.height = displaySize.height;
+        ctx.drawImage(imageElement, 0, 0, displaySize.width, displaySize.height);
+
+        const detections = await faceapi.detectAllFaces(imageElement, new faceapi.TinyFaceDetectorOptions())
+            .withFaceLandmarks()
+            .withAgeAndGender()
+            .withFaceExpressions();
+
+        if (detections.length === 0) {
+            analysisResults.innerHTML = '<div class="result-item">❌ Yüz bulunamadı! Net bir yüz fotoğrafı deneyin.</div>';
+            return;
+        }
+
+        const resized = faceapi.resizeResults(detections, displaySize);
+        faceapi.draw.drawDetections(canvas, resized);
+        faceapi.draw.drawFaceLandmarks(canvas, resized);
+
+        const face = detections[0];
+        const age = Math.round(face.age);
+        const gender = face.gender === 'male' ? 'Erkek' : 'Kadın';
+        const genderProb = (face.genderProbability * 100).toFixed(1);
+        const expressions = face.expressions;
+        const dominant = Object.entries(expressions).sort((a,b)=>b[1]-a[1])[0];
+        
+        // Gözlük / sakal tahmini (face-api desteklemez, fakat landmarklardan basit bir fikir)
+        // Gerçek gözlük tespiti için ek model gerekir. Bilgilendirme yapalım.
+        let glassesNote = "Model gözlük tespiti yapmaz, manuel kontrol edin.";
+        let beardNote = "Model sakal tespiti yapmaz.";
+
+        const html = `
+            <div class="result-item"><div class="result-label">Yaş (tahmini)</div><div class="result-value">${age}</div></div>
+            <div class="result-item"><div class="result-label">Cinsiyet</div><div class="result-value">${gender} (${genderProb}%)</div></div>
+            <div class="result-item"><div class="result-label">Baskın Duygu</div><div class="result-value">${dominant[0].toUpperCase()} (${(dominant[1]*100).toFixed(0)}%)</div></div>
+            <div class="result-item"><div class="result-label">Mutluluk</div><div class="result-value">${(expressions.happy*100).toFixed(0)}%</div></div>
+            <div class="result-item"><div class="result-label">Üzgün</div><div class="result-value">${(expressions.sad*100).toFixed(0)}%</div></div>
+            <div class="result-item"><div class="result-label">Kızgın</div><div class="result-value">${(expressions.angry*100).toFixed(0)}%</div></div>
+            <div class="result-item"><div class="result-label">Şaşkın</div><div class="result-value">${(expressions.surprised*100).toFixed(0)}%</div></div>
+            <div class="result-item"><div class="result-label">Gözlük</div><div class="result-value">${glassesNote}</div></div>
+            <div class="result-item"><div class="result-label">Sakal/Bıyık</div><div class="result-value">${beardNote}</div></div>
+        `;
+        analysisResults.innerHTML = html;
+    }
+
+    // ---------- RESİM YÜKLEME ----------
+    async function handleImage(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            uploadedImg.src = e.target.result;
+            uploadedImg.onload = async () => {
+                previewDiv.style.display = 'block';
+                await analyzeFace(uploadedImg);
+                // EXIF oku
+                const exifText = await readExif(file);
+                exifDiv.innerHTML = `<pre style="white-space:pre-wrap;">${exifText}</pre>`;
+            };
+        };
+        reader.readAsDataURL(file);
+    }
+
+    uploadArea.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length) handleImage(e.target.files[0]);
+    });
+    uploadArea.addEventListener('dragover', (e) => e.preventDefault());
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) handleImage(file);
+    });
+
+    // Google Görsel Arama (gerçek yönlendirme)
+    googleBtn?.addEventListener('click', () => {
+        if (uploadedImg.src && uploadedImg.src.startsWith('data')) {
+            // Base64 resmi direkt göndermek mümkün değil, kullanıcıya bilgi ver
+            alert('Resmi kaydedip https://images.google.com adresine sürükleyerek arama yapabilirsiniz.\nVeya Chrome: resme sağ tıklayıp "Görseli Ara" seçeneğini kullanın.');
+            window.open('https://www.google.com/imghp?hl=tr');
+        } else {
+            alert('Önce bir fotoğraf yükleyin.');
+        }
+    });
+
+    // ---------- EK OSINT (GERÇEK API'LER) ----------
+    async function searchUsername(username) {
+        osintResult.innerHTML = '<div class="spinner"></div> Kullanıcı adı taranıyor...';
+        try {
+            const res = await fetch(`https://whatsmyname.app/api/v1/username?username=${username}`);
+            const data = await res.json();
+            if (data.sites) {
+                const found = data.sites.filter(s => s.exists).slice(0, 20);
+                if (found.length) {
+                    osintResult.innerHTML = `✅ "${username}" bulunduğu platformlar:<br>${found.map(s => `• ${s.name} (${s.url})`).join('<br>')}`;
+                } else {
+                    osintResult.innerHTML = `❌ "${username}" hiçbir platformda bulunamadı.`;
+                }
+            } else {
+                osintResult.innerHTML = `⚠️ API yanıtı: ${JSON.stringify(data)}`;
+            }
+        } catch(e) {
+            osintResult.innerHTML = `Hata: ${e.message}`;
+        }
+    }
+
+    async function searchEmail(email) {
+        osintResult.innerHTML = '<div class="spinner"></div> Sızıntı veritabanı taranıyor...';
+        try {
+            const res = await fetch(`https://haveibeenpwned.com/api/v3/breachedaccount/${email}`, {
+                headers: { 'User-Agent': 'Sherlock-OSINT' }
+            });
+            if (res.status === 200) {
+                const breaches = await res.json();
+                osintResult.innerHTML = `⚠️ ${email} adresi ${breaches.length} sızıntıda bulundu: ${breaches.map(b=>b.Name).join(', ')}`;
+            } else if (res.status === 404) {
+                osintResult.innerHTML = `✅ ${email} güvende, bilinen bir sızıntı yok.`;
+            } else {
+                osintResult.innerHTML = `API sınırı aşıldı veya hata ${res.status}.`;
+            }
+        } catch(e) {
+            osintResult.innerHTML = `Hata: ${e.message}`;
+        }
+    }
+
+    searchUsernameBtn.addEventListener('click', () => {
+        const user = manualUsername.value.trim();
+        if (user) searchUsername(user);
+        else osintResult.innerHTML = 'Lütfen bir kullanıcı adı girin.';
+    });
+    searchEmailBtn.addEventListener('click', () => {
+        const email = manualEmail.value.trim();
+        if (email) searchEmail(email);
+        else osintResult.innerHTML = 'Lütfen bir e-posta adresi girin.';
+    });
+</script>
+</body>
+</html>
