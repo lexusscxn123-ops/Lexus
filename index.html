@@ -3,95 +3,238 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lexus Omnipotence - Siber İstihbarat Paneli</title>
+    <title>Lexus - Yönetim Konsolu</title>
     <style>
         :root {
-            --bg-color: #0b0c10;
-            --panel-bg: #1f2833;
-            --text-color: #c5a059;
-            --text-muted: #858585;
-            --accent-color: #ff0032;
+            --bg-dark: #060709;
+            --bg-panel: #0d1117;
+            --bg-sidebar: #090c10;
+            --accent-red: #ff003c;
+            --accent-cyan: #00f0ff;
+            --text-main: #e6edf3;
+            --text-muted: #8b949e;
+            --border-glow: rgba(255, 0, 60, 0.2);
             --success-color: #00ff66;
-            --border-color: #45f3ff;
         }
 
-        body {
-            background-color: var(--bg-color);
-            color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        body, html {
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow: hidden;
+        }
+
+        /* ----- GİRİŞ SİSTEMİ ----- */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #050508 0%, #0c0d14 100%);
+            position: absolute;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s;
+        }
+
+        .auth-box {
+            background: var(--bg-panel);
+            border: 1px solid var(--accent-red);
+            padding: 40px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 360px;
+            box-shadow: 0 0 30px var(--border-glow);
+            text-align: center;
+        }
+
+        .auth-box h1 {
+            color: var(--accent-red);
+            font-size: 26px;
+            letter-spacing: 4px;
+            margin: 0 0 5px 0;
+            text-shadow: 0 0 10px rgba(255, 0, 60, 0.4);
+        }
+
+        .auth-box p {
+            color: var(--text-muted);
+            font-size: 11px;
+            margin: 0 0 30px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 11px;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            background: #000;
+            border: 1px solid #222;
+            color: #fff;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .input-group input:focus {
+            border-color: var(--accent-cyan);
+            outline: none;
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid var(--accent-red);
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+        }
+
+        .auth-btn:hover {
+            background: var(--accent-red);
+            box-shadow: 0 0 15px var(--accent-red);
+        }
+
+        /* ----- ANA UYGULAMA PANELİ (MENÜ) ----- */
+        .app-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid #161b22;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
         }
 
-        .container {
-            width: 100%;
-            max-width: 900px;
-            background: var(--panel-bg);
-            border: 1px solid var(--accent-color);
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 0 20px rgba(255, 0, 50, 0.2);
-        }
-
-        .header {
-            text-align: center;
-            border-bottom: 2px solid var(--accent-color);
-            padding-bottom: 15px;
-            margin-bottom: 25px;
-        }
-
-        .header h1 {
-            margin: 0;
-            color: var(--accent-color);
-            letter-spacing: 2px;
-            font-size: 28px;
-            text-shadow: 0 0 10px rgba(255, 0, 50, 0.5);
-        }
-
-        .header p {
-            margin: 5px 0 0 0;
-            color: var(--text-muted);
-            font-size: 14px;
-        }
-
-        .grid-menu {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        button {
-            background: #111;
-            color: #fff;
-            border: 1px solid var(--border-color);
-            padding: 12px 20px;
-            font-size: 14px;
+        .sidebar-brand {
+            padding: 20px;
+            border-bottom: 1px solid #161b22;
             font-weight: bold;
+            letter-spacing: 3px;
+            color: var(--accent-red);
+            font-size: 20px;
+            text-align: center;
+        }
+
+        .sidebar-menu {
+            padding: 20px 10px;
+            flex-grow: 1;
+        }
+
+        .menu-title {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            padding-left: 10px;
+            margin: 15px 0 8px 0;
+            letter-spacing: 1px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: var(--text-main);
+            font-size: 13px;
             border-radius: 6px;
+            margin-bottom: 5px;
+            transition: all 0.2s;
             cursor: pointer;
-            transition: all 0.3s ease;
+            font-weight: 500;
         }
 
-        button:hover {
-            background: var(--border-color);
-            color: #000;
-            box-shadow: 0 0 15px var(--border-color);
-            transform: translateY(-2px);
+        .menu-item:hover, .menu-item.active {
+            background: #161b22;
+            color: var(--accent-cyan);
+        }
+        
+        .menu-item.danger-item:hover {
+            color: var(--accent-red);
         }
 
-        button.danger {
-            border-color: var(--accent-color);
-        }
-        button.danger:hover {
-            background: var(--accent-color);
-            color: #fff;
-            box-shadow: 0 0 15px var(--accent-color);
+        .sidebar-footer {
+            padding: 15px;
+            border-top: 1px solid #161b22;
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: center;
         }
 
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-dark);
+            height: 100%;
+        }
+
+        .topbar {
+            height: 60px;
+            background: var(--bg-panel);
+            border-bottom: 1px solid #161b22;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            flex-shrink: 0;
+        }
+
+        .topbar-title {
+            font-size: 13px;
+            letter-spacing: 1px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            color: #00ff66;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #00ff66;
+            border-radius: 50%;
+            margin-right: 8px;
+            box-shadow: 0 0 8px #00ff66;
+        }
+
+        .content-body {
+            padding: 30px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        /* ----- MODAL SISTEMI ----- */
         .modal {
             display: none;
             position: fixed;
@@ -99,50 +242,26 @@
             background: rgba(0, 0, 0, 0.85);
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            z-index: 10000;
         }
 
         .modal-content {
             background: #151922;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--accent-cyan);
             padding: 25px;
             border-radius: 8px;
             width: 100%;
-            max-width: 450px;
-            box-shadow: 0 0 25px rgba(69, 243, 255, 0.3);
+            max-width: 420px;
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.2);
         }
 
         .modal-content h3 {
             margin-top: 0;
-            color: var(--border-color);
-            border-bottom: 1px solid #333;
+            color: var(--accent-cyan);
+            border-bottom: 1px solid #222;
             padding-bottom: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 13px;
-            color: #ccc;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            background: #000;
-            border: 1px solid #333;
-            color: #fff;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .form-group input:focus {
-            border-color: var(--border-color);
-            outline: none;
+            font-size: 16px;
+            letter-spacing: 1px;
         }
 
         .modal-actions {
@@ -152,16 +271,38 @@
             margin-top: 20px;
         }
 
+        .modal-actions button {
+            background: #111;
+            color: #fff;
+            border: 1px solid #333;
+            padding: 10px 20px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .modal-actions button.confirm-btn {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        .modal-actions button.confirm-btn:hover {
+            background: var(--accent-cyan);
+            color: #000;
+        }
+
+        /* ----- PANEL / SONUÇLAR ----- */
         .results-panel {
             background: #0c1015;
-            border: 1px dashed #333;
+            border: 1px dashed #222;
             border-radius: 6px;
-            padding: 20px;
-            min-height: 100px;
+            padding: 25px;
+            min-height: 200px;
         }
 
         .result-card {
-            background: #1b222c;
+            background: #141922;
             border-left: 4px solid var(--success-color);
             padding: 15px;
             margin-bottom: 15px;
@@ -169,137 +310,202 @@
         }
 
         .result-card h4 {
-            margin: 0 0 10px 0;
+            margin: 0 0 12px 0;
             color: var(--success-color);
+            letter-spacing: 0.5px;
         }
 
         .result-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
-            font-size: 14px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+            font-size: 13px;
         }
 
-        .pagination {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 15px;
+        .result-item {
+            background: #0d1117;
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #21262d;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header">
-        <h1>🛰️ LEXUS OMNIPOTENCE CORE</h1>
-        <p>[SİBER İSTİHBARAT VE SORGULAMA KONSOLU]</p>
-    </div>
-
-    <div class="grid-menu">
-        <button onclick="openModal('adsoyadModal')">🔍 Ad Soyad Sorgu</button>
-        <button onclick="openModal('tcModal')">🆔 TC Sorgu</button>
-        <button onclick="openModal('sulaleModal')">👥 Sülale Sorgu</button>
-        <button onclick="openModal('gsmtcModal')">📱 GSM -> TC</button>
-        <button onclick="openModal('tcgsmModal')">📱 TC -> GSM</button>
-        <button onclick="openModal('adresModal')">📍 Adres Sorgu</button>
-        <button onclick="openModal('ipModal')">🌐 IP / Sunucu Sorgu</button>
-        <button class="danger" onclick="clearResults()">🗑️ Ekranı Temizle</button>
-    </div>
-
-    <div class="results-panel" id="resultsPanel">
-        <span style="color: var(--text-muted);">Konsol hazır. Yapılan sorguların sonuçları asenkron olarak burada listelenecektir...</span>
-    </div>
-</div>
-
-<div id="adsoyadModal" class="modal">
-    <div class="modal-content">
-        <h3>🔍 Ad Soyad Sorgulama</h3>
-        <div class="form-group"><label>Ad</label><input type="text" id="as_ad"></div>
-        <div class="form-group"><label>Soyad</label><input type="text" id="as_soyad"></div>
-        <div class="form-group"><label>İl (Opsiyonel)</label><input type="text" id="as_il"></div>
-        <div class="form-group"><label>İlçe (Opsiyonel)</label><input type="text" id="as_ilce"></div>
-        <div class="modal-actions">
-            <button onclick="closeModal('adsoyadModal')">İptal</button>
-            <button onclick="submitSorgu('adsoyad')">Sorgula</button>
+    <!-- GİRİŞ MODÜLÜ -->
+    <div class="auth-container" id="authScreen">
+        <div class="auth-box">
+            <h1>LEXUS</h1>
+            <p>GÜVENLİ ERİŞİM PROKOLÜ</p>
+            
+            <div class="input-group">
+                <label>Erişim Anahtarı</label>
+                <input type="text" id="username" placeholder="root" value="admin">
+            </div>
+            <div class="input-group">
+                <label>Şifreleme Kodu</label>
+                <input type="password" id="password" placeholder="••••••••" value="lexus1337">
+            </div>
+            
+            <button class="auth-btn" onclick="loginSystem()">SİSTEME BAĞLAN</button>
         </div>
     </div>
-</div>
 
-<div id="tcModal" class="modal">
-    <div class="modal-content">
-        <h3>🆔 TC Kimlik Sorgulama</h3>
-        <div class="form-group"><label>TC Numarası</label><input type="text" id="tc_no" maxlength="11"></div>
-        <div class="modal-actions">
-            <button onclick="closeModal('tcModal')">İptal</button>
-            <button onclick="submitSorgu('tc')">Sorgula</button>
+    <!-- ANA PANEL -->
+    <div class="app-container" id="appPanel">
+        
+        <!-- SIDEBAR MENÜ -->
+        <div class="sidebar">
+            <div>
+                <div class="sidebar-brand">LEXUS</div>
+                <div class="sidebar-menu">
+                    <div class="menu-title">Sorgu İstasyonları</div>
+                    <div class="menu-item" onclick="openModal('adsoyadModal')">🔍 Ad Soyad Sorgu</div>
+                    <div class="menu-item" onclick="openModal('tcModal')">🆔 TC Sorgu</div>
+                    <div class="menu-item" onclick="openModal('sulaleModal')">👥 Sülale Sorgu</div>
+                    <div class="menu-item" onclick="openModal('gsmtcModal')">📱 GSM -> TC</div>
+                    <div class="menu-item" onclick="openModal('tcgsmModal')">📱 TC -> GSM</div>
+                    <div class="menu-item" onclick="openModal('adresModal')">📍 Adres Sorgu</div>
+                    <div class="menu-item" onclick="openModal('ipModal')">🌐 IP / Sunucu Sorgu</div>
+                    
+                    <div class="menu-title">Araçlar</div>
+                    <div class="menu-item danger-item" onclick="clearResults()">🗑️ Ekranı Temizle</div>
+                </div>
+            </div>
+            <div class="sidebar-footer">
+                Lexus Core v4.0 // 2026
+            </div>
+        </div>
+
+        <!-- SAĞ İÇERİK ALANI -->
+        <div class="main-content">
+            <div class="topbar">
+                <div class="topbar-title">Terminal Durumu: <span style="color: var(--accent-cyan); font-weight: bold;">YETKİLENDİRİLDİ</span></div>
+                <div class="status-indicator">
+                    <div class="status-dot"></div> ÇEVRİMİÇİ VERİ HATTI
+                </div>
+            </div>
+
+            <div class="content-body">
+                <div class="results-panel" id="resultsPanel">
+                    <span style="color: var(--text-muted);">Sistem aktif. Yapmak istediğiniz işlemi sol menüden seçiniz...</span>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
-<div id="sulaleModal" class="modal">
-    <div class="modal-content">
-        <h3>👥 Sülale Sorgulama</h3>
-        <div class="form-group"><label>TC Numarası</label><input type="text" id="sulale_tc" maxlength="11"></div>
-        <div class="modal-actions">
-            <button onclick="closeModal('sulaleModal')">İptal</button>
-            <button onclick="submitSorgu('sulale')">Sorgula</button>
+    <!-- AD SOYAD MODAL -->
+    <div id="adsoyadModal" class="modal">
+        <div class="modal-content">
+            <h3>🔍 Ad Soyad Sorgulama</h3>
+            <div class="form-group"><label>Ad</label><input type="text" id="as_ad"></div>
+            <div class="form-group"><label>Soyad</label><input type="text" id="as_soyad"></div>
+            <div class="form-group"><label>İl (Opsiyonel)</label><input type="text" id="as_il"></div>
+            <div class="form-group"><label>İlçe (Opsiyonel)</label><input type="text" id="as_ilce"></div>
+            <div class="modal-actions">
+                <button onclick="closeModal('adsoyadModal')">İptal</button>
+                <button class="confirm-btn" onclick="submitSorgu('adsoyad')">Sorgula</button>
+            </div>
         </div>
     </div>
-</div>
 
-<div id="gsmtcModal" class="modal">
-    <div class="modal-content">
-        <h3>📱 GSM numarası üzerinden TC Bul</h3>
-        <div class="form-group"><label>GSM No (Başında 0 olmadan)</label><input type="text" id="gsm_no" maxlength="10"></div>
-        <div class="modal-actions">
-            <button onclick="closeModal('gsmtcModal')">İptal</button>
-            <button onclick="submitSorgu('gsmtc')">Sorgula</button>
+    <!-- TC MODAL -->
+    <div id="tcModal" class="modal">
+        <div class="modal-content">
+            <h3>🆔 TC Kimlik Sorgulama</h3>
+            <div class="form-group"><label>TC Numarası</label><input type="text" id="tc_no" maxlength="11"></div>
+            <div class="modal-actions">
+                <button onclick="closeModal('tcModal')">İptal</button>
+                <button class="confirm-btn" onclick="submitSorgu('tc')">Sorgula</button>
+            </div>
         </div>
     </div>
-</div>
 
-<div id="tcgsmModal" class="modal">
-    <div class="modal-content">
-        <h3>📱 TC üzerinden GSM Bul</h3>
-        <div class="form-group"><label>TC Numarası</label><input type="text" id="tc_gsm_no" maxlength="11"></div>
-        <div class="modal-actions">
-            <button onclick="closeModal('tcgsmModal')">İptal</button>
-            <button onclick="submitSorgu('tcgsm')">Sorgula</button>
+    <!-- SÜLALE MODAL -->
+    <div id="sulaleModal" class="modal">
+        <div class="modal-content">
+            <h3>👥 Sülale Sorgulama</h3>
+            <div class="form-group"><label>TC Numarası</label><input type="text" id="sulale_tc" maxlength="11"></div>
+            <div class="modal-actions">
+                <button onclick="closeModal('sulaleModal')">İptal</button>
+                <button class="confirm-btn" onclick="submitSorgu('sulale')">Sorgula</button>
+            </div>
         </div>
     </div>
-</div>
 
-<div id="adresModal" class="modal">
-    <div class="modal-content">
-        <h3>📍 Adres Sorgulama</h3>
-        <div class="form-group"><label>TC Numarası</label><input type="text" id="adres_tc" maxlength="11"></div>
-        <div class="modal-actions">
-            <button onclick="closeModal('adresModal')">İptal</button>
-            <button onclick="submitSorgu('adres')">Sorgula</button>
+    <!-- GSM TO TC MODAL -->
+    <div id="gsmtcModal" class="modal">
+        <div class="modal-content">
+            <h3>📱 GSM -> TC Sorgulama</h3>
+            <div class="form-group"><label>GSM No (Sıfırsız)</label><input type="text" id="gsm_no" maxlength="10"></div>
+            <div class="modal-actions">
+                <button onclick="closeModal('gsmtcModal')">İptal</button>
+                <button class="confirm-btn" onclick="submitSorgu('gsmtc')">Sorgula</button>
+            </div>
         </div>
     </div>
-</div>
 
-<div id="ipModal" class="modal">
-    <div class="modal-content">
-        <h3>🌐 IP Coğrafi Konum Analizi</h3>
-        <div class="form-group"><label>IP Adresi (Boş bırakılırsa kendi IP'niz)</label><input type="text" id="ip_addr" placeholder="Örn: 8.8.8.8"></div>
-        <div class="modal-actions">
-            <button onclick="closeModal('ipModal')">İptal</button>
-            <button onclick="submitSorgu('ip')">Sorgula</button>
+    <!-- TC TO GSM MODAL -->
+    <div id="tcgsmModal" class="modal">
+        <div class="modal-content">
+            <h3>📱 TC -> GSM Sorgulama</h3>
+            <div class="form-group"><label>TC Numarası</label><input type="text" id="tc_gsm_no" maxlength="11"></div>
+            <div class="modal-actions">
+                <button onclick="closeModal('tcgsmModal')">İptal</button>
+                <button class="confirm-btn" onclick="submitSorgu('tcgsm')">Sorgula</button>
+            </div>
         </div>
     </div>
-</div>
+
+    <!-- ADRES MODAL -->
+    <div id="adresModal" class="modal">
+        <div class="modal-content">
+            <h3>📍 Adres Sorgulama</h3>
+            <div class="form-group"><label>TC Numarası</label><input type="text" id="adres_tc" maxlength="11"></div>
+            <div class="modal-actions">
+                <button onclick="closeModal('adresModal')">İptal</button>
+                <button class="confirm-btn" onclick="submitSorgu('adres')">Sorgula</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- IP MODAL -->
+    <div id="ipModal" class="modal">
+        <div class="modal-content">
+            <h3>🌐 IP Analiz İstasyonu</h3>
+            <div class="form-group"><label>IP Adresi</label><input type="text" id="ip_addr" placeholder="Boş bırakılırsa yerel IP"></div>
+            <div class="modal-actions">
+                <button onclick="closeModal('ipModal')">İptal</button>
+                <button class="confirm-btn" onclick="submitSorgu('ip')">Sorgula</button>
+            </div>
+        </div>
+    </div>
 
 <script>
-    const API_BASE = "https://arastir.vip/api";
+    // GitHub Pages'te doğrudan kod okunmasını biraz olsun zorlaştırmak için API base adresi ayrıştırıldı
+    const part1 = "https://aras";
+    const part2 = "tir.vip/api";
+    const API_BASE = part1 + part2;
+
+    function loginSystem() {
+        const u = document.getElementById('username').value;
+        const p = document.getElementById('password').value;
+        if(u === "admin" && p === "lexus1337") {
+            document.getElementById('authScreen').style.display = 'none';
+            const panel = document.getElementById('appPanel');
+            panel.style.visibility = 'visible';
+            panel.style.opacity = '1';
+        } else {
+            alert("Hatalı kimlik doğrulaması!");
+        }
+    }
 
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-    function clearResults() { document.getElementById('resultsPanel').innerHTML = '<span style="color: var(--text-muted);">Konsol temizlendi. Bekleniyor...</span>'; }
+    function clearResults() { document.getElementById('resultsPanel').innerHTML = '<span style="color: var(--text-muted);">Sistem temizlendi. Komut bekleniyor...</span>'; }
 
-    async defFetch(url) {
+    // Hatalı yazılan "async defFetch" kısmı düzeltildi.
+    async function defFetch(url) {
         try {
             let res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" } });
             return await res.json();
@@ -310,7 +516,7 @@
 
     async function submitSorgu(type) {
         let panel = document.getElementById('resultsPanel');
-        panel.innerHTML = `<span style="color: var(--border-color);">🔄 İstihbarat hattından veriler asenkron olarak çekiliyor, lütfen bekleyin...</span>`;
+        panel.innerHTML = `<span style="color: var(--accent-cyan);">🔄 Veri havuzundan asenkron çıktılar alınıyor, bekleyin...</span>`;
         
         if(type === 'adsoyad') {
             closeModal('adsoyadModal');
@@ -318,45 +524,43 @@
             let soyad = document.getElementById('as_soyad').value.toUpperCase();
             let il = document.getElementById('as_il').value.toUpperCase();
             let ilce = document.getElementById('as_ilce').value.toUpperCase();
-            
-            let url = `${API_BASE}/adsoyad.php?adi=${ad}&soyadi=${soyad}&il=${il}&ilce=${ilce}`;
-            let data = await defFetch(url);
-            renderListResults(data, "AD SOYAD SORGULAMA SONUCU");
+            let data = await defFetch(`${API_BASE}/adsoyad.php?adi=${ad}&soyadi=${soyad}&il=${il}&ilce=${ilce}`);
+            renderListResults(data, "AD SOYAD ANALİZ SONUCU");
         }
         else if(type === 'tc') {
             closeModal('tcModal');
             let tc = document.getElementById('tc_no').value;
             let data = await defFetch(`${API_BASE}/tc.php?tc=${tc}`);
-            renderSingleResult(data, "TC KİMLİK ANALİZİ");
+            renderSingleResult(data, "TC VERİ DETAYI");
         }
         else if(type === 'sulale') {
             closeModal('sulaleModal');
             let tc = document.getElementById('sulale_tc').value;
             let data = await defFetch(`${API_BASE}/sulale.php?tc=${tc}`);
-            renderListResults(data, "SÜLALE SOY AĞACI RAPORU");
+            renderListResults(data, "SÜLALE SOY AĞACI MATRİSİ");
         }
         else if(type === 'gsmtc') {
             closeModal('gsmtcModal');
             let gsm = document.getElementById('gsm_no').value;
             let data = await defFetch(`${API_BASE}/gsmtc.php?gsm=${gsm}`);
-            renderSingleResult(data, "GSM -> TC RAPORU");
+            renderSingleResult(data, "GSM -> TC VERİ BAĞLANTISI");
         }
         else if(type === 'tcgsm') {
             closeModal('tcgsmModal');
             let tc = document.getElementById('tc_gsm_no').value;
             let data = await defFetch(`${API_BASE}/tcgsm.php?tc=${tc}`);
-            renderListResults(data, "TC -> GSM BAĞLANTI RAPORU");
+            renderListResults(data, "TC -> GSM MOBİL HARİTALAMA");
         }
         else if(type === 'adres') {
             closeModal('adresModal');
             let tc = document.getElementById('adres_tc').value;
             let data = await defFetch(`${API_BASE}/adres.php?tc=${tc}`);
-            renderSingleResult(data, "YERLEŞKE / ADRES BİLGİSİ");
+            renderSingleResult(data, "LOKASYON / YERLEŞİM BİLGİSİ");
         }
         else if(type === 'ip') {
             closeModal('ipModal');
             let ip = document.getElementById('ip_addr').value;
-            let url = ip ? `http://ip-api.com/json/${ip}` : `http://ip-api.com/json/`;
+            let url = ip ? `https://ip-api.com/json/${ip}` : `https://ip-api.com/json/`;
             let data = await defFetch(url);
             renderIPResult(data);
         }
@@ -365,58 +569,11 @@
     function renderSingleResult(data, title) {
         let panel = document.getElementById('resultsPanel');
         if(!data || data.error || (Array.isArray(data) && data.length === 0)) {
-            panel.innerHTML = `<span style="color: var(--accent-color);">❌ Veritabanında eşleşen kayıt bulunamadı veya API hatası oluştu.</span>`;
+            panel.innerHTML = `<span style="color: var(--accent-red);">❌ Veri hatası: Eşleşen kayıt bulunamadı.</span>`;
             return;
         }
         let kisi = Array.isArray(data) ? data[0] : data;
-        let html = `<div class="result-card"><h4>🇹🇷 ${title}</h4><div class="result-grid">`;
+        let html = `<div class="result-card"><h4>📊 ${title}</h4><div class="result-grid">`;
         for (let [key, val] of Object.entries(kisi)) {
-            html += `<div><strong>${key}:</strong> ${val || '?'}</div>`;
+            html += `<div class="result-item"><strong>${key}:</strong> ${val || '?'}</div>`;
         }
-        html += `</div></div>`;
-        panel.innerHTML = html;
-    }
-
-    function renderListResults(data, title) {
-        let panel = document.getElementById('resultsPanel');
-        if(!data || data.error || !Array.isArray(data) || data.length === 0) {
-            panel.innerHTML = `<span style="color: var(--accent-color);">❌ Veritabanında eşleşen hiçbir kayıt bulunamadı.</span>`;
-            return;
-        }
-        let html = `<h3>📊 ${title} (${data.length} Sonuç Listelendi)</h3>`;
-        data.forEach((kisi, idx) => {
-            html += `<div class="result-card"><h4>👤 Kayıt #${idx+1}: ${kisi.ADI || ''} ${kisi.SOYADI || ''}</h4><div class="result-grid">`;
-            for (let [key, val] of Object.entries(kisi)) {
-                html += `<div><strong>${key}:</strong> ${val || '?'}</div>`;
-            }
-            html += `</div></div>`;
-        });
-        panel.innerHTML = html;
-    }
-
-    function renderIPResult(data) {
-        let panel = document.getElementById('resultsPanel');
-        if(!data || data.status === "fail") {
-            panel.innerHTML = `<span style="color: var(--accent-color);">❌ IP adresi çözümlenemedi.</span>`;
-            return;
-        }
-        panel.innerHTML = `
-            <div class="result-card" style="border-left-color: var(--border-color);">
-                <h4>🌐 IP COĞRAFİ İSTİHBARAT: ${data.query}</h4>
-                <div class="result-grid">
-                    <div><strong>Ülke:</strong> ${data.country} (${data.countryCode})</div>
-                    <div><strong>Bölge/İl:</strong> ${data.regionName}</div>
-                    <div><strong>Şehir:</strong> ${data.city} / ${data.zip || '?'}</div>
-                    <div><strong>ISP:</strong> ${data.isp}</div>
-                    <div><strong>AS Hattı:</strong> ${data.as}</div>
-                    <div><strong>Zaman Dilimi:</strong> ${data.timezone}</div>
-                    <div><strong>Koordinat:</strong> ${data.lat}, ${data.lon}</div>
-                    <div><strong>VPN/Proxy:</strong> ${data.proxy ? '⚠️ AKTİF' : '🟢 TEMİZ'}</div>
-                    <div><strong>Hosting/Sunucu:</strong> ${data.hosting ? '⚠️ SUNUCU HATTI' : '🏠 EV İNTERNETİ'}</div>
-                </div>
-            </div>
-        `;
-    }
-</script>
-</body>
-</html>
