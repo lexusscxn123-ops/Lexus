@@ -114,7 +114,7 @@
             box-shadow: 0 0 15px var(--accent-red);
         }
 
-        /* ----- ANA UYGULAMA PANELİ (MENÜ) ----- */
+        /* ----- ANA UYGULAMA PANELİ ----- */
         .app-container {
             display: flex;
             width: 100%;
@@ -171,7 +171,7 @@
             font-weight: 500;
         }
 
-        .menu-item:hover, .menu-item.active {
+        .menu-item:hover {
             background: #161b22;
             color: var(--accent-cyan);
         }
@@ -264,6 +264,27 @@
             letter-spacing: 1px;
         }
 
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 13px;
+            color: #ccc;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            background: #000;
+            border: 1px solid #333;
+            color: #fff;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
         .modal-actions {
             display: flex;
             justify-content: flex-end;
@@ -336,15 +357,15 @@
     <div class="auth-container" id="authScreen">
         <div class="auth-box">
             <h1>LEXUS</h1>
-            <p>GÜVENLİ ERİŞİM PROKOLÜ</p>
+            <p>GÜVENLİ ERİŞİM PROTOKOLÜ</p>
             
             <div class="input-group">
                 <label>Erişim Anahtarı</label>
-                <input type="text" id="username" placeholder="root" value="admin">
+                <input type="text" id="username" value="admin">
             </div>
             <div class="input-group">
                 <label>Şifreleme Kodu</label>
-                <input type="password" id="password" placeholder="••••••••" value="lexus1337">
+                <input type="password" id="password" value="lexus1337">
             </div>
             
             <button class="auth-btn" onclick="loginSystem()">SİSTEME BAĞLAN</button>
@@ -394,7 +415,7 @@
         </div>
     </div>
 
-    <!-- AD SOYAD MODAL -->
+    <!-- MODALLAR -->
     <div id="adsoyadModal" class="modal">
         <div class="modal-content">
             <h3>🔍 Ad Soyad Sorgulama</h3>
@@ -409,7 +430,6 @@
         </div>
     </div>
 
-    <!-- TC MODAL -->
     <div id="tcModal" class="modal">
         <div class="modal-content">
             <h3>🆔 TC Kimlik Sorgulama</h3>
@@ -421,7 +441,6 @@
         </div>
     </div>
 
-    <!-- SÜLALE MODAL -->
     <div id="sulaleModal" class="modal">
         <div class="modal-content">
             <h3>👥 Sülale Sorgulama</h3>
@@ -433,7 +452,6 @@
         </div>
     </div>
 
-    <!-- GSM TO TC MODAL -->
     <div id="gsmtcModal" class="modal">
         <div class="modal-content">
             <h3>📱 GSM -> TC Sorgulama</h3>
@@ -445,7 +463,6 @@
         </div>
     </div>
 
-    <!-- TC TO GSM MODAL -->
     <div id="tcgsmModal" class="modal">
         <div class="modal-content">
             <h3>📱 TC -> GSM Sorgulama</h3>
@@ -457,7 +474,6 @@
         </div>
     </div>
 
-    <!-- ADRES MODAL -->
     <div id="adresModal" class="modal">
         <div class="modal-content">
             <h3>📍 Adres Sorgulama</h3>
@@ -469,7 +485,6 @@
         </div>
     </div>
 
-    <!-- IP MODAL -->
     <div id="ipModal" class="modal">
         <div class="modal-content">
             <h3>🌐 IP Analiz İstasyonu</h3>
@@ -482,10 +497,7 @@
     </div>
 
 <script>
-    // GitHub Pages'te doğrudan kod okunmasını biraz olsun zorlaştırmak için API base adresi ayrıştırıldı
-    const part1 = "https://aras";
-    const part2 = "tir.vip/api";
-    const API_BASE = part1 + part2;
+    const API_BASE = "https://arastir.vip/api";
 
     function loginSystem() {
         const u = document.getElementById('username').value;
@@ -504,10 +516,9 @@
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     function clearResults() { document.getElementById('resultsPanel').innerHTML = '<span style="color: var(--text-muted);">Sistem temizlendi. Komut bekleniyor...</span>'; }
 
-    // Hatalı yazılan "async defFetch" kısmı düzeltildi.
     async function defFetch(url) {
         try {
-            let res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" } });
+            let res = await fetch(url);
             return await res.json();
         } catch (e) {
             return { error: true, message: e.message };
@@ -569,7 +580,7 @@
     function renderSingleResult(data, title) {
         let panel = document.getElementById('resultsPanel');
         if(!data || data.error || (Array.isArray(data) && data.length === 0)) {
-            panel.innerHTML = `<span style="color: var(--accent-red);">❌ Veri hatası: Eşleşen kayıt bulunamadı.</span>`;
+            panel.innerHTML = `<span style="color: var(--accent-red);">❌ Veri hatası: Eşleşen kayıt bulunamadı veya API hatası.</span>`;
             return;
         }
         let kisi = Array.isArray(data) ? data[0] : data;
@@ -577,3 +588,47 @@
         for (let [key, val] of Object.entries(kisi)) {
             html += `<div class="result-item"><strong>${key}:</strong> ${val || '?'}</div>`;
         }
+        html += `</div></div>`;
+        panel.innerHTML = html;
+    }
+
+    function renderListResults(data, title) {
+        let panel = document.getElementById('resultsPanel');
+        if(!data || data.error || !Array.isArray(data) || data.length === 0) {
+            panel.innerHTML = `<span style="color: var(--accent-red);">❌ Matriste eşleşen kayıt saptanamadı.</span>`;
+            return;
+        }
+        let html = `<h3 style="color: var(--accent-cyan); font-size: 15px; margin-bottom: 15px;">📊 ${title} (${data.length} Kayıt)</h3>`;
+        data.forEach((kisi, idx) => {
+            html += `<div class="result-card"><h4>👤 Dizin #${idx+1}: ${kisi.ADI || ''} ${kisi.SOYADI || ''}</h4><div class="result-grid">`;
+            for (let [key, val] of Object.entries(kisi)) {
+                html += `<div class="result-item"><strong>${key}:</strong> ${val || '?'}</div>`;
+            }
+            html += `</div></div>`;
+        });
+        panel.innerHTML = html;
+    }
+
+    function renderIPResult(data) {
+        let panel = document.getElementById('resultsPanel');
+        if(!data || data.status === "fail") {
+            panel.innerHTML = `<span style="color: var(--accent-red);">❌ IP adresi haritalanamadı.</span>`;
+            return;
+        }
+        panel.innerHTML = `
+            <div class="result-card" style="border-left-color: var(--accent-cyan);">
+                <h4>🌐 COĞRAFİ İSTİHBARAT: ${data.query}</h4>
+                <div class="result-grid">
+                    <div class="result-item"><strong>Ülke:</strong> ${data.country}</div>
+                    <div class="result-item"><strong>Bölge/İl:</strong> ${data.regionName}</div>
+                    <div class="result-item"><strong>Şehir:</strong> ${data.city}</div>
+                    <div class="result-item"><strong>ISP:</strong> ${data.isp}</div>
+                    <div class="result-item"><strong>Zaman Dilimi:</strong> ${data.timezone}</div>
+                    <div class="result-item"><strong>Koordinat:</strong> ${data.lat}, ${data.lon}</div>
+                </div>
+            </div>
+        `;
+    }
+</script>
+</body>
+</html>
