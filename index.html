@@ -1,87 +1,28 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# lexus_panel.py
-# Lexus OSINT Paneli – Admin giriş, loglama, arastir.vip API entegrasyonu
-
-import os
-import json
-import time
-import requests
-from datetime import datetime
-from flask import Flask, render_template_string, request, redirect, url_for, session, jsonify
-from functools import wraps
-
-app = Flask(__name__)
-app.secret_key = "LEXUS_SUPER_SECRET_KEY_2026"
-
-# Admin bilgileri
-ADMIN_EMAIL = "admin@gmail.com"
-ADMIN_PASS = "vpnn111"
-
-# API
-API_BASE = "https://arastir.vip/api"
-
-# Log dosyası
-LOG_FILE = "lexus_logs.json"
-
-# HTML şablonları (dosya olarak değil, direkt string)
-HTML_INDEX = """
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lexus – Giriş</title>
-    <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { background:#060709; font-family:'Segoe UI',Tahoma,sans-serif; display:flex; justify-content:center; align-items:center; min-height:100vh; color:#e6edf3; }
-        .login-box { background:#0d1117; padding:40px; border-radius:12px; border:1px solid #1e2a3a; width:100%; max-width:360px; box-shadow:0 0 30px rgba(0,255,200,0.1); }
-        .login-box h1 { color:#00ffc8; text-align:center; font-weight:300; letter-spacing:3px; margin-bottom:5px; }
-        .login-box p { text-align:center; color:#8892a0; font-size:12px; margin-bottom:25px; }
-        .input-group { margin-bottom:16px; }
-        .input-group label { display:block; font-size:11px; color:#8892a0; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; }
-        .input-group input { width:100%; padding:12px; background:#0b0e14; border:1px solid #2a3a4a; border-radius:6px; color:#fff; font-size:14px; outline:none; }
-        .input-group input:focus { border-color:#00ffc8; }
-        button { width:100%; padding:12px; background:#00ffc8; border:none; border-radius:6px; color:#0b0e14; font-weight:700; font-size:15px; cursor:pointer; transition:0.25s; }
-        button:hover { background:#66ffd9; box-shadow:0 0 20px rgba(0,255,200,0.25); }
-        .error { color:#ff003c; text-align:center; margin-top:12px; font-size:13px; }
-        .footer { text-align:center; margin-top:18px; font-size:11px; color:#4a5a6a; }
-    </style>
-</head>
-<body>
-    <div class="login-box">
-        <h1>⚡ LEXUS</h1>
-        <p>GÜVENLİ ERİŞİM KONSOLU</p>
-        <form method="POST">
-            <div class="input-group">
-                <label>E-posta</label>
-                <input type="email" name="email" value="admin@gmail.com" required>
-            </div>
-            <div class="input-group">
-                <label>Şifre</label>
-                <input type="password" name="password" required>
-            </div>
-            <button type="submit">GİRİŞ YAP</button>
-            {% if error %}
-            <div class="error">{{ error }}</div>
-            {% endif %}
-        </form>
-        <div class="footer">Lexus Core v4.0</div>
-    </div>
-</body>
-</html>
-"""
-
-HTML_PANEL = """
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lexus – Panel</title>
+    <title>Lexus – Tam Panel</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body { background:#060709; font-family:'Segoe UI',Tahoma,sans-serif; color:#e6edf3; min-height:100vh; }
+        /* GİRİŞ / KAYIT */
+        .auth-overlay { position:fixed; top:0;left:0;width:100%;height:100%;background:#060709;display:flex;justify-content:center;align-items:center;z-index:9999; flex-direction:column; gap:20px; }
+        .auth-box { background:#0d1117; padding:40px; border-radius:12px; border:1px solid #1e2a3a; width:100%;max-width:360px; box-shadow:0 0 30px rgba(0,255,200,0.1); }
+        .auth-box h1 { color:#00ffc8; text-align:center; font-weight:300; letter-spacing:3px; margin-bottom:5px; }
+        .auth-box p { text-align:center; color:#8892a0; font-size:12px; margin-bottom:25px; }
+        .auth-box .input-group { margin-bottom:16px; }
+        .auth-box .input-group label { display:block; font-size:11px; color:#8892a0; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; }
+        .auth-box .input-group input { width:100%; padding:12px; background:#0b0e14; border:1px solid #2a3a4a; border-radius:6px; color:#fff; font-size:14px; outline:none; }
+        .auth-box .input-group input:focus { border-color:#00ffc8; }
+        .auth-box button { width:100%; padding:12px; background:#00ffc8; border:none; border-radius:6px; color:#0b0e14; font-weight:700; font-size:15px; cursor:pointer; transition:0.25s; margin-top:6px; }
+        .auth-box button:hover { background:#66ffd9; box-shadow:0 0 20px rgba(0,255,200,0.25); }
+        .auth-box .switch { text-align:center; margin-top:14px; font-size:13px; color:#8892a0; cursor:pointer; }
+        .auth-box .switch:hover { color:#00ffc8; }
+        .auth-box .error { color:#ff003c; text-align:center; margin-top:10px; font-size:13px; display:none; }
+        .auth-box .success { color:#00ff66; text-align:center; margin-top:10px; font-size:13px; display:none; }
+        /* ANA PANEL */
         .container { display:flex; height:100vh; }
         .sidebar { width:260px; background:#0d1117; border-right:1px solid #1e2a3a; display:flex; flex-direction:column; flex-shrink:0; }
         .sidebar-brand { padding:20px; text-align:center; border-bottom:1px solid #1e2a3a; }
@@ -93,9 +34,11 @@ HTML_PANEL = """
         .menu-item.active { background:#00ffc8; color:#0b0e14; font-weight:600; }
         .sidebar-footer { padding:15px; border-top:1px solid #1e2a3a; text-align:center; font-size:11px; color:#4a5a6a; }
         .main { flex:1; display:flex; flex-direction:column; }
-        .topbar { background:#0d1117; padding:15px 30px; border-bottom:1px solid #1e2a3a; display:flex; justify-content:space-between; align-items:center; }
+        .topbar { background:#0d1117; padding:15px 30px; border-bottom:1px solid #1e2a3a; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
         .topbar span { color:#8892a0; font-size:13px; }
         .topbar .user { color:#00ffc8; font-weight:600; }
+        .topbar .logout-btn { color:#ff003c; cursor:pointer; font-weight:500; text-decoration:none; }
+        .topbar .logout-btn:hover { text-decoration:underline; }
         .content { padding:25px; overflow-y:auto; flex:1; }
         .panel { background:#0d1117; border:1px solid #1e2a3a; border-radius:10px; padding:24px; margin-bottom:20px; }
         .panel h3 { color:#00ffc8; font-weight:400; font-size:18px; margin-bottom:16px; letter-spacing:1px; }
@@ -111,26 +54,51 @@ HTML_PANEL = """
         .result-item { background:#141c2b; padding:12px 16px; border-radius:6px; margin-bottom:10px; border-left:3px solid #00ffc8; }
         .result-item .label { color:#8892a0; font-size:12px; text-transform:uppercase; }
         .result-item .value { color:#e6edf3; font-weight:500; }
-        .error { border-left-color:#ff003c; }
+        .error-item { border-left-color:#ff003c; }
         .loading { color:#00f0ff; animation:pulse 1s infinite; }
         @keyframes pulse { 0% { opacity:0.5; } 50% { opacity:1; } 100% { opacity:0.5; } }
-        .log-area { background:#0b0e14; border-radius:10px; padding:15px; border:1px solid #1e2a3a; max-height:300px; overflow-y:auto; font-size:12px; font-family:'Courier New',monospace; color:#b0c0d0; }
+        .log-area { background:#0b0e14; border-radius:10px; padding:15px; border:1px solid #1e2a3a; max-height:350px; overflow-y:auto; font-size:12px; font-family:'Courier New',monospace; color:#b0c0d0; }
         .log-entry { padding:4px 0; border-bottom:1px solid #1a1a1a; }
         .log-entry .time { color:#8892a0; margin-right:12px; }
         .log-entry .type { color:#00ffc8; font-weight:600; }
         .log-entry .detail { color:#e6edf3; }
-        .flex-row { display:flex; gap:20px; flex-wrap:wrap; }
-        .flex-row .col { flex:1; min-width:280px; }
-        .btn-secondary { background:transparent; border:1px solid #2a3a4a; color:#e6edf3; padding:6px 16px; border-radius:4px; cursor:pointer; font-size:12px; transition:0.2s; }
-        .btn-secondary:hover { border-color:#00ffc8; color:#00ffc8; }
-        .logout-btn { color:#ff003c; text-decoration:none; font-size:13px; font-weight:500; }
-        .logout-btn:hover { text-decoration:underline; }
+        .pagination { display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
+        .pagination button { background:#141c2b; border:1px solid #2a3a4a; color:#e6edf3; padding:6px 14px; border-radius:4px; cursor:pointer; font-size:13px; transition:0.2s; }
+        .pagination button:hover { border-color:#00ffc8; color:#00ffc8; }
+        .pagination button.active { background:#00ffc8; color:#0b0e14; border-color:#00ffc8; font-weight:600; }
+        .hidden { display:none !important; }
+        .user-list { background:#0b0e14; border-radius:8px; padding:12px; border:1px solid #1e2a3a; margin-top:12px; }
+        .user-item { padding:6px 10px; border-bottom:1px solid #1a1a1a; display:flex; justify-content:space-between; font-size:13px; }
+        .user-item:last-child { border-bottom:none; }
+        .user-item .email { color:#00ffc8; }
+        .user-item .pass { color:#8892a0; }
         @media (max-width:700px) { .sidebar { width:60px; } .sidebar-brand h2 { font-size:14px; } .sidebar-menu .menu-item span { display:none; } .menu-title { display:none; } }
     </style>
 </head>
 <body>
-<div class="container">
-    <!-- Sidebar -->
+
+<!-- AUTH EKRANI (Giriş / Kayıt) -->
+<div class="auth-overlay" id="authScreen">
+    <div class="auth-box" id="authBox">
+        <h1>⚡ LEXUS</h1>
+        <p id="authTitle">GİRİŞ YAP</p>
+        <div class="input-group">
+            <label>E-posta</label>
+            <input type="email" id="authEmail" placeholder="ornek@mail.com">
+        </div>
+        <div class="input-group">
+            <label>Şifre</label>
+            <input type="password" id="authPassword" placeholder="********">
+        </div>
+        <button id="authBtn" onclick="handleAuth()">GİRİŞ YAP</button>
+        <div class="error" id="authError">Hatalı bilgiler!</div>
+        <div class="success" id="authSuccess">Kayıt başarılı!</div>
+        <div class="switch" id="authSwitch" onclick="toggleAuth()">Hesabın yok mu? <strong>Kayıt Ol</strong></div>
+    </div>
+</div>
+
+<!-- ANA PANEL -->
+<div class="container" id="mainApp" style="display:none;">
     <div class="sidebar">
         <div class="sidebar-brand"><h2>⚡LEXUS</h2></div>
         <div class="sidebar-menu">
@@ -144,255 +112,384 @@ HTML_PANEL = """
             <a class="menu-item" data-mode="isyeri" onclick="switchMode('isyeri')">🏢 <span>İşyeri/SGK</span></a>
             <div class="menu-title" style="margin-top:20px;">Yönetim</div>
             <a class="menu-item" onclick="showLogs()">📜 <span>Loglar</span></a>
-            <a class="menu-item" href="/logout" style="color:#ff003c;">🚪 <span>Çıkış</span></a>
+            <a class="menu-item" onclick="showUsers()">👥 <span>Kullanıcılar</span></a>
+            <a class="menu-item" onclick="logout()" style="color:#ff003c;">🚪 <span>Çıkış</span></a>
         </div>
         <div class="sidebar-footer">Lexus v4.0</div>
     </div>
 
-    <!-- Ana içerik -->
     <div class="main">
         <div class="topbar">
             <span>📡 <span id="modeTitle">TC Sorgulama</span></span>
-            <span><span class="user">{{ admin_email }}</span> | <a href="/logout" class="logout-btn">Çıkış</a></span>
+            <span><span class="user" id="userEmail">admin@gmail.com</span> | <span class="logout-btn" onclick="logout()">Çıkış</span></span>
         </div>
         <div class="content" id="mainContent">
-            <!-- Panel dinamik olarak doldurulacak -->
             <div id="panelContainer"></div>
-            <!-- Log alanı (gizli) -->
-            <div id="logContainer" style="display:none;"></div>
+            <div id="logContainer" class="hidden"></div>
+            <div id="userContainer" class="hidden"></div>
         </div>
     </div>
 </div>
 
 <script>
-    // Mode yapılandırması
-    const modes = {
-        tc: {
-            title: "TC Kimlik Sorgulama",
-            fields: [{ id: "param1", label: "TC Numarası", placeholder: "11 haneli TC", maxlength: 11 }],
-            endpoint: "tc.php",
-            buildParams: (vals) => ({ tc: vals.param1 })
-        },
-        adsoyad: {
-            title: "Ad Soyad Sorgulama",
-            fields: [
-                { id: "param1", label: "Ad", placeholder: "Kişinin adı" },
-                { id: "param2", label: "Soyad (opsiyonel)", placeholder: "Soyadı", required: false },
-                { id: "param3", label: "İl (opsiyonel)", placeholder: "İl", required: false },
-                { id: "param4", label: "İlçe (opsiyonel)", placeholder: "İlçe", required: false }
-            ],
-            endpoint: "adsoyad.php",
-            buildParams: (vals) => {
-                let p = { adi: vals.param1 };
-                if (vals.param2) p.soyadi = vals.param2;
-                if (vals.param3) p.il = vals.param3;
-                if (vals.param4) p.ilce = vals.param4;
-                return p;
-            }
-        },
-        sulale: {
-            title: "Sülale Sorgulama",
-            fields: [{ id: "param1", label: "TC Numarası", placeholder: "11 haneli TC", maxlength: 11 }],
-            endpoint: "sulale.php",
-            buildParams: (vals) => ({ tc: vals.param1 })
-        },
-        gsmtc: {
-            title: "GSM → TC Sorgulama",
-            fields: [{ id: "param1", label: "GSM Numarası", placeholder: "10 haneli (5xx...)", maxlength: 10 }],
-            endpoint: "gsmtc.php",
-            buildParams: (vals) => ({ gsm: vals.param1 })
-        },
-        tcgsm: {
-            title: "TC → GSM Sorgulama",
-            fields: [{ id: "param1", label: "TC Numarası", placeholder: "11 haneli TC", maxlength: 11 }],
-            endpoint: "tcgsm.php",
-            buildParams: (vals) => ({ tc: vals.param1 })
-        },
-        adres: {
-            title: "Adres Sorgulama",
-            fields: [{ id: "param1", label: "TC Numarası", placeholder: "11 haneli TC", maxlength: 11 }],
-            endpoint: "adres.php",
-            buildParams: (vals) => ({ tc: vals.param1 })
-        },
-        isyeri: {
-            title: "İşyeri / SGK Sorgulama",
-            fields: [{ id: "param1", label: "TC Numarası", placeholder: "11 haneli TC", maxlength: 11 }],
-            endpoint: "isyeri.php",
-            buildParams: (vals) => ({ tc: vals.param1 })
-        }
-    };
+// ---- SABİTLER ----
+const API_BASE = "https://arastir.vip/api";
 
-    let currentMode = "tc";
-    const API_BASE = "/api";  // Flask proxy
+// ---- VERİ DEPOLAMA (localStorage) ----
+function getUsers() {
+    try { return JSON.parse(localStorage.getItem('lexus_users')) || []; }
+    catch { return []; }
+}
+function saveUsers(users) {
+    localStorage.setItem('lexus_users', JSON.stringify(users));
+}
+function getLogs() {
+    try { return JSON.parse(localStorage.getItem('lexus_logs')) || []; }
+    catch { return []; }
+}
+function saveLogs(logs) {
+    localStorage.setItem('lexus_logs', JSON.stringify(logs));
+}
+function getCurrentUser() {
+    return localStorage.getItem('lexus_current_user') || null;
+}
+function setCurrentUser(email) {
+    if (email) localStorage.setItem('lexus_current_user', email);
+    else localStorage.removeItem('lexus_current_user');
+}
 
-    function switchMode(mode) {
-        currentMode = mode;
-        document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-        document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
-        document.getElementById('modeTitle').textContent = modes[mode].title;
-        renderPanel(mode);
-        document.getElementById('logContainer').style.display = 'none';
-        document.getElementById('panelContainer').style.display = 'block';
+// ---- BAŞLANGIÇ ADMIN ----
+(function initAdmin() {
+    let users = getUsers();
+    if (!users.find(u => u.email === 'admin@gmail.com')) {
+        users.push({ email: 'admin@gmail.com', password: 'vpnn111', isAdmin: true });
+        saveUsers(users);
     }
+})();
 
-    function renderPanel(mode) {
-        const config = modes[mode];
-        const container = document.getElementById('panelContainer');
-        let html = `<div class="panel"><h3>${config.title}</h3><div class="input-group" id="inputGroup">`;
-        config.fields.forEach((f, idx) => {
-            const id = `param${idx+1}`;
-            html += `<div class="field"><label>${f.label}</label><input type="text" id="${id}" placeholder="${f.placeholder}" ${f.maxlength ? `maxlength="${f.maxlength}"` : ''}></div>`;
-        });
-        html += `<button onclick="search()">SORGULA</button></div>`;
-        html += `<div class="result-area" id="resultArea"><div class="placeholder">🔍 Parametreleri girin ve sorgulayın.</div></div></div>`;
-        container.innerHTML = html;
+// ---- AUTH ----
+let isLoginMode = true;
+
+function toggleAuth() {
+    isLoginMode = !isLoginMode;
+    document.getElementById('authTitle').textContent = isLoginMode ? 'GİRİŞ YAP' : 'KAYIT OL';
+    document.getElementById('authBtn').textContent = isLoginMode ? 'GİRİŞ YAP' : 'KAYIT OL';
+    document.getElementById('authSwitch').innerHTML = isLoginMode ? 'Hesabın yok mu? <strong>Kayıt Ol</strong>' : 'Zaten hesabın var mı? <strong>Giriş Yap</strong>';
+    document.getElementById('authError').style.display = 'none';
+    document.getElementById('authSuccess').style.display = 'none';
+}
+
+function handleAuth() {
+    const email = document.getElementById('authEmail').value.trim();
+    const pass = document.getElementById('authPassword').value.trim();
+    if (!email || !pass) {
+        showAuthError('Lütfen tüm alanları doldurun.');
+        return;
     }
-
-    async function search() {
-        const config = modes[currentMode];
-        const vals = {};
-        config.fields.forEach((f, idx) => {
-            const el = document.getElementById(`param${idx+1}`);
-            vals[`param${idx+1}`] = el ? el.value.trim() : '';
-        });
-        const param1 = vals.param1;
-        if (!param1) {
-            document.getElementById('resultArea').innerHTML = `<div class="result-item error"><span class="label">HATA</span><br><span class="value">Lütfen gerekli alanı doldurun.</span></div>`;
-            return;
-        }
-        // Basit doğrulama
-        if (['tc','sulale','tcgsm','adres','isyeri'].includes(currentMode) && (param1.length !== 11 || !/^\d+$/.test(param1))) {
-            document.getElementById('resultArea').innerHTML = `<div class="result-item error"><span class="label">HATA</span><br><span class="value">TC 11 haneli ve sadece rakam olmalı.</span></div>`;
-            return;
-        }
-        if (currentMode === 'gsmtc' && (param1.length !== 10 || !/^\d+$/.test(param1))) {
-            document.getElementById('resultArea').innerHTML = `<div class="result-item error"><span class="label">HATA</span><br><span class="value">GSM 10 haneli ve sadece rakam olmalı (başında 0 yok).</span></div>`;
-            return;
-        }
-
-        const params = config.buildParams(vals);
-        const url = new URL(API_BASE + '/' + config.endpoint);
-        Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
-
-        document.getElementById('resultArea').innerHTML = `<div class="loading">⏳ Sorgu gönderiliyor...</div>`;
-
-        try {
-            const resp = await fetch(url.toString());
-            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-            const data = await resp.json();
-            renderResult(data);
-        } catch(e) {
-            document.getElementById('resultArea').innerHTML = `<div class="result-item error"><span class="label">HATA</span><br><span class="value">${e.message}</span></div>`;
-        }
-    }
-
-    function renderResult(data) {
-        let html = '';
-        if (Array.isArray(data)) {
-            if (data.length === 0) {
-                html = `<div style="color:#00ff66;">✅ Hiç kayıt bulunamadı.</div>`;
-            } else {
-                html = `<div style="margin-bottom:10px;color:#00ffc8;">📌 <strong>${data.length}</strong> kayıt bulundu.</div>`;
-                data.forEach((item, idx) => {
-                    html += `<div class="result-item">`;
-                    html += `<div style="display:flex;justify-content:space-between;flex-wrap:wrap;"><span class="label">Kayıt #${idx+1}</span></div>`;
-                    for (const [key, val] of Object.entries(item)) {
-                        if (val === null || val === undefined || val === '') continue;
-                        html += `<div><span class="label">${key}</span> <span class="value">${val}</span></div>`;
-                    }
-                    html += `</div>`;
-                });
-            }
-        } else if (typeof data === 'object' && data !== null) {
-            if (data.error) {
-                html = `<div class="result-item error"><span class="label">API HATASI</span><br><span class="value">${data.message || data.text || 'Bilinmeyen hata'}</span></div>`;
-            } else {
-                html = `<div class="result-item">`;
-                for (const [key, val] of Object.entries(data)) {
-                    if (val === null || val === undefined || val === '') continue;
-                    html += `<div><span class="label">${key}</span> <span class="value">${val}</span></div>`;
-                }
-                html += `</div>`;
-            }
+    const users = getUsers();
+    if (isLoginMode) {
+        const user = users.find(u => u.email === email && u.password === pass);
+        if (user) {
+            setCurrentUser(email);
+            document.getElementById('authScreen').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'flex';
+            document.getElementById('userEmail').textContent = email;
+            addLog('GİRİŞ', `Kullanıcı ${email} giriş yaptı.`);
+            switchMode('tc');
         } else {
-            html = `<div style="color:#8892a0;">${JSON.stringify(data, null, 2)}</div>`;
+            showAuthError('Hatalı e-posta veya şifre.');
+            addLog('BAŞARISIZ GİRİŞ', `Hatalı giriş denemesi: ${email}`);
         }
-        document.getElementById('resultArea').innerHTML = html;
+    } else {
+        if (users.find(u => u.email === email)) {
+            showAuthError('Bu e-posta zaten kayıtlı.');
+            return;
+        }
+        users.push({ email, password: pass, isAdmin: false });
+        saveUsers(users);
+        showAuthSuccess('Kayıt başarılı! Şimdi giriş yapabilirsiniz.');
+        setTimeout(() => {
+            isLoginMode = true;
+            toggleAuth();
+            document.getElementById('authEmail').value = email;
+            document.getElementById('authPassword').value = pass;
+        }, 1500);
+        addLog('KAYIT', `Yeni kullanıcı: ${email}`);
+    }
+}
+
+function showAuthError(msg) {
+    const el = document.getElementById('authError');
+    el.textContent = msg;
+    el.style.display = 'block';
+    document.getElementById('authSuccess').style.display = 'none';
+}
+function showAuthSuccess(msg) {
+    const el = document.getElementById('authSuccess');
+    el.textContent = msg;
+    el.style.display = 'block';
+    document.getElementById('authError').style.display = 'none';
+}
+
+// ---- LOGLAR ----
+function addLog(type, message) {
+    const logs = getLogs();
+    logs.push({
+        time: new Date().toISOString().replace('T',' ').slice(0,19),
+        type: type,
+        message: message
+    });
+    saveLogs(logs);
+}
+
+// ---- OTURUM KONTROL ----
+window.onload = function() {
+    if (getCurrentUser()) {
+        const users = getUsers();
+        const user = users.find(u => u.email === getCurrentUser());
+        if (user) {
+            document.getElementById('authScreen').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'flex';
+            document.getElementById('userEmail').textContent = user.email;
+            switchMode('tc');
+            return;
+        }
+    }
+    // auth ekranı göster
+    document.getElementById('authScreen').style.display = 'flex';
+    document.getElementById('mainApp').style.display = 'none';
+};
+
+// ---- ÇIKIŞ ----
+function logout() {
+    addLog('ÇIKIŞ', `Kullanıcı ${getCurrentUser()} çıkış yaptı.`);
+    setCurrentUser(null);
+    document.getElementById('authScreen').style.display = 'flex';
+    document.getElementById('mainApp').style.display = 'none';
+}
+
+// ---- MODE YAPILANDIRMASI ----
+const modes = {
+    tc: {
+        title: "TC Kimlik Sorgulama",
+        fields: [{ id: "param1", label: "TC Numarası", placeholder: "11 haneli TC", maxlength: 11 }],
+        endpoint: "tc.php",
+        buildParams: (vals) => ({ tc: vals.param1 })
+    },
+    adsoyad: {
+        title: "Ad Soyad Sorgulama",
+        fields: [
+            { id: "param1", label: "Ad", placeholder: "Kişinin adı" },
+            { id: "param2", label: "Soyad (opsiyonel)", placeholder: "Soyadı", required: false },
+            { id: "param3", label: "İl (opsiyonel)", placeholder: "İl", required: false },
+            { id: "param4", label: "İlçe (opsiyonel)", placeholder: "İlçe", required: false }
+        ],
+        endpoint: "adsoyad.php",
+        buildParams: (vals) => {
+            let p = { adi: vals.param1 };
+            if (vals.param2) p.soyadi = vals.param2;
+            if (vals.param3) p.il = vals.param3;
+            if (vals.param4) p.ilce = vals.param4;
+            return p;
+        }
+    },
+    sulale: {
+        title: "Sülale Sorgulama",
+        fields: [{ id: "param1", label: "TC Numarası", placeholder: "11 haneli TC", maxlength: 11 }],
+        endpoint: "sulale.php",
+        buildParams: (vals) => ({ tc: vals.param1 })
+    },
+    gsmtc: {
+        title: "GSM → TC Sorgulama",
+        fields: [{ id: "param1", label: "GSM Numarası", placeholder: "10 haneli (5xx...)", maxlength: 10 }],
+        endpoint: "gsmtc.php",
+        buildParams: (vals) => ({ gsm: vals.param1 })
+    },
+    tcgsm: {
+        title: "TC → GSM Sorgulama",
+        fields: [{ id: "param1", label: "TC Numarası", placeholder: "11 haneli TC", maxlength: 11 }],
+        endpoint: "tcgsm.php",
+        buildParams: (vals) => ({ tc: vals.param1 })
+    },
+    adres: {
+        title: "Adres Sorgulama",
+        fields: [{ id: "param1", label: "TC Numarası", placeholder: "11 haneli TC", maxlength: 11 }],
+        endpoint: "adres.php",
+        buildParams: (vals) => ({ tc: vals.param1 })
+    },
+    isyeri: {
+        title: "İşyeri / SGK Sorgulama",
+        fields: [{ id: "param1", label: "TC Numarası", placeholder: "11 haneli TC", maxlength: 11 }],
+        endpoint: "isyeri.php",
+        buildParams: (vals) => ({ tc: vals.param1 })
+    }
+};
+
+let currentMode = "tc";
+let currentResultData = [];
+let currentPage = 0;
+const PER_PAGE = 5;
+
+// ---- MODE DEĞİŞTİRME ----
+function switchMode(mode) {
+    currentMode = mode;
+    document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+    document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+    document.getElementById('modeTitle').textContent = modes[mode].title;
+    document.getElementById('logContainer').classList.add('hidden');
+    document.getElementById('userContainer').classList.add('hidden');
+    document.getElementById('panelContainer').classList.remove('hidden');
+    renderPanel(mode);
+}
+
+function renderPanel(mode) {
+    const config = modes[mode];
+    const container = document.getElementById('panelContainer');
+    let html = `<div class="panel"><h3>${config.title}</h3><div class="input-group" id="inputGroup">`;
+    config.fields.forEach((f, idx) => {
+        const id = `param${idx+1}`;
+        html += `<div class="field"><label>${f.label}</label><input type="text" id="${id}" placeholder="${f.placeholder}" ${f.maxlength ? `maxlength="${f.maxlength}"` : ''}></div>`;
+    });
+    html += `<button onclick="search()">SORGULA</button></div>`;
+    html += `<div class="result-area" id="resultArea"><div class="placeholder">🔍 Parametreleri girin ve sorgulayın.</div></div>`;
+    html += `<div id="paginationContainer" class="pagination" style="display:none;"></div></div>`;
+    container.innerHTML = html;
+    currentResultData = [];
+    currentPage = 0;
+}
+
+// ---- SORGULAMA ----
+async function search() {
+    const config = modes[currentMode];
+    const vals = {};
+    config.fields.forEach((f, idx) => {
+        const el = document.getElementById(`param${idx+1}`);
+        vals[`param${idx+1}`] = el ? el.value.trim() : '';
+    });
+    const param1 = vals.param1;
+    if (!param1) {
+        document.getElementById('resultArea').innerHTML = `<div class="result-item error-item"><span class="label">HATA</span><br><span class="value">Lütfen gerekli alanı doldurun.</span></div>`;
+        return;
+    }
+    if (['tc','sulale','tcgsm','adres','isyeri'].includes(currentMode) && (param1.length !== 11 || !/^\d+$/.test(param1))) {
+        document.getElementById('resultArea').innerHTML = `<div class="result-item error-item"><span class="label">HATA</span><br><span class="value">TC 11 haneli ve sadece rakam olmalı.</span></div>`;
+        return;
+    }
+    if (currentMode === 'gsmtc' && (param1.length !== 10 || !/^\d+$/.test(param1))) {
+        document.getElementById('resultArea').innerHTML = `<div class="result-item error-item"><span class="label">HATA</span><br><span class="value">GSM 10 haneli ve sadece rakam olmalı (başında 0 yok).</span></div>`;
+        return;
     }
 
-    function showLogs() {
-        document.getElementById('panelContainer').style.display = 'none';
-        const logContainer = document.getElementById('logContainer');
-        logContainer.style.display = 'block';
-        logContainer.innerHTML = `<div class="panel"><h3>📜 Tüm Loglar</h3><div class="log-area" id="logArea">Yükleniyor...</div></div>`;
-        fetch('/logs')
-            .then(r => r.json())
-            .then(logs => {
-                let html = '';
-                logs.reverse().forEach(entry => {
-                    html += `<div class="log-entry"><span class="time">${entry.time}</span> <span class="type">[${entry.type}]</span> <span class="detail">${entry.message}</span></div>`;
-                });
-                if (!html) html = '<div style="color:#4a5a6a;">Henüz log yok.</div>';
-                document.getElementById('logArea').innerHTML = html;
-            })
-            .catch(() => {
-                document.getElementById('logArea').innerHTML = '<div style="color:#ff003c;">Loglar alınamadı.</div>';
-            });
-    }
+    const params = config.buildParams(vals);
+    const url = new URL(API_BASE + '/' + config.endpoint);
+    Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
 
-    // Enter ile sorgu
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && e.target.tagName === 'INPUT') {
+    document.getElementById('resultArea').innerHTML = `<div class="loading">⏳ Sorgu gönderiliyor...</div>`;
+    addLog('SORGU', `${currentMode} - Param: ${JSON.stringify(params)}`);
+
+    try {
+        const resp = await fetch(url.toString(), { mode: 'cors' });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        currentResultData = Array.isArray(data) ? data : [data];
+        currentPage = 0;
+        renderResult();
+        addLog('SORGU SONUCU', `${currentMode} - ${currentResultData.length} kayıt`);
+    } catch(e) {
+        document.getElementById('resultArea').innerHTML = `<div class="result-item error-item"><span class="label">HATA</span><br><span class="value">${e.message} (CORS hatası olabilir, proxy gerekir)</span></div>`;
+        addLog('SORGU HATASI', `${currentMode} - ${e.message}`);
+    }
+}
+
+// ---- SONUÇ RENDER ----
+function renderResult() {
+    const area = document.getElementById('resultArea');
+    const pagContainer = document.getElementById('paginationContainer');
+    const data = currentResultData;
+    if (!data || data.length === 0) {
+        area.innerHTML = `<div style="color:#00ff66;">✅ Hiç kayıt bulunamadı.</div>`;
+        pagContainer.style.display = 'none';
+        return;
+    }
+    const totalPages = Math.ceil(data.length / PER_PAGE);
+    if (totalPages > 1) {
+        pagContainer.style.display = 'flex';
+        let pagHtml = '';
+        for (let i = 0; i < totalPages; i++) {
+            pagHtml += `<button class="${i===currentPage?'active':''}" onclick="goToPage(${i})">${i+1}</button>`;
+        }
+        pagContainer.innerHTML = pagHtml;
+    } else {
+        pagContainer.style.display = 'none';
+    }
+    const start = currentPage * PER_PAGE;
+    const end = Math.min(start + PER_PAGE, data.length);
+    const pageData = data.slice(start, end);
+    let html = `<div style="margin-bottom:10px;color:#00ffc8;">📌 <strong>${data.length}</strong> kayıt bulundu (Sayfa ${currentPage+1}/${totalPages}).</div>`;
+    pageData.forEach((item, idx) => {
+        html += `<div class="result-item">`;
+        html += `<div style="display:flex;justify-content:space-between;flex-wrap:wrap;"><span class="label">Kayıt #${start+idx+1}</span></div>`;
+        for (const [key, val] of Object.entries(item)) {
+            if (val === null || val === undefined || val === '') continue;
+            html += `<div><span class="label">${key}</span> <span class="value">${val}</span></div>`;
+        }
+        html += `</div>`;
+    });
+    area.innerHTML = html;
+}
+
+function goToPage(page) {
+    currentPage = page;
+    renderResult();
+}
+
+// ---- LOG GÖSTER ----
+function showLogs() {
+    document.getElementById('panelContainer').classList.add('hidden');
+    document.getElementById('userContainer').classList.add('hidden');
+    const logContainer = document.getElementById('logContainer');
+    logContainer.classList.remove('hidden');
+    const logs = getLogs();
+    let html = `<div class="panel"><h3>📜 Tüm Loglar</h3><div class="log-area">`;
+    if (logs.length === 0) {
+        html += `<div style="color:#4a5a6a;">Henüz log yok.</div>`;
+    } else {
+        logs.reverse().forEach(entry => {
+            html += `<div class="log-entry"><span class="time">${entry.time}</span> <span class="type">[${entry.type}]</span> <span class="detail">${entry.message}</span></div>`;
+        });
+    }
+    html += `</div></div>`;
+    logContainer.innerHTML = html;
+}
+
+// ---- KULLANICILARI GÖSTER ----
+function showUsers() {
+    document.getElementById('panelContainer').classList.add('hidden');
+    document.getElementById('logContainer').classList.add('hidden');
+    const container = document.getElementById('userContainer');
+    container.classList.remove('hidden');
+    const users = getUsers();
+    let html = `<div class="panel"><h3>👥 Kayıtlı Kullanıcılar</h3><div class="user-list">`;
+    if (users.length === 0) {
+        html += `<div style="color:#4a5a6a;">Hiç kullanıcı yok.</div>`;
+    } else {
+        users.forEach(u => {
+            html += `<div class="user-item"><span class="email">${u.email}</span> <span class="pass">${u.password}</span></div>`;
+        });
+    }
+    html += `</div></div>`;
+    container.innerHTML = html;
+}
+
+// ---- ENTER ----
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && e.target.tagName === 'INPUT') {
+        const panel = document.getElementById('panelContainer');
+        if (!panel.classList.contains('hidden')) {
             search();
         }
-    });
-
-    // Başlangıç
-    switchMode('tc');
+    }
+});
 </script>
 </body>
 </html>
-"""
-
-# ---- FONKSİYONLAR ----
-
-def log_olay(tip, mesaj):
-    """Log kaydı oluşturur."""
-    try:
-        with open(LOG_FILE, 'r', encoding='utf-8') as f:
-            logs = json.load(f)
-    except:
-        logs = []
-    logs.append({
-        "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "type": tip,
-        "message": mesaj,
-        "ip": request.remote_addr if request else "0.0.0.0"
-    })
-    with open(LOG_FILE, 'w', encoding='utf-8') as f:
-        json.dump(logs, f, ensure_ascii=False, indent=2)
-
-# ---- Dekoratör ----
-
-def login_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if not session.get('logged_in'):
-            return redirect(url_for('login'))
-        return f(*args, **kwargs)
-    return decorated
-
-# ---- Rotalar ----
-
-@app.route('/', methods=['GET', 'POST'])
-def login():
-    if session.get('logged_in'):
-        return redirect(url_for('panel'))
-    error = None
-    if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
-        if email == ADMIN_EMAIL and password == ADMIN_PASS:
-            session['logged_in'] = True
-            session['email'] = email
-            log_olay("GİRİŞ", f"Kullanıcı {email} giriş ya
