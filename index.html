@@ -100,7 +100,7 @@
 <!-- ANA PANEL -->
 <div class="container" id="mainApp" style="display:none;">
     <div class="sidebar">
-        <div class="sidebar-brand"><h2>⚡LEXUS</h2></div>
+        <div class="sidebar-brand"><h2>⚡ LEXUS</h2></div>
         <div class="sidebar-menu">
             <div class="menu-title">Sorgu İstasyonları</div>
             <a class="menu-item active" data-mode="tc" onclick="switchMode('tc')">🔍 <span>TC Sorgu</span></a>
@@ -255,7 +255,6 @@ window.onload = function() {
             return;
         }
     }
-    // auth ekranı göster
     document.getElementById('authScreen').style.display = 'flex';
     document.getElementById('mainApp').style.display = 'none';
 };
@@ -334,7 +333,9 @@ const PER_PAGE = 5;
 function switchMode(mode) {
     currentMode = mode;
     document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-    document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+    const targetItem = document.querySelector(`[data-mode="${mode}"]`);
+    if (targetItem) targetItem.classList.add('active');
+    
     document.getElementById('modeTitle').textContent = modes[mode].title;
     document.getElementById('logContainer').classList.add('hidden');
     document.getElementById('userContainer').classList.add('hidden');
@@ -358,7 +359,7 @@ function renderPanel(mode) {
     currentPage = 0;
 }
 
-// ---- SORGULAMA ----
+// ---- SORGULAMA VE API ENTEGRASYONU ----
 async function search() {
     const config = modes[currentMode];
     const vals = {};
@@ -384,112 +385,140 @@ async function search() {
     const url = new URL(API_BASE + '/' + config.endpoint);
     Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
 
-    document.getElementById('resultArea').innerHTML = `<div class="loading">⏳ Sorgu gönderiliyor...</div>`;
-    addLog('SORGU', `${currentMode} - Param: ${JSON.stringify(params)}`);
+    document.getElementById('resultArea').innerHTML = `<div class="loading">⏳ Sorgulanıyor, lütfen bekleyin...</div>`;
+    document.getElementById('paginationContainer').style.display = 'none';
 
     try {
-        const resp = await fetch(url.toString(), { mode: 'cors' });
-        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-        const data = await resp.json();
-        currentResultData = Array.isArray(data) ? data : [data];
+        const response = await fetch(url.toString(), {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP Hata kodu: ${response.status}`);
+        }
+
+        const data = await response.json();
+        addLog('SORGU', `${currentMode.toUpperCase()} sorgulaması yapıldı: ${param1}`);
+
+        // Gelen veri dizi formatında değilse diziye çevir
+        if (Array.isArray(data)) {
+            currentResultData = data;
+        } else if (data && typeof data === 'object') {
+            if (data.success === false || data.status === false) {
+                currentResultData = [{ Hata: data.message || "API'den olumsuz yanıt döndü." }];
+            } else {
+                currentResultData = [data];
+            }
+        } else {
+            currentResultData = [];
+        }
+
         currentPage = 0;
-        renderResult();
-        addLog('SORGU SONUCU', `${currentMode} - ${currentResultData.length} kayıt`);
-    } catch(e) {
-        document.getElementById('resultArea').innerHTML = `<div class="result-item error-item"><span class="label">HATA</span><br><span class="value">${e.message} (CORS hatası olabilir, proxy gerekir)</span></div>`;
-        addLog('SORGU HATASI', `${currentMode} - ${e.message}`);
+        displayResults();
+
+    } catch (error) {
+        document.getElementById('resultArea').innerHTML = `<div class="result-item error-item"><span class="label">API BAĞLANTI HATASI</span><br><span class="value">${error.message}. API adresi kapalı veya erişilemiyor olabilir.</span></div>`;
+        addLog('HATA', `${currentMode.toUpperCase()} sorgusunda hata oluştu: ${error.message}`);
     }
 }
 
-// ---- SONUÇ RENDER ----
-function renderResult() {
-    const area = document.getElementById('resultArea');
-    const pagContainer = document.getElementById('paginationContainer');
-    const data = currentResultData;
-    if (!data || data.length === 0) {
-        area.innerHTML = `<div style="color:#00ff66;">✅ Hiç kayıt bulunamadı.</div>`;
-        pagContainer.style.display = 'none';
+// ---- SONUÇLARI GÖSTERME (SAYFALAMA İLE) ----
+function displayResults() {
+    const resultArea = document.getElementById('resultArea');
+    const paginationContainer = document.getElementById('paginationContainer');
+    resultArea.innerHTML = '';
+
+    if (currentResultData.length === 0) {
+        resultArea.innerHTML = `<div class="placeholder">Sonuç bulunamadı.</div>`;
+        paginationContainer.style.display = 'none';
         return;
     }
-    const totalPages = Math.ceil(data.length / PER_PAGE);
-    if (totalPages > 1) {
-        pagContainer.style.display = 'flex';
-        let pagHtml = '';
-        for (let i = 0; i < totalPages; i++) {
-            pagHtml += `<button class="${i===currentPage?'active':''}" onclick="goToPage(${i})">${i+1}</button>`;
-        }
-        pagContainer.innerHTML = pagHtml;
-    } else {
-        pagContainer.style.display = 'none';
-    }
+
     const start = currentPage * PER_PAGE;
-    const end = Math.min(start + PER_PAGE, data.length);
-    const pageData = data.slice(start, end);
-    let html = `<div style="margin-bottom:10px;color:#00ffc8;">📌 <strong>${data.length}</strong> kayıt bulundu (Sayfa ${currentPage+1}/${totalPages}).</div>`;
-    pageData.forEach((item, idx) => {
-        html += `<div class="result-item">`;
-        html += `<div style="display:flex;justify-content:space-between;flex-wrap:wrap;"><span class="label">Kayıt #${start+idx+1}</span></div>`;
-        for (const [key, val] of Object.entries(item)) {
-            if (val === null || val === undefined || val === '') continue;
-            html += `<div><span class="label">${key}</span> <span class="value">${val}</span></div>`;
+    const end = start + PER_PAGE;
+    const paginatedItems = currentResultData.slice(start, end);
+
+    paginatedItems.forEach(item => {
+        let itemHtml = `<div class="result-item">`;
+        for (const [key, value] of Object.entries(item)) {
+            itemHtml += `<div><span class="label">${key}: </span><span class="value">${value !== null ? value : '-'}</span></div>`;
         }
-        html += `</div>`;
+        itemHtml += `</div>`;
+        resultArea.innerHTML += itemHtml;
     });
-    area.innerHTML = html;
+
+    renderPagination();
 }
 
-function goToPage(page) {
-    currentPage = page;
-    renderResult();
+function renderPagination() {
+    const paginationContainer = document.getElementById('paginationContainer');
+    paginationContainer.innerHTML = '';
+    const totalPages = Math.ceil(currentResultData.length / PER_PAGE);
+
+    if (totalPages <= 1) {
+        paginationContainer.style.display = 'none';
+        return;
+    }
+
+    paginationContainer.style.display = 'flex';
+    for (let i = 0; i < totalPages; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = i + 1;
+        if (i === currentPage) btn.classList.add('active');
+        btn.onclick = () => {
+            currentPage = i;
+            displayResults();
+        };
+        paginationContainer.appendChild(btn);
+    }
 }
 
-// ---- LOG GÖSTER ----
+// ---- LOG PANELİ GÖSTERİMİ ----
 function showLogs() {
     document.getElementById('panelContainer').classList.add('hidden');
     document.getElementById('userContainer').classList.add('hidden');
-    const logContainer = document.getElementById('logContainer');
-    logContainer.classList.remove('hidden');
-    const logs = getLogs();
-    let html = `<div class="panel"><h3>📜 Tüm Loglar</h3><div class="log-area">`;
-    if (logs.length === 0) {
-        html += `<div style="color:#4a5a6a;">Henüz log yok.</div>`;
-    } else {
-        logs.reverse().forEach(entry => {
-            html += `<div class="log-entry"><span class="time">${entry.time}</span> <span class="type">[${entry.type}]</span> <span class="detail">${entry.message}</span></div>`;
-        });
-    }
-    html += `</div></div>`;
-    logContainer.innerHTML = html;
-}
-
-// ---- KULLANICILARI GÖSTER ----
-function showUsers() {
-    document.getElementById('panelContainer').classList.add('hidden');
-    document.getElementById('logContainer').classList.add('hidden');
-    const container = document.getElementById('userContainer');
+    const container = document.getElementById('logContainer');
     container.classList.remove('hidden');
-    const users = getUsers();
-    let html = `<div class="panel"><h3>👥 Kayıtlı Kullanıcılar</h3><div class="user-list">`;
-    if (users.length === 0) {
-        html += `<div style="color:#4a5a6a;">Hiç kullanıcı yok.</div>`;
+    document.getElementById('modeTitle').textContent = "Sistem Logları";
+
+    const logs = getLogs().reverse();
+    let html = `<div class="panel"><h3>Sistem İşlem Geçmişi</h3><div class="log-area">`;
+    if (logs.length === 0) {
+        html += `<div style="color:#4a5a6a; text-align:center;">Kayıtlı log bulunmamaktadır.</div>`;
     } else {
-        users.forEach(u => {
-            html += `<div class="user-item"><span class="email">${u.email}</span> <span class="pass">${u.password}</span></div>`;
+        logs.forEach(log => {
+            html += `<div class="log-entry">
+                <span class="time">[${log.time}]</span> 
+                <span class="type">[${log.type}]</span> 
+                <span class="detail">${log.message}</span>
+            </div>`;
         });
     }
     html += `</div></div>`;
     container.innerHTML = html;
 }
 
-// ---- ENTER ----
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' && e.target.tagName === 'INPUT') {
-        const panel = document.getElementById('panelContainer');
-        if (!panel.classList.contains('hidden')) {
-            search();
-        }
-    }
-});
+// ---- KULLANICI PANELİ GÖSTERİMİ ----
+function showUsers() {
+    document.getElementById('panelContainer').classList.add('hidden');
+    document.getElementById('logContainer').classList.add('hidden');
+    const container = document.getElementById('userContainer');
+    container.classList.remove('hidden');
+    document.getElementById('modeTitle').textContent = "Kullanıcı Yönetimi";
+
+    const users = getUsers();
+    let html = `<div class="panel"><h3>Kayıtlı Kullanıcılar</h3><div class="user-list">`;
+    users.forEach(u => {
+        html += `<div class="user-item">
+            <span class="email">${u.email} ${u.isAdmin ? '👑' : ''}</span>
+            <span class="pass">Şifre: ${u.password}</span>
+        </div>`;
+    });
+    html += `</div></div>`;
+    container.innerHTML = html;
+}
 </script>
+
 </body>
 </html>
